@@ -1,0 +1,13 @@
+#DownloadModelFormat: OBJ/BLEND
+#GeometryFile: BushObj.obj
+#MaterialFile: BushObj.mtl
+#PreviewFile: preview.jpg
+#OtherFiles: Bush_2.png
+#DownloadedFromURL: https://www.turbosquid.com/FullPreview/Index.cfm/ID/580785
+#DateOfDownload: 20.05.2020
+#CreatedBy: Rusty_hawk
+#CreatedIn: 3D MAX
+#UploadedBy: Jan Hamet (hametja1)
+#Description: plant with three leaves
+#NumberOfPolygons: 139
+

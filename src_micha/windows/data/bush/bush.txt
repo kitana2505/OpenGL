@@ -1,0 +1,12 @@
+#DownloadModelFormat: OBJ
+#GeometryFile: bush.obj
+#MaterialFile: bush.mtl
+#PreviewFile: bush_preview.jpg
+#OtherFiles: .DS_Store, bush.jpg
+#DownloadedFromURL: https://ru.3dexport.com/free-3dmodel-bush-295311.htm
+#DateOfDownload: 21.6.2020
+#CreatedBy: Roman.art
+#CreatedIn: blender
+#UploadedBy: Yanina Arameleva
+#Description: bush
+#NumberOfPolygons: unknown
