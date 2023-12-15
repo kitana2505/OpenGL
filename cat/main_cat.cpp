@@ -39,6 +39,7 @@
 //#include "singlemesh.h"
 #include "Tree.h"
 #include "House.h"
+#include "Ground.h"
 
 //constexpr int WINDOW_WIDTH = 500;
 //constexpr int WINDOW_HEIGHT = 500;
@@ -86,36 +87,95 @@ struct _GameState {
 	// Skybox* skybox;
 
 	/// number of wood stacks in inventory
-	int wood_in_inventory = 0;
+	//int wood_in_inventory = 0;
 
 }gameState;
 
+
+bool check_bounds(glm::vec3 position) {
+	//glm::vec3 fire_position;
+	//fire_position.x = gameState.fire->globalModelMatrix[0][3];
+	//fire_position.y = gameState.fire->globalModelMatrix[1][3];
+	//fire_position.z = gameState.fire->globalModelMatrix[2][3];
+	if (abs(position.x) > SCENE_WIDTH) {
+		return false;
+	}
+	if (abs(position.z) > SCENE_DEPTH) {
+		return false;
+	}
+	return true;
+}
+
+void move_player(float deltaTime) {
+	int forward = 0;
+	int sideways = 0;
+
+	if (gameState.keyMap[FORWARD]) {
+		forward += 1;
+		sideways += 0;
+	}
+	if (gameState.keyMap[BACKWARD]) {
+		forward += -1;
+		sideways += 0;
+	}
+
+	if (gameState.keyMap[LEFT]) {
+		forward += 0;
+		sideways += -1;
+	}
+
+	if (gameState.keyMap[RIGHT]) {
+		forward += 0;
+		sideways += 1;
+	}
+
+	float x = cos(glm::radians(gameState.cameraRotationAngle)) * forward + sin(glm::radians(gameState.cameraRotationAngle)) * -sideways;
+	float z = cos(glm::radians(gameState.cameraRotationAngle)) * sideways + sin(glm::radians(gameState.cameraRotationAngle)) * forward;
+	gameState.player_direction = glm::vec3(x, 0, z);
+	if (x != 0 && z != 0) {
+		gameState.player_direction = glm::normalize(gameState.player_direction);
+	}
+
+	//gameState.player_direction = glm::normalize(glm::vec3(0, 0,0));
+	if (gameState.keyMap[RUN]) {
+		if (check_bounds(gameState.player_position + gameState.player_direction * PLAYER_RUNNING_SPEED * deltaTime)) {
+			gameState.player_position += gameState.player_direction * PLAYER_RUNNING_SPEED * deltaTime;
+		}
+
+	}
+	else {
+		if (check_bounds(gameState.player_position + gameState.player_direction * PLAYER_WALKING_SPEED * deltaTime)) {
+			gameState.player_position += gameState.player_direction * PLAYER_WALKING_SPEED * deltaTime;
+		}
+	}
+
+}
 
 /**
  * \brief Load and compile shader programs. Get attribute locations.
  */
 void loadShaderPrograms() //define at least 1 shader obj
 {
-	std::string vertexShaderSrc =
-		"#version 140\n"
-		"in vec2 position;\n"
-		"uniform mat4 PVM;\n"
-		"void main() {\n"
-		"  gl_Position = PVM * vec4(position, 0.0f, 1.0f);\n" //3rd coord = 0, homogeneour = 1
-		"}\n"
-		;
+	//std::string vertexShaderSrc =
+	//	"#version 140\n"
+	//	"in vec2 position;\n"
+	//	"uniform mat4 PVM;\n"
+	//	"void main() {\n"
+	//	"  gl_Position = PVM * vec4(position, 0.0f, 1.0f);\n" //3rd coord = 0, homogeneour = 1
+	//	"}\n"
+	//	;
 
-	std::string fragmentShaderSrc =
-		"#version 140\n"
-		"out vec4 fragmentColor;"
-		"void main() {\n"
-		"  fragmentColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n"
-		"}\n"
-		;
+	//std::string fragmentShaderSrc =
+	//	"#version 140\n"
+	//	"out vec4 fragmentColor;"
+	//	"void main() {\n"
+	//	"  fragmentColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n"
+	//	"}\n"
+	//	;
 
 	GLuint shaders[] = {
-	  pgr::createShaderFromSource(GL_VERTEX_SHADER, vertexShaderSrc),
-	  pgr::createShaderFromSource(GL_FRAGMENT_SHADER, fragmentShaderSrc),
+	  pgr::createShaderFromFile(GL_VERTEX_SHADER, "commonShader.vert"),
+	  pgr::createShaderFromFile(GL_FRAGMENT_SHADER, "commonShader.frag"),
 	  0
 	};
 
@@ -124,6 +184,26 @@ void loadShaderPrograms() //define at least 1 shader obj
 
 	// other attributes and uniforms
 	commonShaderProgram.locations.PVMmatrix = glGetUniformLocation(commonShaderProgram.program, "PVM");
+
+	// other attributes and uniforms
+	commonShaderProgram.locations.PVMmatrix = glGetUniformLocation(commonShaderProgram.program, "PVMmatrix");
+
+	commonShaderProgram.locations.normal = glGetAttribLocation(commonShaderProgram.program, "normal");
+	commonShaderProgram.locations.texCoord = glGetAttribLocation(commonShaderProgram.program, "texCoord");
+	// get uniforms locations
+	commonShaderProgram.locations.Vmatrix = glGetUniformLocation(commonShaderProgram.program, "Vmatrix");
+	commonShaderProgram.locations.Mmatrix = glGetUniformLocation(commonShaderProgram.program, "Mmatrix");
+	commonShaderProgram.locations.normalMatrix = glGetUniformLocation(commonShaderProgram.program, "normalMatrix");
+	// material
+	commonShaderProgram.locations.ambient = glGetUniformLocation(commonShaderProgram.program, "material.ambient");
+	commonShaderProgram.locations.diffuse = glGetUniformLocation(commonShaderProgram.program, "material.diffuse");
+	commonShaderProgram.locations.specular = glGetUniformLocation(commonShaderProgram.program, "material.specular");
+	commonShaderProgram.locations.shininess = glGetUniformLocation(commonShaderProgram.program, "material.shininess");
+	// texture
+	commonShaderProgram.locations.texSampler = glGetUniformLocation(commonShaderProgram.program, "texSampler");
+	commonShaderProgram.locations.useTexture = glGetUniformLocation(commonShaderProgram.program, "material.useTexture");
+	//fog
+	commonShaderProgram.locations.fogColor = glGetUniformLocation(commonShaderProgram.program, "fogColor");
 
 	assert(commonShaderProgram.locations.PVMmatrix != -1);
 	assert(commonShaderProgram.locations.position != -1);
@@ -138,6 +218,40 @@ void loadShaderPrograms() //define at least 1 shader obj
 void cleanupShaderPrograms(void) {
 
 	pgr::deleteProgramAndShaders(commonShaderProgram.program);
+}
+
+glm::vec3 move_camera() {
+	if (!gameState.move_camera) {
+		gameState.camera_position = gameState.target_camera_position;
+		return gameState.camera_position;
+	}
+	glm::vec3 position = gameState.initial_camera_position;
+	glm::vec3 target = gameState.target_camera_position;
+	glm::vec3 direction = (target - position) * 0.05f;
+
+	float dis1 = glm::distance(gameState.camera_position, target);
+	gameState.camera_position += direction;
+	float dis2 = glm::distance(gameState.camera_position, target);
+	if (dis1 <= dis2) {
+		gameState.camera_position = target;
+		gameState.move_camera = false;
+	}
+	return gameState.camera_position;
+}
+
+void setLights() {
+	if (gameState.sunOn) {
+		glUniform1i(commonShaderProgram.locations.sunOn, 1);
+	}
+	else {
+		glUniform1i(commonShaderProgram.locations.sunOn, 0);
+	}if (gameState.reflectorOn) {
+		glUniform1i(commonShaderProgram.locations.flashlightOn, 1);
+	}
+	else {
+		glUniform1i(commonShaderProgram.locations.flashlightOn, 0);
+	}
+
 }
 
 /**
@@ -161,6 +275,39 @@ void drawScene(void)
 
 	glm::vec3 cameraDirection = glm::vec3(cos(glm::radians(gameState.cameraRotationAngle)) * cos(glm::radians(gameState.cameraElevationAngle)), sin(glm::radians(gameState.cameraElevationAngle)), sin(glm::radians(gameState.cameraRotationAngle)) * cos(glm::radians(gameState.cameraElevationAngle)));
 
+	switch (gameState.camera_index) {
+	case 0:
+		gameState.target_camera_position = gameState.player_position;
+		break;
+	case 1:
+		gameState.target_camera_position = STATIC_CAMERA_1;
+		break;
+	case 2:
+		gameState.target_camera_position = STATIC_CAMERA_2;
+		break;
+	}
+	glm::vec3 cameraPosition = move_camera();
+
+	glm::vec3 cameraUpVector = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 cameraCenter = cameraPosition + cameraDirection;
+
+	viewMatrix = glm::lookAt(
+		cameraPosition,
+		cameraCenter,
+		cameraUpVector
+	);
+	projectionMatrix = glm::perspective(glm::radians(60.0f), gameState.windowWidth / (float)gameState.windowHeight, 0.1f, 200.0f);
+	
+	// setup camera & projection transform
+	glUseProgram(commonShaderProgram.program);
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_STENCIL_BUFFER_BIT);
+
+
+	setLights();
+	glUniform3f(commonShaderProgram.locations.reflectorPosition, cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	glUniform3f(commonShaderProgram.locations.reflectorDirection, cameraDirection.x, cameraDirection.y, cameraDirection.z);
+	glUseProgram(0);
 
 	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
 		if (object != nullptr)
@@ -190,11 +337,22 @@ void displayCb() {
  * \param newWidth New window width
  * \param newHeight New window height
  */
-void reshapeCb(int newWidth, int newHeight) { //must have 2 params
+void reshapeCb(int newWidth, int newHeight) {
+	gameState.windowWidth = newWidth;
+	gameState.windowHeight = newHeight;
+
+	glViewport(0, 0, (GLsizei)newWidth, (GLsizei)newHeight);
 	// TODO: Take new window size and update the application state,
 	// window and projection.
 
-	// glViewport(...); // define in which part of the window we are drawing
+	// glViewport(...);
+};
+
+void changeCamera() {
+	gameState.move_camera = true;
+	gameState.camera_index++;
+	gameState.camera_index = gameState.camera_index % CAMERA_COUNT;
+	gameState.initial_camera_position = gameState.camera_position;
 };
 
 // -----------------------  Keyboard ---------------------------------
@@ -208,14 +366,66 @@ void reshapeCb(int newWidth, int newHeight) { //must have 2 params
  * \param mouseX mouse (cursor) X position
  * \param mouseY mouse (cursor) Y position
  */
-void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) { // position of mourse at the time we press the key
-
-	if (keyPressed == 27) {
+void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
+	switch (keyPressed) {
+	case 27:
 		glutLeaveMainLoop();
-		exit(EXIT_SUCCESS);
+	case 'w':
+	case 'W':
+		//case GLUT_KEY_UP:
+		gameState.keyMap[FORWARD] = true;
+		break;
+	case 'a':
+	case 'A':
+		//case GLUT_KEY_LEFT:
+		gameState.keyMap[LEFT] = true;
+		break;
+	case 'd':
+	case 'D':
+		//case GLUT_KEY_RIGHT:
+		gameState.keyMap[RIGHT] = true;
+		break;
+	case 's':
+	case 'S':
+		//case GLUT_KEY_DOWN:
+		gameState.keyMap[BACKWARD] = true;
+		break;
+	case 'f':
+	case 'F':
+		//case GLUT_KEY_DOWN:
+		if (gameState.reflectorOn) {
+			gameState.reflectorOn = false;
+		}
+		else {
+			gameState.reflectorOn = true;
+		}
+		break;
+	//case 'n':
+	//case 'N':
+	//	//case GLUT_KEY_DOWN:
+	//	if (gameState.sunOn) {
+	//		gameState.sunOn = false;
+	//		gameState.skybox->load_skybox(SKYBOX_NIGHT_TEXTURE_NAME, gameState.skybox->night_suffixes);
+	//		glUseProgram(commonShaderProgram.program);
+	//		glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
+	//		glUseProgram(0);
+
+	//	}
+	//	else {
+	//		gameState.sunOn = true;
+	//		gameState.skybox->load_skybox(SKYBOX_DAY_TEXTURE_NAME, gameState.skybox->day_suffixes);
+	//		glUseProgram(commonShaderProgram.program);
+	//		glUniform3f(commonShaderProgram.locations.fogColor, 0.5f, 0.5f, 0.5f);
+	//		glUseProgram(0);
+	//	}
+	//	break;
+	case 'c':
+	case 'C':
+		//case GLUT_KEY_DOWN:
+		changeCamera();
+		break;
 	}
 }
-
 // Called whenever a key on the keyboard was released. The key is given by
 // the "keyReleased" parameter, which is in ASCII. 
 /**
@@ -225,8 +435,29 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) { // position 
  * \param mouseY mouse (cursor) Y position
  */
 void keyboardUpCb(unsigned char keyReleased, int mouseX, int mouseY) {
+	switch (keyReleased) {
+	case 'w':
+	case 'W':
+		//case GLUT_KEY_UP:
+		gameState.keyMap[FORWARD] = false;
+		break;
+	case 'a':
+	case 'A':
+		//case GLUT_KEY_LEFT:
+		gameState.keyMap[LEFT] = false;
+		break;
+	case 'd':
+	case 'D':
+		//case GLUT_KEY_RIGHT:
+		gameState.keyMap[RIGHT] = false;
+		break;
+	case 's':
+	case 'S':
+		//case GLUT_KEY_DOWN:
+		gameState.keyMap[BACKWARD] = false;
+		break;
+	}
 }
-
 //
 /**
  * \brief Handle the non-ASCII key pressed event (such as arrows or F1).
@@ -237,9 +468,51 @@ void keyboardUpCb(unsigned char keyReleased, int mouseX, int mouseY) {
  * \param mouseY mouse (cursor) Y position
  */
 void specialKeyboardCb(int specKeyPressed, int mouseX, int mouseY) {
+	switch (specKeyPressed) {
+	case GLUT_KEY_UP:
+		//case GLUT_KEY_UP:
+		gameState.keyMap[FORWARD] = true;
+		break;
+	case GLUT_KEY_LEFT:
+		//case GLUT_KEY_LEFT:
+		gameState.keyMap[LEFT] = true;
+		break;
+	case GLUT_KEY_RIGHT:
+		//case GLUT_KEY_RIGHT:
+		gameState.keyMap[RIGHT] = true;
+		break;
+	case GLUT_KEY_DOWN:
+		//case GLUT_KEY_DOWN:
+		gameState.keyMap[BACKWARD] = true;
+		break;
+	case GLUT_KEY_SHIFT_L:
+		gameState.keyMap[RUN] = true;
+		break;
+	}
 }
 
 void specialKeyboardUpCb(int specKeyReleased, int mouseX, int mouseY) {
+	switch (specKeyReleased) {
+	case GLUT_KEY_UP:
+		//case GLUT_KEY_UP:
+		gameState.keyMap[FORWARD] = false;
+		break;
+	case GLUT_KEY_LEFT:
+		//case GLUT_KEY_LEFT:
+		gameState.keyMap[LEFT] = false;
+		break;
+	case GLUT_KEY_RIGHT:
+		//case GLUT_KEY_RIGHT:
+		gameState.keyMap[RIGHT] = false;
+		break;
+	case GLUT_KEY_DOWN:
+		//case GLUT_KEY_DOWN:
+		gameState.keyMap[BACKWARD] = false;
+		break;
+	case GLUT_KEY_SHIFT_L:
+		gameState.keyMap[RUN] = false;
+		break;
+	}
 } // key released
 
 // -----------------------  Mouse ---------------------------------
@@ -257,7 +530,30 @@ void specialKeyboardUpCb(int specKeyReleased, int mouseX, int mouseY) {
  * \param mouseY mouse (cursor) Y position
  */
 void mouseCb(int buttonPressed, int buttonState, int mouseX, int mouseY) {
+	unsigned char objectID = 0;
+	glReadPixels(mouseX, glutGet(GLUT_WINDOW_HEIGHT) - mouseY - 1, 1, 1,
+		GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, &objectID
+	);
+	if (buttonState == 1) {
+		return;
+	}
+	//if (objectID == 0) {
+	//}
+	//else if (objectID == 1) {
+	//	if (gameState.wood_in_inventory > 0) {
+	//		gameState.fire->add_wood();
+	//		gameState.wood_in_inventory -= 1;
+	//	}
+	//}
+	//else if (objectID < 20) {
+	//	gameState.fire->pop_smoke(objectID - 2);
+	//}
+	//else {
+	//	gameState.firewood->collect_wood(objectID - 20);
+	//	gameState.wood_in_inventory += 1;
+	//}
 }
+
 
 /**
  * \brief Handle mouse dragging (mouse move with any button pressed).
@@ -265,14 +561,41 @@ void mouseCb(int buttonPressed, int buttonState, int mouseX, int mouseY) {
  * \param mouseX mouse (cursor) X position
  * \param mouseY mouse (cursor) Y position
  */
-void mouseMotionCb(int mouseX, int mouseY) {
+float angleToBounds(float angle) {
+	while (angle < 0) {
+		angle += 360;
+	}
+	while (angle > 360) {
+		angle -= 360;
+	}
+	return angle;
 }
+void mouseMotionCb(int mouseX, int mouseY) {
+	if (mouseY != gameState.windowHeight / 2) {
 
-/**
- * \brief Handle mouse movement over the window (with no button pressed).
- * \param mouseX mouse (cursor) X position
- * \param mouseY mouse (cursor) Y position
- */
+		float cameraElevationAngleDelta = -0.2f * (mouseY - gameState.windowHeight / 2);
+
+		if (fabs(gameState.cameraElevationAngle + cameraElevationAngleDelta) < CAMERA_ELEVATION_MAX)
+			gameState.cameraElevationAngle += cameraElevationAngleDelta;
+
+		// set mouse pointer to the window center
+		glutWarpPointer(gameState.windowWidth / 2, gameState.windowHeight / 2);
+
+		glutPostRedisplay();
+	}
+	if (mouseX != gameState.windowWidth / 2) {
+
+		float cameraRotationAngle = 0.2f * (mouseX - gameState.windowWidth / 2);
+
+		gameState.cameraRotationAngle += cameraRotationAngle;
+		gameState.cameraRotationAngle = angleToBounds(gameState.cameraRotationAngle);
+
+		// set mouse pointer to the window center
+		glutWarpPointer(gameState.windowWidth / 2, gameState.windowHeight / 2);
+
+		glutPostRedisplay();
+	}
+}
 void passiveMouseMotionCb(int mouseX, int mouseY) {
 
 	// mouse hovering over window
@@ -291,12 +614,16 @@ void timerCb(int)
 #ifndef SKELETON // @task_1_0
 	const glm::mat4 sceneRootMatrix = glm::mat4(1.0f);
 
-	float elapsedTime = 0.001f * static_cast<float>(glutGet(GLUT_ELAPSED_TIME)); // milliseconds => seconds
+	//float elapsedTime = 0.001f * static_cast<float>(glutGet(GLUT_ELAPSED_TIME)); // milliseconds => seconds
+	float time = glutGet(GLUT_ELAPSED_TIME);
+	float deltaTime = (time - gameState.last_update) / 1000;
+	gameState.last_update = time;
+	move_player(deltaTime);
 
 	// update the application state
 	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
 		if (object != nullptr)
-			object->update(elapsedTime, &sceneRootMatrix);
+			object->update(deltaTime, &sceneRootMatrix);
 	}
 #endif // task_1_0
 
@@ -317,14 +644,32 @@ void initApplication() {
 	// init OpenGL
 	// - all programs (shaders), buffers, textures, ...
 	loadShaderPrograms();
-
+	CHECK_GL_ERROR();
 	//objects.push_back(new Triangle(&commonShaderProgram));
 	// objects.push_back(new SingleMesh(&commonShaderProgram));
 	//objects.push_back(new Tree(&commonShaderProgram));
 	objects.push_back(new House(&commonShaderProgram));
+	objects.push_back(new Ground(&commonShaderProgram));
+
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	// init your Application
 	// - setup the initial application state
+
+	// player_init
+	gameState.player_position = glm::vec3(0, PLAYER_HEIGHT, -10);
+	gameState.player_direction = glm::vec3(0, 0, 0);
+
+	//lights
+	gameState.sunOn = true;
+	gameState.reflectorOn = false;
+
+	glUseProgram(commonShaderProgram.program);
+	glUniform3f(commonShaderProgram.locations.fogColor, 0.5f, 0.5f, 0.5f);
+	glUseProgram(0);
+
+	//mouse
+	glutWarpPointer(gameState.windowWidth / 2, gameState.windowHeight / 2);
+
 }
 
 /**
@@ -370,16 +715,17 @@ int main(int argc, char** argv) {
 		glutDisplayFunc(displayCb);
 		glutReshapeFunc(reshapeCb);
 		glutKeyboardFunc(keyboardCb); //f1,f2, page up, page down
-		// glutKeyboardUpFunc(keyboardUpCb);
-		// glutSpecialFunc(specialKeyboardCb);     // key pressed
-		// glutSpecialUpFunc(specialKeyboardUpCb); // key released
-		// glutMouseFunc(mouseCb);
-		// glutMotionFunc(mouseMotionCb);
-#ifndef SKELETON // @task_1_0
+		glutKeyboardUpFunc(keyboardUpCb);
+		glutSpecialFunc(specialKeyboardCb);     // key pressed
+		glutSpecialUpFunc(specialKeyboardUpCb); // key released
+		glutMouseFunc(mouseCb);
+		glutMotionFunc(mouseMotionCb);
 		glutTimerFunc(33, timerCb, 0);
-#else
-		// glutTimerFunc(33, timerCb, 0);
-#endif // task_1_0
+//#ifndef SKELETON // @task_1_0
+//		glutTimerFunc(33, timerCb, 0);
+//#else
+//		// glutTimerFunc(33, timerCb, 0);
+//#endif // task_1_0
 
 	}
 	// end for each window 
