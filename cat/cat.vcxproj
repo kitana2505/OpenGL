@@ -152,21 +152,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animal_cat.cpp" />
+    <ClCompile Include="data\fire_wood\big.cpp" />
+    <ClCompile Include="data\fire_wood\fireplace.cpp" />
+    <ClCompile Include="data\fire_wood\medium.cpp" />
+    <ClCompile Include="data\fire_wood\small.cpp" />
+    <ClCompile Include="Fire.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="House.cpp" />
     <ClCompile Include="main_cat.cpp" />
+    <ClCompile Include="Skybox.cpp" />
+    <ClCompile Include="Smoke.cpp" />
     <ClCompile Include="Tree.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animal_cat.h" />
     <ClInclude Include="data.h" />
+    <ClInclude Include="data\fire_wood\big.h" />
+    <ClInclude Include="data\fire_wood\fireplace.h" />
+    <ClInclude Include="data\fire_wood\medium.h" />
+    <ClInclude Include="data\fire_wood\small.h" />
+    <ClInclude Include="fire.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="House.h" />
     <ClInclude Include="object.h" />
+    <ClInclude Include="Skybox.h" />
+    <ClInclude Include="Smoke.h" />
     <ClInclude Include="Tree.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="commonShader.frag" />
     <None Include="commonShader.vert" />
+    <None Include="fireShader.frag" />
+    <None Include="fireShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

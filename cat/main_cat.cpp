@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------
+	//----------------------------------------------------------------------------------------
 /**
  * \file    skeleton.cpp : This file contains the 'main' function and callbacks.
 			Program execution begins and ends there.
@@ -33,13 +33,18 @@
 
 
 #include <iostream>
+#include <list>
+#include "data.h"
 #include "pgr.h"
 #include "object.h"
 //#include "triangle.h"
 //#include "singlemesh.h"
+#include "Fire.h"
 #include "Tree.h"
 #include "House.h"
 #include "Ground.h"
+#include "Skybox.h"
+#include "Animal_cat.h"
 
 //constexpr int WINDOW_WIDTH = 500;
 //constexpr int WINDOW_HEIGHT = 500;
@@ -48,6 +53,8 @@
 ObjectList objects;
 // shared shader programs
 ShaderProgram commonShaderProgram;
+FireShaderProgram fireShaderProgram;
+SkyboxShaderProgram skyboxShaderProgram;
 
 
 // -----------------------  OpenGL stuff ---------------------------------
@@ -82,9 +89,9 @@ struct _GameState {
 
 	/// Sunlight should be on/off
 	bool sunOn;
-	// Fire* fire;
+	 Fire* fire;
 	// Firewood* firewood;
-	// Skybox* skybox;
+	 Skybox* skybox;
 
 	/// number of wood stacks in inventory
 	//int wood_in_inventory = 0;
@@ -151,8 +158,36 @@ void move_player(float deltaTime) {
 
 }
 
+
+const std::string skyboxVShader(
+	"#version 140\n"
+	"\n"
+	"uniform mat4 inversePVmatrix;\n"
+	"in vec2 screenCoord;\n"
+	"out vec3 texCoord_v;\n"
+	"\n"
+	"void main() {\n"
+	"  vec4 farplaneCoord = vec4(screenCoord, 0.9999, 1.0);\n"
+	"  vec4 worldViewCoord = inversePVmatrix * farplaneCoord;\n"
+	"  texCoord_v = - worldViewCoord.xyz / worldViewCoord.w;\n"
+	"  gl_Position = farplaneCoord;\n"
+	"}\n"
+);
+
+const std::string skyboxFShader(
+	"#version 140\n"
+	"\n"
+	"uniform samplerCube skyboxSampler;\n"
+	"in vec3 texCoord_v;\n"
+	"out vec4 color_f;\n"
+	"\n"
+	"void main() {\n"
+	"  color_f = texture(skyboxSampler, texCoord_v);\n"
+	"}\n"
+);
+
 /**
- * \brief Load and compile shader programs. Get attribute locations.
+ * \brief s and compile shader programs. Get attribute locations.
  */
 void loadShaderPrograms() //define at least 1 shader obj
 {
@@ -181,15 +216,14 @@ void loadShaderPrograms() //define at least 1 shader obj
 
 	commonShaderProgram.program = pgr::createProgram(shaders);
 	commonShaderProgram.locations.position = glGetAttribLocation(commonShaderProgram.program, "position");
-
-	// other attributes and uniforms
-	commonShaderProgram.locations.PVMmatrix = glGetUniformLocation(commonShaderProgram.program, "PVM");
+	commonShaderProgram.locations.color = glGetAttribLocation(commonShaderProgram.program, "color");
 
 	// other attributes and uniforms
 	commonShaderProgram.locations.PVMmatrix = glGetUniformLocation(commonShaderProgram.program, "PVMmatrix");
 
 	commonShaderProgram.locations.normal = glGetAttribLocation(commonShaderProgram.program, "normal");
 	commonShaderProgram.locations.texCoord = glGetAttribLocation(commonShaderProgram.program, "texCoord");
+
 	// get uniforms locations
 	commonShaderProgram.locations.Vmatrix = glGetUniformLocation(commonShaderProgram.program, "Vmatrix");
 	commonShaderProgram.locations.Mmatrix = glGetUniformLocation(commonShaderProgram.program, "Mmatrix");
@@ -202,14 +236,66 @@ void loadShaderPrograms() //define at least 1 shader obj
 	// texture
 	commonShaderProgram.locations.texSampler = glGetUniformLocation(commonShaderProgram.program, "texSampler");
 	commonShaderProgram.locations.useTexture = glGetUniformLocation(commonShaderProgram.program, "material.useTexture");
+
+	// flashlight
+	commonShaderProgram.locations.reflectorPosition = glGetUniformLocation(commonShaderProgram.program, "reflectorPosition");
+	commonShaderProgram.locations.reflectorDirection = glGetUniformLocation(commonShaderProgram.program, "reflectorDirection");
+	commonShaderProgram.locations.flashlightOn = glGetUniformLocation(commonShaderProgram.program, "reflectorOn");
+	commonShaderProgram.locations.sunOn = glGetUniformLocation(commonShaderProgram.program, "sunOn");
+
+
+	//fire
+	commonShaderProgram.locations.firePosition = glGetUniformLocation(commonShaderProgram.program, "firePosition");
+	commonShaderProgram.locations.fireStrength = glGetUniformLocation(commonShaderProgram.program, "fireStrength");
+	commonShaderProgram.locations.fireFallof = glGetUniformLocation(commonShaderProgram.program, "fireFallof");
+	commonShaderProgram.locations.fireDiffuse = glGetUniformLocation(commonShaderProgram.program, "fireDiffuse");
+	commonShaderProgram.locations.fireSpecular = glGetUniformLocation(commonShaderProgram.program, "fireSpecular");
+	commonShaderProgram.locations.fireAmbient = glGetUniformLocation(commonShaderProgram.program, "fireAmbient");
+
 	//fog
 	commonShaderProgram.locations.fogColor = glGetUniformLocation(commonShaderProgram.program, "fogColor");
+
+	commonShaderProgram.initialized = true;
+
+	// push vertex shader and fragment shader
+	GLuint shaders2[] = {
+	  pgr::createShaderFromFile(GL_VERTEX_SHADER,"fireShader.vert"),
+	  pgr::createShaderFromFile(GL_FRAGMENT_SHADER, "fireShader.frag"),
+	  0
+		};
+
+	// create the program with two shaders
+	fireShaderProgram.program = pgr::createProgram(shaders2);
+
+	// get position and texture coordinates attributes locations
+	fireShaderProgram.posLocation = glGetAttribLocation(fireShaderProgram.program, "position");
+	fireShaderProgram.texCoordLocation = glGetAttribLocation(fireShaderProgram.program, "texCoord");
+	// get uniforms locations
+	fireShaderProgram.texCoordLocation = 1;
+	fireShaderProgram.PVMmatrixLocation = glGetUniformLocation(fireShaderProgram.program, "PVMmatrix");
+	fireShaderProgram.VmatrixLocation = glGetUniformLocation(fireShaderProgram.program, "Vmatrix");
+	fireShaderProgram.timeLocation = glGetUniformLocation(fireShaderProgram.program, "time");
+	fireShaderProgram.texSamplerLocation = glGetUniformLocation(fireShaderProgram.program, "texSampler");
+	fireShaderProgram.frameDurationLocation = glGetUniformLocation(fireShaderProgram.program, "frameDuration");
+	fireShaderProgram.frames = glGetUniformLocation(fireShaderProgram.program, "pattern");
+	fireShaderProgram.scale = glGetUniformLocation(fireShaderProgram.program, "scale");
+
+
+	GLuint shaders3[] = {
+	  pgr::createShaderFromSource(GL_VERTEX_SHADER,skyboxVShader),
+	  pgr::createShaderFromSource(GL_FRAGMENT_SHADER, skyboxFShader),
+	  0
+	};
+	skyboxShaderProgram.program = pgr::createProgram(shaders3);
+
+	skyboxShaderProgram.screenCoord = glGetAttribLocation(skyboxShaderProgram.program, "screenCoord");
+	skyboxShaderProgram.Sampler = glGetUniformLocation(skyboxShaderProgram.program, "skyboxSampler");
+	skyboxShaderProgram.iPVM = glGetUniformLocation(skyboxShaderProgram.program, "inversePVmatrix");
 
 	assert(commonShaderProgram.locations.PVMmatrix != -1);
 	assert(commonShaderProgram.locations.position != -1);
 	// ...
 
-	commonShaderProgram.initialized = true;
 }
 
 /**
@@ -648,10 +734,14 @@ void initApplication() {
 	//objects.push_back(new Triangle(&commonShaderProgram));
 	// objects.push_back(new SingleMesh(&commonShaderProgram));
 	//objects.push_back(new Tree(&commonShaderProgram));
+	gameState.fire = new Fire(&commonShaderProgram, &fireShaderProgram);
+	gameState.skybox = new Skybox(&skyboxShaderProgram);
+	objects.push_back(gameState.skybox);
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
+	objects.push_back(new Cat(&commonShaderProgram));
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	// init your Application
 	// - setup the initial application state
 

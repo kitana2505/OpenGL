@@ -24,9 +24,12 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT};
 #define CAMERA_ELEVATION_MAX 70.0f
 #define CAMERA_ROTAION_MAX 90.0f
 
+//cat
+#define CAT_MODEL  "data/animal_cat/samy.obj"
+#define CAT_SCALE  1.0f
+
 //house
 #define HOUSE_MODEL "data/house/house_blue/house.obj"
-#define HOUSE_SPACING 5.0f
 #define HOUSE_SCALE 2.0f
 
 //trees

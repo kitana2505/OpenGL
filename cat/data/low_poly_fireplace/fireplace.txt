@@ -1,0 +1,10 @@
+#DownloadModelFormat: OBJ
+#GeometryFile: fireplace.obj
+#MaterialFile: fireplace.mtl
+#PreviewFile: fireplace.png
+#OtherFiles: fireplace.blend, fire.blend, fire.obj, fire.mtl, fireplace_empty.blend, fireplace_empty.obj, fireplace_empty.mtl
+#CreatedBy: Antonín Plevač
+#CreatedIn: Blender 3.1.2
+#UploadedBy: Antonín Plevač
+#Description: Model of low poly fireplace
+#NumberOfPolygons: 156

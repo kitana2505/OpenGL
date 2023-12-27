@@ -56,7 +56,7 @@ Ground::Ground(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(fa
 				location = glm::translate(location, glm::vec3(i/ GROUND_SCALE.x, 0, j/ GROUND_SCALE.z));
 				
 				//location = glm::rotate(location, randRotation, glm::vec3(0, 1, 0));
-				location = glm::rotate(location, GROUND_ROTATION, glm::vec3(1, 0, 0));;
+				location = glm::rotate(location, GROUND_ROTATION, glm::vec3(1, 0, 0));
 
 				locations.emplace_back(location);
 			}
