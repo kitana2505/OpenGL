@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Fire.h"
-#include "Smoke.h"
 #include "data/fire_wood/fireplace.h"
 const char* FIRE_MODEL_NAME = "data/low_poly_fireplace/fireplace.obj";
 
@@ -149,11 +148,6 @@ void Fire::add_wood() {
 	firesize += 1;
 }
 
-void Fire::pop_smoke(int index) {
-	Smoke* smoke = (Smoke*)this->children[0];
-	smoke->pop_smoke(index);
-}
-
 Fire::Fire(ShaderProgram* shdrPrg, FireShaderProgram* fireShaderProgram )
 {
 	this->shaderProgram = shdrPrg;
@@ -169,16 +163,12 @@ Fire::Fire(ShaderProgram* shdrPrg, FireShaderProgram* fireShaderProgram )
 		glUniform3f(shaderProgram->locations.fireAmbient, 0.0f,0.0f,0.0f);
 		glUniform3f(shaderProgram->locations.fireDiffuse, 1.0f, 0.4f, 0.0f);
 		glUniform3f(shaderProgram->locations.fireSpecular, 1.5f, 0.5f, 0.0f);
-		//glUniform3f(shaderProgram->locations.firePosition, globalModelMatrix[0][3], globalModelMatrix[1][3], globalModelMatrix[2][3]);
-		//glUniform3f(shaderProgram->locations.firePosition, 10, 1, 0);
 		glUniform3f(shaderProgram->locations.firePosition, 0, 0, 0);
 		glUniform1f(shaderProgram->locations.fireStrength, 5);
 		glUniform1f(shaderProgram->locations.fireFallof, 1.5f);
 		glUseProgram(0);
 		
 	}
-	this->children.push_back(new Smoke(fireShaderProgram, &current_fire_size));
-
 
 	//initialize flames
 	flames->texture = pgr::createTexture(EXPLOSION_TEXTURE_NAME);

@@ -41,14 +41,16 @@ Cat::Cat(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(false)
 {
 	//this->shaderProgram = shdrPrg;
 	if (loadMultipleMeshes(CAT_MODEL, shdrPrg, geometries) != true) {
-		std::cerr << "initializeModels(): Vegetation model loading failed." << std::endl;
+		std::cerr << "initializeModels(): Cat model loading failed." << std::endl;
 	}
 	else {
 		//geometries[0]->texture= pgr::createTexture("\data\Spruce_obj");;
 		initialized = true;
 	}
+
 	glm::mat4 location = glm::scale(globalModelMatrix, glm::vec3(CAT_SCALE));
-	location = glm::translate(location, glm::vec3(0.0f,CAT_SCALE/2 + 1.0f, 10.0f));
+	location = glm::translate(location, CAT_INITIAL_POS);
+	location = glm::rotate(location, CAT_ROTATION, glm::vec3(0, 1, 0));
 	locations.emplace_back(location);
 
 	CHECK_GL_ERROR();

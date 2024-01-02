@@ -26,11 +26,14 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT};
 
 //cat
 #define CAT_MODEL  "data/animal_cat/samy.obj"
-#define CAT_SCALE  1.0f
+#define CAT_SCALE  0.5f
+#define CAT_INITIAL_POS glm::vec3(0, 0.9, -10)
+#define CAT_ROTATION 0.0f
 
 //house
 #define HOUSE_MODEL "data/house/house_blue/house.obj"
 #define HOUSE_SCALE 2.0f
+#define HOUSE_TRANSLATE glm::vec3(5.0f,0.8f,0)
 
 //trees
 #define TREE_MODEL "data/Spruce_obj/Spruce.obj"
@@ -88,9 +91,9 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT};
 /// size of fire for moving purposes
 #define FIRE_SIZE 1.0f
 /// Light strengths
-#define SMALL_FIRE_STRENGTH 5.0f
-#define MEDIUM_FIRE_STRENGTH 7.0f
-#define HIGH_FIRE_STRENGTH 10.0f
+#define SMALL_FIRE_STRENGTH 15.0f
+#define MEDIUM_FIRE_STRENGTH 17.0f
+#define HIGH_FIRE_STRENGTH 20.0f
 #define BURNING_TIME 5.0f
 #define FIRE_SCALE glm::vec3(0.9f,0.5f, 0.9f)
 #define FIRE_TRANSLATE glm::vec3(0,0.5f,0)
@@ -114,23 +117,11 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 #define FIRE_SMALL_SCALE  glm::vec3(0.075f, 0.10f, 0.15f)
 #define FIRE_SMALL_TRANSLATE  glm::vec3(2, 2, 0)
 
-//smoke
-#define SMOKE_TEXTURE_NAME "data/Smoke3.jpg"
-#define SMOKE_SPEED 1.1f
-///maximum count of smokes(changes after each smoke deletion)
-#define SMOKE_COUNT (rand() % 8 + 6)
-/// time until next smoke emerges
-#define NEXT_SMOKE_TIME (rand() % 35 + 10.0f)/10
-///time until smoke is deleted
-#define DELETE_SMOKE_TIME (rand() % 30 + 0.0f)/10
-#define SMOKE_SCALE 0.25f
-#define SMOKE_ROTATION_SPEED 2.0f
-#define SMOKE_ROTATION 0.5f
-
-//player
+// player config 
 #define PLAYER_WALKING_SPEED  2.0f
 #define PLAYER_RUNNING_SPEED  4.5f
-#define PLAYER_HEIGHT  1.0f
+#define PLAYER_HEIGHT  0.5f
+#define CAM_INIT_PLAYER glm::vec3(17.8f, 1.0f, -12.9f)
 
 //camera
 #define CAMERA_COUNT 3;

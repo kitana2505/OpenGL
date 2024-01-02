@@ -111,7 +111,7 @@ void setupLights() {
   sun.ambient  = vec3(0.0);
   sun.diffuse  = vec3(1.0, 1.0, 1.0f);
   sun.specular = vec3(0.1f);
-  sun.strength=1.0f;
+  sun.strength = 1.0f;
   sun.position = (Vmatrix*vec4(vec3(100,100,0),0)).xyz;
 
   flashlight.ambient       = vec3(0.5f);

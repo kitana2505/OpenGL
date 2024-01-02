@@ -44,7 +44,7 @@ Skybox::Skybox(SkyboxShaderProgram* shdrPrg)
 	this->shaderProgram = shdrPrg;
 	geometries.push_back(new ObjectGeometry);
 	// 2D coordinates of 2 triangles covering the whole screen (NDC), draw using triangle strip
-	load_skybox(SKYBOX_DAY_TEXTURE_NAME, day_suffixes);
+	load_skybox(SKYBOX_NIGHT_TEXTURE_NAME, night_suffixes);
 	
 }
 

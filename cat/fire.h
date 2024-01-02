@@ -14,7 +14,8 @@ public:
 	void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) override;
 	void draw_flames(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
 	void add_wood();
-	void pop_smoke(int index);
+	void pop_
+	(int index);
 	void init_fireWood();
 	void draw_fireWood(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
 	void update_fire_size();

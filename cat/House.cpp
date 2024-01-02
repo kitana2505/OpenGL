@@ -49,7 +49,7 @@ House::House(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(fals
 		initialized = true;
 	}
 	glm::mat4 location = glm::scale(globalModelMatrix, glm::vec3(HOUSE_SCALE));
-	location = glm::translate(location, glm::vec3(0.0f, HOUSE_SCALE /2,0.0f));
+	location = glm::translate(location, HOUSE_TRANSLATE);
 	locations.emplace_back(location);
 
 	CHECK_GL_ERROR();

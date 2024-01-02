@@ -100,10 +100,6 @@ struct _GameState {
 
 
 bool check_bounds(glm::vec3 position) {
-	//glm::vec3 fire_position;
-	//fire_position.x = gameState.fire->globalModelMatrix[0][3];
-	//fire_position.y = gameState.fire->globalModelMatrix[1][3];
-	//fire_position.z = gameState.fire->globalModelMatrix[2][3];
 	if (abs(position.x) > SCENE_WIDTH) {
 		return false;
 	}
@@ -366,7 +362,11 @@ void drawScene(void)
 		gameState.target_camera_position = gameState.player_position;
 		break;
 	case 1:
-		gameState.target_camera_position = STATIC_CAMERA_1;
+		gameState.target_camera_position = CAT_INITIAL_POS * glm::vec3(1.0f, 1.0f, 0.5f);
+
+		// Fix camera in front of the cat
+		gameState.cameraElevationAngle = 0.0f;
+		gameState.cameraRotationAngle = 90.0f;
 		break;
 	case 2:
 		gameState.target_camera_position = STATIC_CAMERA_2;
@@ -486,25 +486,26 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
 			gameState.reflectorOn = true;
 		}
 		break;
-	//case 'n':
-	//case 'N':
-	//	//case GLUT_KEY_DOWN:
-	//	if (gameState.sunOn) {
-	//		gameState.sunOn = false;
-	//		gameState.skybox->load_skybox(SKYBOX_NIGHT_TEXTURE_NAME, gameState.skybox->night_suffixes);
-	//		glUseProgram(commonShaderProgram.program);
-	//		glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
-	//		glUseProgram(0);
+	case 'n':
+	case 'N':
+		case GLUT_KEY_DOWN:
+		if (gameState.sunOn) {
+			gameState.sunOn = false;
+			gameState.skybox->load_skybox(SKYBOX_NIGHT_TEXTURE_NAME, gameState.skybox->night_suffixes);
+			glUseProgram(commonShaderProgram.program);
+			glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
+			glUseProgram(0);
 
-	//	}
-	//	else {
-	//		gameState.sunOn = true;
-	//		gameState.skybox->load_skybox(SKYBOX_DAY_TEXTURE_NAME, gameState.skybox->day_suffixes);
-	//		glUseProgram(commonShaderProgram.program);
-	//		glUniform3f(commonShaderProgram.locations.fogColor, 0.5f, 0.5f, 0.5f);
-	//		glUseProgram(0);
-	//	}
-	//	break;
+		}
+		else {
+			gameState.sunOn = true;
+			gameState.skybox->load_skybox(SKYBOX_DAY_TEXTURE_NAME, gameState.skybox->day_suffixes);
+			glUseProgram(commonShaderProgram.program);
+			glUniform3f(commonShaderProgram.locations.fogColor, 0.5f, 0.5f, 0.5f);
+			glUseProgram(0);
+		}
+		break;
+
 	case 'c':
 	case 'C':
 		//case GLUT_KEY_DOWN:
@@ -623,23 +624,7 @@ void mouseCb(int buttonPressed, int buttonState, int mouseX, int mouseY) {
 	if (buttonState == 1) {
 		return;
 	}
-	//if (objectID == 0) {
-	//}
-	//else if (objectID == 1) {
-	//	if (gameState.wood_in_inventory > 0) {
-	//		gameState.fire->add_wood();
-	//		gameState.wood_in_inventory -= 1;
-	//	}
-	//}
-	//else if (objectID < 20) {
-	//	gameState.fire->pop_smoke(objectID - 2);
-	//}
-	//else {
-	//	gameState.firewood->collect_wood(objectID - 20);
-	//	gameState.wood_in_inventory += 1;
-	//}
 }
-
 
 /**
  * \brief Handle mouse dragging (mouse move with any button pressed).
@@ -740,25 +725,30 @@ void initApplication() {
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
+	objects.push_back(gameState.fire);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	// init your Application
 	// - setup the initial application state
 
 	// player_init
-	gameState.player_position = glm::vec3(0, PLAYER_HEIGHT, -10);
-	gameState.player_direction = glm::vec3(0, 0, 0);
+	gameState.player_position = CAM_INIT_PLAYER;
+	gameState.player_direction = CAM_INIT_PLAYER;
+	gameState.cameraElevationAngle = 0.0f;
+	gameState.cameraRotationAngle = 135.0f;
 
-	//lights
-	gameState.sunOn = true;
-	gameState.reflectorOn = false;
+	//initiali night environment
+	gameState.sunOn = false;
+	gameState.reflectorOn = true;
 
+	// set initial fog color to black
 	glUseProgram(commonShaderProgram.program);
-	glUniform3f(commonShaderProgram.locations.fogColor, 0.5f, 0.5f, 0.5f);
+	glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
 	glUseProgram(0);
 
 	//mouse
 	glutWarpPointer(gameState.windowWidth / 2, gameState.windowHeight / 2);
+
 
 }
 
