@@ -63,6 +63,7 @@ typedef struct _ShaderProgram {
 		GLint reflectorDirection;
 		GLint flashlightOn;
 		GLint sunOn;
+		GLfloat sunStrength;
 
 		GLint firePosition;  
 		GLint fireStrength;

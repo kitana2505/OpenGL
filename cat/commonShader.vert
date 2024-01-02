@@ -37,6 +37,7 @@ uniform vec3 reflectorPosition;
 uniform vec3 reflectorDirection; 
 uniform int reflectorOn;
 uniform int sunOn;
+uniform float sunStrength;
 
 uniform vec3 firePosition;
 uniform float fireStrength;
@@ -111,7 +112,8 @@ void setupLights() {
   sun.ambient  = vec3(0.0);
   sun.diffuse  = vec3(1.0, 1.0, 1.0f);
   sun.specular = vec3(0.1f);
-  sun.strength = 1.0f;
+  //sun.strength = 1.0f;
+  sun.strength = sunStrength;
   sun.position = (Vmatrix*vec4(vec3(100,100,0),0)).xyz;
 
   flashlight.ambient       = vec3(0.5f);
@@ -140,6 +142,7 @@ void main() {
   if(sunOn==1){
    outputColor += directionalLight(sun, material, vertexPosition, vertexNormal);
   }
+
  if(reflectorOn==0){
 	outputColor += spotLight(flashlight, material, vertexPosition, vertexNormal);
  }

@@ -95,6 +95,7 @@ struct _GameState {
 
 	/// number of wood stacks in inventory
 	//int wood_in_inventory = 0;
+	 float sunStrength;
 
 }gameState;
 
@@ -238,6 +239,7 @@ void loadShaderPrograms() //define at least 1 shader obj
 	commonShaderProgram.locations.reflectorDirection = glGetUniformLocation(commonShaderProgram.program, "reflectorDirection");
 	commonShaderProgram.locations.flashlightOn = glGetUniformLocation(commonShaderProgram.program, "reflectorOn");
 	commonShaderProgram.locations.sunOn = glGetUniformLocation(commonShaderProgram.program, "sunOn");
+	commonShaderProgram.locations.sunStrength = glGetUniformLocation(commonShaderProgram.program, "sunStrength");
 
 
 	//fire
@@ -323,10 +325,12 @@ glm::vec3 move_camera() {
 
 void setLights() {
 	if (gameState.sunOn) {
+		glUniform1f(commonShaderProgram.locations.sunStrength, 2.0f);
 		glUniform1i(commonShaderProgram.locations.sunOn, 1);
 	}
 	else {
-		glUniform1i(commonShaderProgram.locations.sunOn, 0);
+		glUniform1f(commonShaderProgram.locations.sunStrength, 0.7f);
+		glUniform1i(commonShaderProgram.locations.sunOn, 1);
 	}if (gameState.reflectorOn) {
 		glUniform1i(commonShaderProgram.locations.flashlightOn, 1);
 	}
