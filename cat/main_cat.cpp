@@ -177,7 +177,7 @@ void shooting(ObjectList objects, float elapsedTime)
 	//missilePosition += missileDirection * 1.5f * CAT_SCALE;
 	missilePosition += missileDirection  * CAT_SCALE;
 	//MissileShaderProgram* missileShader = new MissileShaderProgram;
-	Missile* newMissile = Missile::createMissile(&commonShaderProgram, &missileShaderProgram,missilePosition, missileDirection, gameState.missileLaunchTime,gameState.elapsedTime);
+	Missile* newMissile = Missile::createMissile(&commonShaderProgram, missilePosition, missileDirection, gameState.missileLaunchTime,gameState.elapsedTime);
 	//}
 
 	// test collisions among objects in the scene
@@ -319,6 +319,9 @@ void loadShaderPrograms() //define at least 1 shader obj
 	skyboxShaderProgram.screenCoord = glGetAttribLocation(skyboxShaderProgram.program, "screenCoord");
 	skyboxShaderProgram.Sampler = glGetUniformLocation(skyboxShaderProgram.program, "skyboxSampler");
 	skyboxShaderProgram.iPVM = glGetUniformLocation(skyboxShaderProgram.program, "inversePVmatrix");
+
+
+
 
 	assert(commonShaderProgram.locations.PVMmatrix != -1);
 	assert(commonShaderProgram.locations.position != -1);

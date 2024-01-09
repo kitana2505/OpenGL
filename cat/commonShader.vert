@@ -38,6 +38,9 @@ uniform vec3 reflectorDirection;
 uniform int reflectorOn;
 uniform int sunOn;
 uniform float sunStrength;
+uniform int explodeOn;
+uniform float explodeStrength;
+uniform float explodeTime;
 
 uniform vec3 firePosition;
 uniform float fireStrength;
@@ -91,6 +94,7 @@ vec4 fireLight(mat4 VMatrix, Material material, vec3 vertexPosition, vec3 vertex
   return vec4(ret, 1.0);
 }
 
+//sun light
 vec4 directionalLight(Light light, Material material, vec3 vertexPosition, vec3 vertexNormal) {
 
   vec3 ret = vec3(0.0);

@@ -11,15 +11,15 @@ glm::mat4 fireWoodLocation2;
 float firesize2 = 10;
 int current_fire_size2 = 4;
 
-void Fire2::update(float eTime, const glm::mat4* parentModelMatrix) {
+void Fire2::update(float currentTime, const glm::mat4* parentModelMatrix) {
 	/*firesize -= eTime * FIRE_BURN_MULT;
 	if (firesize < 0) {
 		firesize = 0;
 	}
 	elapsed_time2 += eTime;
 	update_fire_size();*/
-	elapsed_time2 += eTime;
-	ObjectInstance::update(eTime, parentModelMatrix);
+	elapsed_time2 += currentTime;
+	ObjectInstance::update(currentTime, parentModelMatrix);
 }
 
 

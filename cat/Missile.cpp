@@ -72,6 +72,13 @@ const float missileVertices[] = {
 
 
 void Missile::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
+	float timeDelta = elapsedTime - currentTime;
+
+	currentTime = elapsedTime;
+	position += timeDelta * speed * direction;
+	localModelMatrix = glm::translate(glm::mat4(1.0f), position);
+	//parentModelMatrix = localModelMatrix;
+
 	ObjectInstance::update(elapsedTime, parentModelMatrix);
 }
 
@@ -124,7 +131,7 @@ void Missile::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatri
 
 }
 
-Missile* Missile::createMissile(ShaderProgram* shdrPrg, MissileShaderProgram* missileShader,const glm::vec3& missilePosition, const glm::vec3& missileDirection, float& missileLaunchTime, float elapsedTime)
+Missile* Missile::createMissile(ShaderProgram* shdrPrg,const glm::vec3& missilePosition, const glm::vec3& missileDirection, float& missileLaunchTime, float elapsedTime)
 {
 	float currentTime = 0.001f * (float)glutGet(GLUT_ELAPSED_TIME); // milliseconds => seconds
 	if (currentTime - missileLaunchTime < MISSILE_LAUNCH_TIME_DELAY)
@@ -132,7 +139,7 @@ Missile* Missile::createMissile(ShaderProgram* shdrPrg, MissileShaderProgram* mi
 
 	missileLaunchTime = currentTime;
 
-	Missile* newMissile = new Missile(shdrPrg, missileShader);
+	Missile* newMissile = new Missile(shdrPrg);
 
 	//overwite if needed
 	//newMissile->destroyed = false;
@@ -142,13 +149,13 @@ Missile* Missile::createMissile(ShaderProgram* shdrPrg, MissileShaderProgram* mi
 	//newMissile->speed = MISSILE_SPEED;
 	newMissile->position = missilePosition;
 	newMissile->direction = glm::normalize(missileDirection);
-
+	//newMissile->draw(viewMatrix, projectionMatrix);
 	//gameObjects.missiles.push_back(newMissile);
 	//objects.push_back(newMissile);
 	return newMissile;
 }
 
-Missile::Missile(ShaderProgram* shdrPrg, MissileShaderProgram* missileShaderProgram)
+Missile::Missile(ShaderProgram* shdrPrg)
 {
 	ObjectGeometry *geometry = new ObjectGeometry;
 
@@ -160,19 +167,19 @@ Missile::Missile(ShaderProgram* shdrPrg, MissileShaderProgram* missileShaderProg
 	glBufferData(GL_ARRAY_BUFFER, sizeof(missileVertices), missileVertices, GL_STATIC_DRAW);
 	CHECK_GL_ERROR();
 
-	glEnableVertexAttribArray(missileShaderProgram->posLocation);
+	glEnableVertexAttribArray(shdrPrg->locations.position);
 	// vertices of triangles - start at the beginning of the array
-	glVertexAttribPointer(missileShaderProgram->posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(shdrPrg->locations.position, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 	if (useLighting == false) {
-		glEnableVertexAttribArray(missileShaderProgram->colorLocation);
+		glEnableVertexAttribArray(shdrPrg->locations.color);
 		// colors of vertices start after the positions
-		glVertexAttribPointer(missileShaderProgram->colorLocation, 3, GL_FLOAT, GL_FALSE, 0, (void*)(missileTrianglesCount * 3 * 3 * sizeof(float)));
+		glVertexAttribPointer(shdrPrg->locations.color, 3, GL_FLOAT, GL_FALSE, 0, (void*)(missileTrianglesCount * 3 * 3 * sizeof(float)));
 	}
 	else {
-		glEnableVertexAttribArray(missileShaderProgram->normalLocation);
+		glEnableVertexAttribArray(shdrPrg->locations.normal);
 		// normals of vertices start after the colors
-		glVertexAttribPointer(missileShaderProgram->normalLocation, 3, GL_FLOAT, GL_FALSE, 0, (void*)(2 * missileTrianglesCount * 3 * 3 * sizeof(float)));
+		glVertexAttribPointer(shdrPrg->locations.normal, 3, GL_FLOAT, GL_FALSE, 0, (void*)(2 * missileTrianglesCount * 3 * 3 * sizeof(float)));
 	}
 
 	(geometry)->ambient = glm::vec3(0.0f, 1.0f, 1.0f);
