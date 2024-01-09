@@ -2,6 +2,7 @@
 
 #include "pgr.h"
 #include "data.h"
+#include "iostream"
 
 /**
  * \file    object.h : this file contains the parent of all objects in the scene
@@ -24,6 +25,36 @@ typedef struct _FireShaderProgram {
 	GLint scale;
 
 }FireShaderProgram;
+
+typedef struct _MissileShaderProgram {
+	// identifier for the shader program
+	GLuint program;          // = 0;
+	// vertex attributes locations
+	GLint posLocation;       // = -1;
+	GLint colorLocation;     // = -1;
+	GLint normalLocation;    // = -1;
+	GLint texCoordLocation;  // = -1;
+	// uniforms locations
+	GLint PVMmatrixLocation;    // = -1;
+	GLint VmatrixLocation;      // = -1;  view/camera matrix
+	GLint MmatrixLocation;      // = -1;  modeling matrix
+	GLint normalMatrixLocation; // = -1;  inverse transposed Mmatrix
+
+	GLint timeLocation;         // = -1; elapsed time in seconds
+
+	// material 
+	GLint diffuseLocation;    // = -1;
+	GLint ambientLocation;    // = -1;
+	GLint specularLocation;   // = -1;
+	GLint shininessLocation;  // = -1;
+	// texture
+	GLint useTextureLocation; // = -1; 
+	GLint texSamplerLocation; // = -1;
+	// reflector related uniforms
+	GLint reflectorPositionLocation;  // = -1; 
+	GLint reflectorDirectionLocation; // = -1;
+
+}MissileShaderProgram;
 
 typedef struct _SkyboxShaderProgram {
 	GLuint program;
@@ -118,7 +149,15 @@ public:
 	// dynamic objects
 	// glm::vec3 direction;
 	// float     speed;
-	// ...
+	glm::vec3 position;
+	glm::vec3 direction;
+	float     speed;
+	float     size;
+
+	bool destroyed;
+
+	float startTime;
+	float currentTime;
 
 	ShaderProgram* shaderProgram;
 

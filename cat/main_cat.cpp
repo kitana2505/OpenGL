@@ -40,11 +40,13 @@
 //#include "triangle.h"
 //#include "singlemesh.h"
 #include "Fire.h"
+#include "Fire2.h"
 #include "Tree.h"
 #include "House.h"
 #include "Ground.h"
 #include "Skybox.h"
 #include "Animal_cat.h"
+#include "Missile.h"
 
 //constexpr int WINDOW_WIDTH = 500;
 //constexpr int WINDOW_HEIGHT = 500;
@@ -55,6 +57,8 @@ ObjectList objects;
 ShaderProgram commonShaderProgram;
 FireShaderProgram fireShaderProgram;
 SkyboxShaderProgram skyboxShaderProgram;
+MissileShaderProgram missileShaderProgram;
+ObjectList missleList;
 
 
 // -----------------------  OpenGL stuff ---------------------------------
@@ -90,12 +94,20 @@ struct _GameState {
 	/// Sunlight should be on/off
 	bool sunOn;
 	 Fire* fire;
+	 Fire2* fire2;
 	// Firewood* firewood;
 	 Skybox* skybox;
 
 	/// number of wood stacks in inventory
 	//int wood_in_inventory = 0;
 	 float sunStrength;
+
+
+	 float elapsedTime;
+	 float missileLaunchTime;
+	 float ufoMissileLaunchTime;
+	 Missile* missile;
+	 bool launchMissile;
 
 }gameState;
 
@@ -155,7 +167,25 @@ void move_player(float deltaTime) {
 
 }
 
+void shooting(ObjectList objects, float elapsedTime)
+{
+	//if (gameState.keyMap[KEY_SPACE] == true) {
+		// missile position and direction
+	glm::vec3 missilePosition = objects[3]->position;
+	glm::vec3 missileDirection = objects[3]->direction;
 
+	//missilePosition += missileDirection * 1.5f * CAT_SCALE;
+	missilePosition += missileDirection  * CAT_SCALE;
+	//MissileShaderProgram* missileShader = new MissileShaderProgram;
+	Missile* newMissile = Missile::createMissile(&commonShaderProgram, &missileShaderProgram,missilePosition, missileDirection, gameState.missileLaunchTime,gameState.elapsedTime);
+	//}
+
+	// test collisions among objects in the scene
+	//checkCollisions();
+	//newMissile->draw();
+	missleList.push_back(newMissile);
+	gameState.launchMissile = false;
+}
 const std::string skyboxVShader(
 	"#version 140\n"
 	"\n"
@@ -404,6 +434,10 @@ void drawScene(void)
 			object->draw(viewMatrix, projectionMatrix);
 	}
 
+	for (ObjectInstance* object : missleList) {   // for (auto object : objects) {
+		if (object != nullptr)
+			object->draw(viewMatrix, projectionMatrix);
+	}
 }
 
 
@@ -514,6 +548,12 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
 	case 'C':
 		//case GLUT_KEY_DOWN:
 		changeCamera();
+		break;
+
+	case ' ': // launch missile
+		//if (gameState.gameOver != true)
+		gameState.keyMap[KEY_SPACE] = true;
+		//gameState.launchMissile = true;
 		break;
 	}
 }
@@ -694,11 +734,16 @@ void timerCb(int)
 	float deltaTime = (time - gameState.last_update) / 1000;
 	gameState.last_update = time;
 	move_player(deltaTime);
-
+	
 	// update the application state
 	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->update(deltaTime, &sceneRootMatrix);
+	}
+	if (gameState.keyMap[KEY_SPACE] == true)
+	{
+		gameState.launchMissile = true;
+		shooting(objects, gameState.elapsedTime);
 	}
 #endif // task_1_0
 
@@ -723,13 +768,18 @@ void initApplication() {
 	//objects.push_back(new Triangle(&commonShaderProgram));
 	// objects.push_back(new SingleMesh(&commonShaderProgram));
 	//objects.push_back(new Tree(&commonShaderProgram));
-	gameState.fire = new Fire(&commonShaderProgram, &fireShaderProgram);
+
+	//gameState.fire = new Fire(&commonShaderProgram, &fireShaderProgram);
+	gameState.fire2 = new Fire2(&commonShaderProgram, &fireShaderProgram);
 	gameState.skybox = new Skybox(&skyboxShaderProgram);
+	//gameState.missile = new Missile(&commonShaderProgram, &missileShaderProgram);
 	objects.push_back(gameState.skybox);
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
-	objects.push_back(gameState.fire);
+	objects.push_back(gameState.fire2);
+	//objects.push_back(gameState.fire);
+	//objects.push_back(gameState.missile);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	// init your Application

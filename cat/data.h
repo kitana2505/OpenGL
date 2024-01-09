@@ -15,7 +15,7 @@
 #define WINDOW_TITLE   "CAT"
 
 /// keys used in the key map
-enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT};
+enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT, KEY_SPACE};
 
 #define SCENE_WIDTH  100.0f
 #define SCENE_HEIGHT 100.0f
@@ -29,6 +29,13 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT};
 #define CAT_SCALE  0.5f
 #define CAT_INITIAL_POS glm::vec3(0, 0.9, -10)
 #define CAT_ROTATION 0.0f
+
+//missile
+#define MISSILE_MAX_DISTANCE       1.5f
+#define MISSILE_LAUNCH_TIME_DELAY  0.25f // seconds
+#define MISSILE_SIZE     0.0085f
+#define MISSILE_SPEED              1.5f
+
 
 //house
 #define HOUSE_MODEL "data/house/house_blue/house.obj"

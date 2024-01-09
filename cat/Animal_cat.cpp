@@ -33,7 +33,7 @@ void Cat::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 
 	}
 	else {
-		//std::cout << "Can't draw Vegetation: triangle not initialized properly!" << std::endl;
+		//std::cout << "Can't draw Cat: triangle not initialized properly!" << std::endl;
 	}
 }
 

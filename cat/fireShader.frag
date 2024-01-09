@@ -14,16 +14,21 @@ uniform float frameDuration = 0.001f;
 
 
 vec4 sampleTexture(int frame) {
-	int x_size=3;
-	int y_size=2;
-  vec2 size=vec2(1/pattern.x, 1/pattern.y);
-  vec2 coord=texCoord_v;
-  int xframe=frame%(x_size);
+	//int col=3;
+	//int row=2;
+  //vec2 size=vec2(1/pattern.x, 1/pattern.y);
+  //vec2 coord=texCoord_v;
+  //int xframe=frame%(col);
   //int yframe=int(frame/x_size);
-  int yframe=1;
-  coord.x=(texCoord_v.x+xframe)/pattern.x;
-  coord.y=(texCoord_v.y+yframe)/pattern.y;
-  return texture(texSampler, coord);
+  //int yframe=1;
+  //coord.x=(texCoord_v.x+xframe)/pattern.x;
+  //coord.y=(texCoord_v.y+yframe)/pattern.y;
+
+	vec2 offset = vec2(1.0) / vec2(pattern);
+
+	vec2 texCoordBase = texCoord_v / vec2(pattern);
+	vec2 texCoord = texCoordBase + vec2(frame % pattern.x, /*pattern.y - 1 -*/ (frame / pattern.x)) * offset;
+  return texture(texSampler, texCoord);
 }
 
 void main() {
