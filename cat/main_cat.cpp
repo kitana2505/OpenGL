@@ -169,10 +169,11 @@ void move_player(float deltaTime) {
 
 void shooting(ObjectList objects, float elapsedTime)
 {
+	if (gameState.launchMissile == false) { return; }
 	//if (gameState.keyMap[KEY_SPACE] == true) {
 		// missile position and direction
 	glm::vec3 missilePosition = objects[3]->position;
-	glm::vec3 missileDirection = objects[3]->direction;
+	glm::vec3 missileDirection = glm::vec3(1.0f, 0.0f, 0.0f); //- objects[3]->position;
 
 	//missilePosition += missileDirection * 1.5f * CAT_SCALE;
 	missilePosition += missileDirection  * CAT_SCALE;
@@ -432,10 +433,10 @@ void drawScene(void)
 	glUniform3f(commonShaderProgram.locations.reflectorDirection, cameraDirection.x, cameraDirection.y, cameraDirection.z);
 	glUseProgram(0);
 
-	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
+	/*for (ObjectInstance* object : objects) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->draw(viewMatrix, projectionMatrix);
-	}
+	}*/
 
 	for (ObjectInstance* object : missleList) {   // for (auto object : objects) {
 		if (object != nullptr)
@@ -556,7 +557,7 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
 	case ' ': // launch missile
 		//if (gameState.gameOver != true)
 		gameState.keyMap[KEY_SPACE] = true;
-		//gameState.launchMissile = true;
+		gameState.launchMissile = true;
 		break;
 	}
 }
@@ -589,6 +590,10 @@ void keyboardUpCb(unsigned char keyReleased, int mouseX, int mouseY) {
 	case 'S':
 		//case GLUT_KEY_DOWN:
 		gameState.keyMap[BACKWARD] = false;
+		break;
+	case ' ':
+		gameState.keyMap[KEY_SPACE] = false;
+		gameState.launchMissile = false;
 		break;
 	}
 }
@@ -743,9 +748,13 @@ void timerCb(int)
 		if (object != nullptr)
 			object->update(deltaTime, &sceneRootMatrix);
 	}
+	for (ObjectInstance* object : missleList) {   // for (auto object : objects) {
+		if (object != nullptr)
+			object->update(time/1000, &sceneRootMatrix);
+	}
 	if (gameState.keyMap[KEY_SPACE] == true)
 	{
-		gameState.launchMissile = true;
+		//gameState.launchMissile = true;
 		shooting(objects, gameState.elapsedTime);
 	}
 #endif // task_1_0

@@ -13,6 +13,7 @@ void Ground::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 	if (initialized && (shaderProgram != nullptr)) {
 		glUseProgram(shaderProgram->program);
 		glEnable(GL_DEPTH_TEST);
+		CHECK_GL_ERROR();
 		for (auto geometry : geometries) {
 				glBindVertexArray(geometry->vertexArrayObject);
 				for (auto location : locations) {

@@ -31,4 +31,6 @@ void main() {
   }else{
     color_f = mix(fogColor_v, color_v, visibility);
   }
+  color_f = vec4(1.0f,1.0f,1.0f,1.0f);
+
 }

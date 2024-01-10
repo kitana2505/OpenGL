@@ -76,6 +76,8 @@ void Missile::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 
 	currentTime = elapsedTime;
 	position += timeDelta * speed * direction;
+	//position += 0.1f * speed * direction ;
+	//position = glm::vec3(0.0f, 0.0f, 0.0f);
 	localModelMatrix = glm::translate(glm::mat4(1.0f), position);
 	//parentModelMatrix = localModelMatrix;
 
@@ -89,10 +91,11 @@ void Missile::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatri
 	if (initialized && (shaderProgram != nullptr)) {
 		glUseProgram(shaderProgram->program);
 		for (auto geometry : geometries) {
-			for (auto location : locations) {
+			//for (auto location : locations) {
 
 				glBindVertexArray(geometry->vertexArrayObject);
-				setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
+				//setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
+				setTransformUniforms(*shaderProgram,  localModelMatrix, viewMatrix, projectionMatrix);
 				setMaterialUniforms(
 					*shaderProgram,
 					geometry->ambient,
@@ -101,11 +104,12 @@ void Missile::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatri
 					geometry->shininess,
 					geometry->texture
 				);
-				glDrawElements(GL_TRIANGLES, geometry->numTriangles * 3, GL_UNSIGNED_INT, 0);
+				//glDrawElements(GL_TRIANGLES, geometry->numTriangles * 3, GL_UNSIGNED_INT, 0);
+				glDrawArrays(GL_TRIANGLES, 0, geometry->numTriangles * 3);
 				glBindVertexArray(0);
 
 
-			}
+			//}
 		}
 		glUseProgram(0);
 
@@ -155,7 +159,7 @@ Missile* Missile::createMissile(ShaderProgram* shdrPrg,const glm::vec3& missileP
 	return newMissile;
 }
 
-Missile::Missile(ShaderProgram* shdrPrg)
+Missile::Missile(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(false)
 {
 	ObjectGeometry *geometry = new ObjectGeometry;
 
@@ -191,6 +195,7 @@ Missile::Missile(ShaderProgram* shdrPrg)
 	glBindVertexArray(0);
 
 	(geometry)->numTriangles = missileTrianglesCount;
+	geometries.push_back(geometry);
 
 	destroyed = false;
 	startTime = 0;//gameState.elapsedTime;
@@ -199,7 +204,7 @@ Missile::Missile(ShaderProgram* shdrPrg)
 	speed = MISSILE_SPEED;
 	position = glm::vec3(0.0f, 0.0f, 0.0f);//missilePosition;
 	direction = glm::vec3(1.0f, 0.0f, 0.0f);//glm::normalize(missileDirection);
-
+	initialized = true;
 }
 
 Missile::~Missile() {
