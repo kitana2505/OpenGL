@@ -131,9 +131,9 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 #define CAM_INIT_PLAYER glm::vec3(17.8f, 1.0f, -12.9f)
 
 //camera
-#define CAMERA_COUNT 3;
+#define CAMERA_COUNT 4;
 #define STATIC_CAMERA_1 glm::vec3(-80,15,20)
-#define STATIC_CAMERA_2 glm::vec3(60,15,-70)
+#define STATIC_CAMERA_2 glm::vec3(17.0f,15.0f,-12.0f)
 
 //Skybox
 #define SKYBOX_DAY_TEXTURE_NAME "data/skybox/miramar"
