@@ -22,21 +22,21 @@ const size_t  curveSize = 12;
 };*/
 
 glm::vec3 curveData[] = {
-  glm::vec3(0.00, 0.0,  0.0),
+  glm::vec3(0.00, 0.0,  0.0)* glm::vec3(10),
 
-  glm::vec3(-0.33,  0.0, 0.35),
-  glm::vec3(-0.66,  0.0, 0.35),
-  glm::vec3(-1.00,  0.0, 0.0),
-  glm::vec3(-0.66, 0.0, -0.35),
-  glm::vec3(-0.33, 0.0, -0.35),
+  glm::vec3(-0.33,  0.0, 0.35)* glm::vec3(10),
+  glm::vec3(-0.66,  0.0, 0.35)* glm::vec3(10),
+  glm::vec3(-1.00,  0.0, 0.0)* glm::vec3(10),
+  glm::vec3(-0.66, 0.0, -0.35)* glm::vec3(10),
+  glm::vec3(-0.33, 0.0, -0.35)* glm::vec3(10),
 
-  glm::vec3(0.00,  0.0, 0.0),
+  glm::vec3(0.00,  0.0, 0.0)* glm::vec3(10),
 
-  glm::vec3(0.33,  0.0, 0.35),
-  glm::vec3(0.66,  0.0, 0.35),
-  glm::vec3(1.00,  0.0, 0.0),
-  glm::vec3(0.66, 0.0, -0.35),
-  glm::vec3(0.33, 0.0, -0.35)
+  glm::vec3(0.33,  0.0, 0.35)* glm::vec3(10),
+  glm::vec3(0.66,  0.0, 0.35)* glm::vec3(10),
+  glm::vec3(1.00,  0.0, 0.0)* glm::vec3(10),
+  glm::vec3(0.66, 0.0, -0.35)* glm::vec3(10),
+  glm::vec3(0.33, 0.0, -0.35)* glm::vec3(10)
 };
 
 void Turtle::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
@@ -46,11 +46,13 @@ void Turtle::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 			//TODO: where startTime defined?
 	float curveParamT = speed * (currentTime - startTime);
 
-	position = initPosition + evaluateClosedCurve(curveData, curveSize, curveParamT) * glm::vec3(10);
+	position = initPosition + evaluateClosedCurve(curveData, curveSize, curveParamT);
 	direction = glm::normalize(evaluateClosedCurve_1stDerivative(curveData, curveSize, curveParamT));
 
 
 	localModelMatrix = glm::translate(glm::mat4(1.0f), position);
+	glm::mat4 modelMatrix = alignObject(position, direction, glm::vec3(0.0f, 0.0f, 1.0f));
+	//localModelMatrix = glm::rotate(localModelMatrix, modelMatrix, glm::vec3(0, 1, 0));
 	ObjectInstance::update(elapsedTime, parentModelMatrix);
 }
 
@@ -61,9 +63,10 @@ void Turtle::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 		for (auto geometry : geometries) {
 			//for (auto location : locations) {
 			glm::mat4 modelMatrix = alignObject(position,direction, glm::vec3(0.0f, 0.0f, 1.0f));
+			//modelMatrix = glm::scale(modelMatrix, glm::vec3(size));
 				glBindVertexArray(geometry->vertexArrayObject);
 				setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
-				//setTransformUniforms(*shaderProgram, localModelMatrix, viewMatrix, projectionMatrix);
+				//setTransformUniforms(*shaderProgram, modelMatrix, viewMatrix, projectionMatrix);
 				setMaterialUniforms(
 					*shaderProgram,
 					geometry->ambient,

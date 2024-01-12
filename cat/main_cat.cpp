@@ -39,7 +39,7 @@
 #include "object.h"
 //#include "triangle.h"
 //#include "singlemesh.h"
-#include "Fire.h"
+//#include "Fire.h"
 #include "Fire2.h"
 #include "Tree.h"
 #include "House.h"
@@ -94,7 +94,7 @@ struct _GameState {
 
 	/// Sunlight should be on/off
 	bool sunOn;
-	 Fire* fire;
+	 //Fire* fire;
 	 Fire2* fire2;
 	// Firewood* firewood;
 	 Skybox* skybox;
@@ -276,7 +276,7 @@ void loadShaderPrograms() //define at least 1 shader obj
 	//fire
 	commonShaderProgram.locations.firePosition = glGetUniformLocation(commonShaderProgram.program, "firePosition");
 	commonShaderProgram.locations.fireStrength = glGetUniformLocation(commonShaderProgram.program, "fireStrength");
-	commonShaderProgram.locations.fireFallof = glGetUniformLocation(commonShaderProgram.program, "fireFallof");
+	//commonShaderProgram.locations.fireFallof = glGetUniformLocation(commonShaderProgram.program, "fireFallof");
 	commonShaderProgram.locations.fireDiffuse = glGetUniformLocation(commonShaderProgram.program, "fireDiffuse");
 	commonShaderProgram.locations.fireSpecular = glGetUniformLocation(commonShaderProgram.program, "fireSpecular");
 	commonShaderProgram.locations.fireAmbient = glGetUniformLocation(commonShaderProgram.program, "fireAmbient");
@@ -436,6 +436,7 @@ void drawScene(void)
 
 
 	setLights();
+	// tight reflector to camera
 	glUniform3f(commonShaderProgram.locations.reflectorPosition, cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	glUniform3f(commonShaderProgram.locations.reflectorDirection, cameraDirection.x, cameraDirection.y, cameraDirection.z);
 	glUseProgram(0);

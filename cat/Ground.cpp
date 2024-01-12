@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Ground.h"
 
-std::vector<glm::mat4> locations;
+//std::vector<glm::mat4> locations;
 //const char* MODEL_NAME = "data/low_poly_Ground/Ground2.obj";
 
 void Ground::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
@@ -57,7 +57,6 @@ Ground::Ground(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(fa
 				
 				//location = glm::rotate(location, randRotation, glm::vec3(0, 1, 0));
 				location = glm::rotate(location, GROUND_ROTATION, glm::vec3(1, 0, 0));
-
 				locations.emplace_back(location);
 			}
 		}

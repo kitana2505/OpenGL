@@ -35,7 +35,7 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT, KEY_SPACE};
 #define TURTLE_SCALE  0.2f
 #define TURTLE_INITIAL_POS glm::vec3(30.0f,0.8f,-30.0f)
 #define TURTLE_ROTATION 0.0f
-#define TURTLE_SPEED              60.0f
+#define TURTLE_SPEED              20.0f
 
 //missile
 #define MISSILE_MAX_DISTANCE       1.5f
@@ -157,4 +157,55 @@ const float flameVertexData[flameNumQuadVertices * 5] = {
 	  -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
 	   1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
 };
+
+// default shaders - color per vertex and matrix multiplication
+const std::string colorVertexShaderSrc(
+    "#version 140\n"
+    "uniform mat4 PVMmatrix;\n"
+    "in vec3 position;\n"
+    "in vec3 color;\n"
+    "smooth out vec4 theColor;\n"
+    "void main() {\n"
+    "  gl_Position = PVMmatrix * vec4(position, 1.0);\n"
+    "  theColor = vec4(color, 1.0);\n"
+    "}\n"
+);
+
+const std::string colorFragmentShaderSrc(
+    "#version 140\n"
+    "smooth in vec4 theColor;\n"
+    "out vec4 outputColor;\n"
+    "void main() {\n"
+    "  outputColor = theColor;\n"
+    "}\n"
+);
+
+// each vertex shader receives screen space coordinates and calculates world direction
+const std::string skyboxFarPlaneVertexShaderSrc(
+    "#version 140\n"
+    "\n"
+    "uniform mat4 inversePVmatrix;\n"
+    "in vec2 screenCoord;\n"
+    "out vec3 texCoord_v;\n"
+    "\n"
+    "void main() {\n"
+    "  vec4 farplaneCoord = vec4(screenCoord, 0.9999, 1.0);\n"
+    "  vec4 worldViewCoord = inversePVmatrix * farplaneCoord;\n"
+    "  texCoord_v = worldViewCoord.xyz / worldViewCoord.w;\n"
+    "  gl_Position = farplaneCoord;\n"
+    "}\n"
+);
+
+// fragment shader uses interpolated 3D tex coords to sample cube map
+const std::string skyboxFarPlaneFragmentShaderSrc(
+    "#version 140\n"
+    "\n"
+    "uniform samplerCube skyboxSampler;\n"
+    "in vec3 texCoord_v;\n"
+    "out vec4 color_f;\n"
+    "\n"
+    "void main() {\n"
+    "  color_f = texture(skyboxSampler, texCoord_v);\n"
+    "}\n"
+);
 #endif // __DATA_H
