@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animal_cat.cpp" />
+    <ClCompile Include="Animal_turtle.cpp" />
     <ClCompile Include="data\fire_wood\big.cpp" />
     <ClCompile Include="data\fire_wood\fireplace.cpp" />
     <ClCompile Include="data\fire_wood\medium.cpp" />
@@ -164,11 +165,11 @@
     <ClCompile Include="main_cat.cpp" />
     <ClCompile Include="Missile.cpp" />
     <ClCompile Include="Skybox.cpp" />
-    <ClCompile Include="spline.cpp" />
     <ClCompile Include="Tree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animal_cat.h" />
+    <ClInclude Include="Animal_turtle.h" />
     <ClInclude Include="data.h" />
     <ClInclude Include="data\fire_wood\big.h" />
     <ClInclude Include="data\fire_wood\fireplace.h" />
@@ -181,7 +182,6 @@
     <ClInclude Include="Missile.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="Skybox.h" />
-    <ClInclude Include="spline.h" />
     <ClInclude Include="Tree.h" />
   </ItemGroup>
   <ItemGroup>

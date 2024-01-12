@@ -30,6 +30,13 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT, KEY_SPACE};
 #define CAT_INITIAL_POS glm::vec3(0, 0.9, -10)
 #define CAT_ROTATION 0.0f
 
+//turtle
+#define TURTLE_MODEL  "data/animal_turtle/Turtle.obj"
+#define TURTLE_SCALE  0.2f
+#define TURTLE_INITIAL_POS glm::vec3(30.0f,0.8f,-30.0f)
+#define TURTLE_ROTATION 0.0f
+#define TURTLE_SPEED              60.0f
+
 //missile
 #define MISSILE_MAX_DISTANCE       1.5f
 #define MISSILE_LAUNCH_TIME_DELAY  0.25f // seconds

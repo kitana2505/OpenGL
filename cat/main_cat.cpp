@@ -46,6 +46,7 @@
 #include "Ground.h"
 #include "Skybox.h"
 #include "Animal_cat.h"
+#include "Animal_turtle.h"
 #include "Missile.h"
 
 //constexpr int WINDOW_WIDTH = 500;
@@ -788,6 +789,7 @@ void initApplication() {
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
 	objects.push_back(gameState.fire2);
+	objects.push_back(new Turtle(&commonShaderProgram));
 	//objects.push_back(gameState.fire);
 	//objects.push_back(gameState.missile);
 
