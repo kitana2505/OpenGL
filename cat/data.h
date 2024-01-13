@@ -35,7 +35,7 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT, KEY_SPACE};
 #define TURTLE_SCALE  0.2f
 #define TURTLE_INITIAL_POS glm::vec3(30.0f,0.8f,-30.0f)
 #define TURTLE_ROTATION 0.0f
-#define TURTLE_SPEED              20.0f
+#define TURTLE_SPEED    20.0f
 
 //missile
 #define MISSILE_MAX_DISTANCE       1.5f

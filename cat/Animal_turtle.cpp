@@ -51,7 +51,7 @@ void Turtle::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 
 
 	localModelMatrix = glm::translate(glm::mat4(1.0f), position);
-	glm::mat4 modelMatrix = alignObject(position, direction, glm::vec3(0.0f, 0.0f, 1.0f));
+	//glm::mat4 modelMatrix = alignObject(position, direction, glm::vec3(0.0f, 0.0f, 1.0f));
 	//localModelMatrix = glm::rotate(localModelMatrix, modelMatrix, glm::vec3(0, 1, 0));
 	ObjectInstance::update(elapsedTime, parentModelMatrix);
 }
@@ -62,11 +62,13 @@ void Turtle::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 		glUseProgram(shaderProgram->program);
 		for (auto geometry : geometries) {
 			//for (auto location : locations) {
-			glm::mat4 modelMatrix = alignObject(position,direction, glm::vec3(0.0f, 0.0f, 1.0f));
-			//modelMatrix = glm::scale(modelMatrix, glm::vec3(size));
+			localModelMatrix = alignObject(position,direction, glm::vec3(0.0f, 0.0f, 1.0f));
+			localModelMatrix = glm::scale(localModelMatrix, glm::vec3(size));
+			localModelMatrix = glm::rotate(localModelMatrix, -0.8f, glm::vec3(0, 0, 1));
+
 				glBindVertexArray(geometry->vertexArrayObject);
-				setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
-				//setTransformUniforms(*shaderProgram, modelMatrix, viewMatrix, projectionMatrix);
+				//setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
+				setTransformUniforms(*shaderProgram, localModelMatrix, viewMatrix, projectionMatrix);
 				setMaterialUniforms(
 					*shaderProgram,
 					geometry->ambient,
@@ -103,10 +105,15 @@ Turtle::Turtle(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(fa
 	size = TURTLE_SCALE;
 	speed = TURTLE_SPEED;
 	initPosition = TURTLE_INITIAL_POS;
+	direction = glm::vec3(
+		(float)(2.0 * (rand() / (double)RAND_MAX) - 1.0),
+		0.0f,
+		(float)(2.0 * (rand() / (double)RAND_MAX) - 1.0));
+	direction = glm::normalize(direction);
 	startTime = 0.0f;
-	location = glm::scale(globalModelMatrix, glm::vec3(size));
-	location = glm::translate(location, position);
-	location = glm::rotate(location, TURTLE_ROTATION, glm::vec3(0, 1, 0));
+	//location = glm::scale(globalModelMatrix, glm::vec3(size));
+	//location = glm::translate(location, position);
+	//location = glm::rotate(globalModelMatrix, 1.7f, glm::vec3(1, 0, 0));
 	
 
 	CHECK_GL_ERROR();
