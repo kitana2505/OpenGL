@@ -30,11 +30,11 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT, KEY_SPACE};
 #define CAT_INITIAL_POS glm::vec3(0, 0.9, -10)
 #define CAT_ROTATION 0.0f
 
-//mouse
-#define MOUSE_MODEL  "data/animal_cat/samy.obj"
-#define MOUSE_SCALE  0.5f
-#define MOUSE_INITIAL_POS glm::vec3(0, 0.9, -10)
-#define MOUSE_ROTATION 0.0f
+//Rabbit
+#define RABBIT_MODEL  "data/animal_rabbit/rabbit.obj"
+#define RABBIT_SCALE  0.3f
+#define RABBIT_INITIAL_POS glm::vec3(20.0, 0.9, -20)
+#define RABBIT_ROTATION 0.0f
 
 //missile
 #define MISSILE_MAX_DISTANCE       1.5f

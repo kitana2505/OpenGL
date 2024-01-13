@@ -153,7 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animal_cat.cpp" />
-    <ClCompile Include="Animal_mouse.cpp" />
+    <ClCompile Include="Animal_rabbit.cpp" />
     <ClCompile Include="data\fire_wood\big.cpp" />
     <ClCompile Include="data\fire_wood\fireplace.cpp" />
     <ClCompile Include="data\fire_wood\medium.cpp" />
@@ -170,7 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animal_cat.h" />
-    <ClInclude Include="Animal_mouse.h" />
+    <ClInclude Include="Animal_rabbit.h" />
     <ClInclude Include="data.h" />
     <ClInclude Include="data\fire_wood\big.h" />
     <ClInclude Include="data\fire_wood\fireplace.h" />

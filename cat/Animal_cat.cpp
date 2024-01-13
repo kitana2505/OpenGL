@@ -54,7 +54,7 @@ Cat::Cat(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(false)
 	locations.emplace_back(location);
 
 	CHECK_GL_ERROR();
-
+	initialized = true;
 }
 Cat::~Cat() {
 	for (auto geometry : geometries) {
