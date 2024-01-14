@@ -94,9 +94,9 @@ void Missile::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatri
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(size));
 
 	// angular speed = 2*pi*frequency => path = angular speed * time
-	//const float frequency = 2.0f; // per second
-	//const float angle = 2.0f * M_PI * frequency * (currentTime - startTime); // angle in radians
-	const float angle = 45.0f * M_PI / 180.0f;
+//const float frequency = 2.0f; // per second
+//const float angle = 2.0f * M_PI * frequency * (currentTime - startTime); // angle in radians
+	const float angle = 180.0f * M_PI / 180;
 	localModelMatrix = glm::rotate(modelMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
 
 	if (initialized && (shaderProgram != nullptr)) {
@@ -104,20 +104,20 @@ void Missile::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatri
 		for (auto geometry : geometries) {
 			//for (auto location : locations) {
 
-				glBindVertexArray(geometry->vertexArrayObject);
-				//setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
-				setTransformUniforms(*shaderProgram,  localModelMatrix, viewMatrix, projectionMatrix);
-				setMaterialUniforms(
-					*shaderProgram,
-					geometry->ambient,
-					geometry->diffuse,
-					geometry->specular,
-					geometry->shininess,
-					geometry->texture
-				);
-				//glDrawElements(GL_TRIANGLES, geometry->numTriangles * 3, GL_UNSIGNED_INT, 0);
-				glDrawArrays(GL_TRIANGLES, 0, geometry->numTriangles * 3);
-				glBindVertexArray(0);
+			glBindVertexArray(geometry->vertexArrayObject);
+			//setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
+			setTransformUniforms(*shaderProgram, localModelMatrix, viewMatrix, projectionMatrix);
+			setMaterialUniforms(
+				*shaderProgram,
+				geometry->ambient,
+				geometry->diffuse,
+				geometry->specular,
+				geometry->shininess,
+				geometry->texture
+			);
+			//glDrawElements(GL_TRIANGLES, geometry->numTriangles * 3, GL_UNSIGNED_INT, 0);
+			glDrawArrays(GL_TRIANGLES, 0, geometry->numTriangles * 3);
+			glBindVertexArray(0);
 
 
 			//}
@@ -125,26 +125,8 @@ void Missile::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatri
 		glUseProgram(0);
 
 	}
-	else {
-		//std::cout << "Can't draw Vegetation: triangle not initialized properly!" << std::endl;
-	}
-
-
-
-/*	// align missile coordinate system to match its position and direction - see alignObject() function
-	glm::mat4 modelMatrix = alignObject(missile->position, missile->direction, glm::vec3(0.0f, 0.0f, 1.0f));
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(missile->size));
-
-	// angular speed = 2*pi*frequency => path = angular speed * time
-	const float frequency = 2.0f; // per second
-	const float angle = 2.0f * M_PI * frequency * (missile->currentTime - missile->startTime); // angle in radians
-	modelMatrix = glm::rotate(modelMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
-
-	// send matrices to the vertex & fragment shader
-	*/
-
-
 }
+
 
 Missile* Missile::createMissile(ShaderProgram* shdrPrg,const glm::vec3& missilePosition, const glm::vec3& missileDirection, float& missileLaunchTime, float elapsedTime)
 {

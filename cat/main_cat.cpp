@@ -47,6 +47,7 @@
 #include "Skybox.h"
 #include "Animal_cat.h"
 #include "Missile.h"
+#include "Explosion.h"
 
 //constexpr int WINDOW_WIDTH = 500;
 //constexpr int WINDOW_HEIGHT = 500;
@@ -58,7 +59,6 @@ ShaderProgram commonShaderProgram;
 FireShaderProgram fireShaderProgram;
 SkyboxShaderProgram skyboxShaderProgram;
 MissileShaderProgram missileShaderProgram;
-ObjectList missleList;
 
 
 // -----------------------  OpenGL stuff ---------------------------------
@@ -93,8 +93,8 @@ struct _GameState {
 
 	/// Sunlight should be on/off
 	bool sunOn;
-	 Fire* fire;
-	 Fire2* fire2;
+	Fire* fire;
+	Fire2* fire2;
 	// Firewood* firewood;
 	 Skybox* skybox;
 
@@ -108,6 +108,9 @@ struct _GameState {
 	 float ufoMissileLaunchTime;
 	 Missile* missile;
 	 bool launchMissile;
+
+	 ObjectList missleList;
+	 ObjectList explosions;
 
 }gameState;
 
@@ -172,8 +175,8 @@ void shooting(ObjectList objects, float elapsedTime)
 	if (gameState.launchMissile == false) { return; }
 	//if (gameState.keyMap[KEY_SPACE] == true) {
 		// missile position and direction
-	glm::vec3 missilePosition = objects[3]->position + glm::vec3(1.0f, 1.0f, 5.0f);
-	glm::vec3 missileDirection = objects[3]->direction;
+	glm::vec3 missilePosition = objects[4]->position + glm::vec3(0.0f, CAT_SCALE/5.0f, 4.5f);
+	glm::vec3 missileDirection = objects[4]->direction;
 
 	//missilePosition += missileDirection * 1.5f * CAT_SCALE;
 	missilePosition += missileDirection * CAT_SCALE * 0.25f;
@@ -181,10 +184,7 @@ void shooting(ObjectList objects, float elapsedTime)
 	Missile* newMissile = Missile::createMissile(&commonShaderProgram, missilePosition, missileDirection, gameState.missileLaunchTime, gameState.elapsedTime);
 	//}
 
-	// test collisions among objects in the scene
-	//checkCollisions();
-	//newMissile->draw();
-	missleList.push_back(newMissile);
+	gameState.missleList.push_back(newMissile);
 
 
 	gameState.launchMissile = false;
@@ -286,6 +286,9 @@ void loadShaderPrograms() //define at least 1 shader obj
 	//fog
 	commonShaderProgram.locations.fogColor = glGetUniformLocation(commonShaderProgram.program, "fogColor");
 
+	//explosion
+
+
 	commonShaderProgram.initialized = true;
 
 	// push vertex shader and fragment shader
@@ -293,7 +296,7 @@ void loadShaderPrograms() //define at least 1 shader obj
 	  pgr::createShaderFromFile(GL_VERTEX_SHADER,"fireShader.vert"),
 	  pgr::createShaderFromFile(GL_FRAGMENT_SHADER, "fireShader.frag"),
 	  0
-		};
+	};
 
 	// create the program with two shaders
 	fireShaderProgram.program = pgr::createProgram(shaders2);
@@ -324,7 +327,40 @@ void loadShaderPrograms() //define at least 1 shader obj
 	skyboxShaderProgram.iPVM = glGetUniformLocation(skyboxShaderProgram.program, "inversePVmatrix");
 
 
+	// exlosion shader
+	GLuint shaders4[] = {
+		pgr::createShaderFromFile(GL_VERTEX_SHADER,"explosion.vert"),
+		pgr::createShaderFromFile(GL_FRAGMENT_SHADER, "explosion.frag"),
+		0
+	};
 
+	struct ExplosionShaderProgram {
+		// identifier for the shader program
+		GLuint program;              // = 0;
+		// vertex attributes locations
+		GLint posLocation;           // = -1;
+		GLint texCoordLocation;      // = -1;
+		// uniforms locations
+		GLint PVMmatrixLocation;     // = -1;
+		GLint VmatrixLocation;       // = -1;
+		GLint timeLocation;          // = -1;
+		GLint texSamplerLocation;    // = -1;
+		GLint frameDurationLocation; // = -1;
+
+	} explosionShaderProgram;
+
+	  // create the program with two shaders
+	  explosionShaderProgram.program = pgr::createProgram(shaders4);
+
+	  // get position and texture coordinates attributes locations
+	  explosionShaderProgram.posLocation      = glGetAttribLocation(explosionShaderProgram.program, "position");
+	  explosionShaderProgram.texCoordLocation = glGetAttribLocation(explosionShaderProgram.program, "texCoord");
+	  // get uniforms locations
+	  explosionShaderProgram.PVMmatrixLocation     = glGetUniformLocation(explosionShaderProgram.program, "PVMmatrix");
+	  explosionShaderProgram.VmatrixLocation       = glGetUniformLocation(explosionShaderProgram.program, "Vmatrix");
+	  explosionShaderProgram.timeLocation          = glGetUniformLocation(explosionShaderProgram.program, "time");
+	  explosionShaderProgram.texSamplerLocation    = glGetUniformLocation(explosionShaderProgram.program, "texSampler");
+	  explosionShaderProgram.frameDurationLocation = glGetUniformLocation(explosionShaderProgram.program, "frameDuration");
 
 	assert(commonShaderProgram.locations.PVMmatrix != -1);
 	assert(commonShaderProgram.locations.position != -1);
@@ -447,10 +483,15 @@ void drawScene(void)
 			object->draw(viewMatrix, projectionMatrix);
 	}
 
-	for (ObjectInstance* object : missleList) {   // for (auto object : objects) {
+	for (ObjectInstance* object : gameState.missleList) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->draw(viewMatrix, projectionMatrix);
 	}
+
+	//for (ObjectInstance* object : gameState.explosions) {   // for (auto object : objects) {
+	//	if (object != nullptr)
+	//		object->draw(viewMatrix, projectionMatrix);
+	//}
 }
 
 
@@ -736,8 +777,56 @@ void passiveMouseMotionCb(int mouseX, int mouseY) {
 	// glutPostRedisplay();
 }
 
-// -----------------------  Timer ---------------------------------
 
+bool pointInSphere(const glm::vec3& point, const glm::vec3& center, float radius) {
+	// Calculate the squared distance between the point and the center of the sphere
+	float distanceSquared = glm::dot(point - center, point - center);
+
+	// Check if the squared distance is less than or equal to the squared radius
+	bool insideSphere = distanceSquared <= (radius * radius);
+
+	return insideSphere;
+}
+
+void insertExplosion(const glm::vec3& position) {
+
+	Explosion* newExplosion = new Explosion(&commonShaderProgram);
+
+	newExplosion->speed = 0.0f;
+	newExplosion->destroyed = false;
+
+	newExplosion->startTime = gameState.elapsedTime;
+	newExplosion->currentTime = newExplosion->startTime;
+
+	newExplosion->size = EXPLOSION_SIZE;
+	newExplosion->direction = glm::vec3(0.0f, 0.0f, 1.0f);
+
+	newExplosion->frameDuration = 0.1f;
+	newExplosion->textureFrames = 16;
+	newExplosion->position = position;
+
+	gameState.explosions.push_back(newExplosion);
+}
+
+void checkCollisions()
+{
+	auto fire_obj = objects[0];
+	
+	for (auto it = gameState.missleList.begin(); it != gameState.missleList.end(); ++ it)
+	{
+		Missile* missile = (Missile*)(*it);
+		if (pointInSphere(missile->position, fire_obj->position, fire_obj->size))
+		{
+			missile->destroyed = true;
+			//insertExplosion(missile->position);
+			std::cout << "Collsion" << std::endl;
+		}
+
+	}
+
+}
+
+// -----------------------  Timer ---------------------------------
 /**
  * \brief Callback responsible for the scene update.
  */
@@ -758,7 +847,7 @@ void timerCb(int)
 		if (object != nullptr)
 			object->update(deltaTime, &sceneRootMatrix);
 	}
-	for (ObjectInstance* object : missleList) {   // for (auto object : objects) {
+	for (ObjectInstance* object : gameState.missleList) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->update(gameState.elapsedTime, &sceneRootMatrix);
 	}
@@ -768,18 +857,20 @@ void timerCb(int)
 		shooting(objects, gameState.elapsedTime);
 	}
 
-
 	// destroy missle after certain distance
-	auto it = missleList.begin();
-	while (it != missleList.end()) {
+	auto it = gameState.missleList.begin();
+	while (it != gameState.missleList.end()) {
 		Missile* missile = (Missile*)(*it);
 		if (missile->destroyed == true) {
-			it = missleList.erase(it);
+			it = gameState.missleList.erase(it);
 		}
 		else {
 			++it;
 		}
 	}
+
+	// check collision
+	checkCollisions();
 
 
 #endif // task_1_0
@@ -810,11 +901,11 @@ void initApplication() {
 	gameState.fire2 = new Fire2(&commonShaderProgram, &fireShaderProgram);
 	gameState.skybox = new Skybox(&skyboxShaderProgram);
 	//gameState.missile = new Missile(&commonShaderProgram, &missileShaderProgram);
+	objects.push_back(gameState.fire2);
 	objects.push_back(gameState.skybox);
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
-	objects.push_back(gameState.fire2);
 	//objects.push_back(gameState.fire);
 	//objects.push_back(gameState.missile);
 

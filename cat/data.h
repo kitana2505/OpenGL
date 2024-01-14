@@ -31,7 +31,7 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define CAT_ROTATION 0.0f
 
 //missile
-#define MISSILE_MAX_DISTANCE       2.5f
+#define MISSILE_MAX_DISTANCE       3.5f
 #define MISSILE_LAUNCH_TIME_DELAY  0.25 // seconds
 #define MISSILE_SIZE     0.25f
 #define MISSILE_SPEED              1.0f
@@ -130,6 +130,9 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 #define PLAYER_HEIGHT  0.5f
 #define CAM_INIT_PLAYER glm::vec3(17.8f, 1.0f, -12.9f)
 
+// explosion size
+#define EXPLOSION_SIZE 0.5f;
+
 //camera
 #define CAMERA_COUNT 4;
 #define STATIC_CAMERA_1 glm::vec3(-80,15,20)
@@ -150,4 +153,14 @@ const float flameVertexData[flameNumQuadVertices * 5] = {
 	  -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
 	   1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
 };
+const int explosionNumQuadVertices = 4;
+const float explosionVertexData[explosionNumQuadVertices * 5] = {
+
+	// x      y     z     u     v
+	-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+	 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+	-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+	 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+};
+
 #endif // __DATA_H
