@@ -26,6 +26,41 @@ typedef struct _FireShaderProgram {
 
 }FireShaderProgram;
 
+typedef struct _ExplosionShaderProgram {
+	// identifier for the shader program
+	GLuint program;              // = 0;
+	// vertex attributes locations
+	GLint posLocation;           // = -1;
+	GLint texCoordLocation;      // = -1;
+	// uniforms locations
+	GLint PVMmatrixLocation;     // = -1;
+	GLint VmatrixLocation;       // = -1;
+	GLint timeLocation;          // = -1;
+	GLint texSamplerLocation;    // = -1;
+	GLint frameDurationLocation; // = -1;
+	GLint frames;
+	GLint scale;
+}ExplosionShaderProgram;
+
+typedef struct _BrickShaderProgram {
+	// identifier for the shader program
+	GLuint program;              // = 0;
+	// vertex attributes locations
+	GLint posLocation;           // = -1;
+	GLint texCoordLocation;      // = -1;
+	// uniforms locations
+	GLint PVMmatrixLocation;     // = -1;
+	GLint VmatrixLocation;       // = -1;
+	//GLint timeLocation;          // = -1;
+	GLint texSamplerLocation;    // = -1;
+	//GLint frameDurationLocation; // = -1;
+	//GLint frames;
+	GLint scale;
+	GLint mossTex;
+	GLint brickTex;
+
+}BrickShaderProgram;
+
 typedef struct _MissileShaderProgram {
 	// identifier for the shader program
 	GLuint program;          // = 0;

@@ -109,7 +109,7 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define HIGH_FIRE_THRESHOLD 5
 #define MEDIUM_FIRE_THRESHOLD 2
 const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
-#define EXPLOSION_TEXTURE_NAME "data/flames/fire2.jpg"
+#define FIRE_TEXTURE_NAME "data/flames/fire2.jpg"
 
 //fire big
 #define FIRE_BIG_SCALE  glm::vec3(0.125f, 0.20f, 0.25f)
@@ -131,7 +131,9 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 #define CAM_INIT_PLAYER glm::vec3(17.8f, 1.0f, -12.9f)
 
 // explosion size
-#define EXPLOSION_SIZE 0.5f;
+#define EXPLOSION_SIZE 5.0f;
+#define EXPLOSION_TEXTURE_NAME "data/explosion/explode.png"
+
 
 //camera
 #define CAMERA_COUNT 4;
