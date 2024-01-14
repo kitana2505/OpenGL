@@ -31,10 +31,10 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define CAT_ROTATION 0.0f
 
 //missile
-#define MISSILE_MAX_DISTANCE       1.5f
-#define MISSILE_LAUNCH_TIME_DELAY  0.25f // seconds
-#define MISSILE_SIZE     0.5f
-#define MISSILE_SPEED              1.5f
+#define MISSILE_MAX_DISTANCE       2.5f
+#define MISSILE_LAUNCH_TIME_DELAY  0.25 // seconds
+#define MISSILE_SIZE     0.25f
+#define MISSILE_SPEED              1.0f
 
 
 //house

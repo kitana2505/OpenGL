@@ -172,19 +172,21 @@ void shooting(ObjectList objects, float elapsedTime)
 	if (gameState.launchMissile == false) { return; }
 	//if (gameState.keyMap[KEY_SPACE] == true) {
 		// missile position and direction
-	glm::vec3 missilePosition = objects[3]->position + glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 missilePosition = objects[3]->position + glm::vec3(1.0f, 1.0f, 5.0f);
 	glm::vec3 missileDirection = objects[3]->direction;
 
 	//missilePosition += missileDirection * 1.5f * CAT_SCALE;
-	missilePosition += missileDirection  * CAT_SCALE;
+	missilePosition += missileDirection * CAT_SCALE * 0.25f;
 	//MissileShaderProgram* missileShader = new MissileShaderProgram;
-	Missile* newMissile = Missile::createMissile(&commonShaderProgram, missilePosition, missileDirection, gameState.missileLaunchTime,gameState.elapsedTime);
+	Missile* newMissile = Missile::createMissile(&commonShaderProgram, missilePosition, missileDirection, gameState.missileLaunchTime, gameState.elapsedTime);
 	//}
 
 	// test collisions among objects in the scene
 	//checkCollisions();
 	//newMissile->draw();
 	missleList.push_back(newMissile);
+
+
 	gameState.launchMissile = false;
 }
 const std::string skyboxVShader(
@@ -745,6 +747,7 @@ void timerCb(int)
 	const glm::mat4 sceneRootMatrix = glm::mat4(1.0f);
 
 	//float elapsedTime = 0.001f * static_cast<float>(glutGet(GLUT_ELAPSED_TIME)); // milliseconds => seconds
+	gameState.elapsedTime = 0.001f * (float)glutGet(GLUT_ELAPSED_TIME);
 	float time = glutGet(GLUT_ELAPSED_TIME);
 	float deltaTime = (time - gameState.last_update) / 1000;
 	gameState.last_update = time;
@@ -757,13 +760,28 @@ void timerCb(int)
 	}
 	for (ObjectInstance* object : missleList) {   // for (auto object : objects) {
 		if (object != nullptr)
-			object->update(time/1000, &sceneRootMatrix);
+			object->update(gameState.elapsedTime, &sceneRootMatrix);
 	}
 	if (gameState.keyMap[KEY_SPACE] == true)
 	{
 		//gameState.launchMissile = true;
 		shooting(objects, gameState.elapsedTime);
 	}
+
+
+	// destroy missle after certain distance
+	auto it = missleList.begin();
+	while (it != missleList.end()) {
+		Missile* missile = (Missile*)(*it);
+		if (missile->destroyed == true) {
+			it = missleList.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+
+
 #endif // task_1_0
 
 	// and plan a new event
