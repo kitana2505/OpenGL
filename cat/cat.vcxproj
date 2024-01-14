@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animal_cat.cpp" />
+    <ClCompile Include="Brick.cpp" />
     <ClCompile Include="data\fire_wood\big.cpp" />
     <ClCompile Include="data\fire_wood\fireplace.cpp" />
     <ClCompile Include="data\fire_wood\medium.cpp" />
@@ -169,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animal_cat.h" />
+    <ClInclude Include="Brick.h" />
     <ClInclude Include="data.h" />
     <ClInclude Include="data\fire_wood\big.h" />
     <ClInclude Include="data\fire_wood\fireplace.h" />
@@ -185,6 +187,8 @@
     <ClInclude Include="Tree.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="brickShader.frag" />
+    <None Include="brickShader.vert" />
     <None Include="commonShader.frag" />
     <None Include="commonShader.vert" />
     <None Include="fireShader.frag" />

@@ -47,6 +47,7 @@
 #include "Skybox.h"
 #include "Animal_cat.h"
 #include "Missile.h"
+#include "Brick.h"
 
 //constexpr int WINDOW_WIDTH = 500;
 //constexpr int WINDOW_HEIGHT = 500;
@@ -56,6 +57,7 @@ ObjectList objects;
 // shared shader programs
 ShaderProgram commonShaderProgram;
 FireShaderProgram fireShaderProgram;
+BrickShaderProgram brickShaderProgram;
 SkyboxShaderProgram skyboxShaderProgram;
 MissileShaderProgram missileShaderProgram;
 ObjectList missleList;
@@ -320,6 +322,28 @@ void loadShaderPrograms() //define at least 1 shader obj
 	skyboxShaderProgram.Sampler = glGetUniformLocation(skyboxShaderProgram.program, "skyboxSampler");
 	skyboxShaderProgram.iPVM = glGetUniformLocation(skyboxShaderProgram.program, "inversePVmatrix");
 
+	// push vertex shader and fragment shader
+	GLuint shaders5[] = {
+	  pgr::createShaderFromFile(GL_VERTEX_SHADER,"brickShader.vert"),
+	  pgr::createShaderFromFile(GL_FRAGMENT_SHADER, "brickShader.frag"),
+	  0
+	};
+
+	// create the program with two shaders
+	brickShaderProgram.program = pgr::createProgram(shaders5);
+
+	// get position and texture coordinates attributes locations
+	brickShaderProgram.posLocation = glGetAttribLocation(fireShaderProgram.program, "position");
+	brickShaderProgram.texCoordLocation = glGetAttribLocation(fireShaderProgram.program, "texCoord");
+	// get uniforms locations
+	//brickShaderProgram.texCoordLocation = 1;
+	brickShaderProgram.PVMmatrixLocation = glGetUniformLocation(fireShaderProgram.program, "PVMmatrix");
+	brickShaderProgram.VmatrixLocation = glGetUniformLocation(fireShaderProgram.program, "Vmatrix");
+	brickShaderProgram.timeLocation = glGetUniformLocation(fireShaderProgram.program, "time");
+	brickShaderProgram.texSamplerLocation = glGetUniformLocation(fireShaderProgram.program, "texSampler");
+	brickShaderProgram.frameDurationLocation = glGetUniformLocation(fireShaderProgram.program, "frameDuration");
+	brickShaderProgram.brickTex = glGetUniformLocation(fireShaderProgram.program, "brickTex");
+	brickShaderProgram.mossTex = glGetUniformLocation(fireShaderProgram.program, "brickTex");
 
 
 
@@ -788,6 +812,8 @@ void initApplication() {
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
 	objects.push_back(gameState.fire2);
+	Brick* brick = new Brick(&commonShaderProgram, &brickShaderProgram);
+	objects.push_back(brick);
 	//objects.push_back(gameState.fire);
 	//objects.push_back(gameState.missile);
 
