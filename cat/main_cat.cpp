@@ -488,10 +488,10 @@ void drawScene(void)
 			object->draw(viewMatrix, projectionMatrix);
 	}
 
-	//for (ObjectInstance* object : gameState.explosions) {   // for (auto object : objects) {
-	//	if (object != nullptr)
-	//		object->draw(viewMatrix, projectionMatrix);
-	//}
+	for (ObjectInstance* object : gameState.explosions) {   // for (auto object : objects) {
+		if (object != nullptr)
+			object->draw(viewMatrix, projectionMatrix);
+	}
 }
 
 
@@ -818,8 +818,8 @@ void checkCollisions()
 		if (pointInSphere(missile->position, fire_obj->position, fire_obj->size))
 		{
 			missile->destroyed = true;
-			//insertExplosion(missile->position);
-			std::cout << "Collsion" << std::endl;
+			insertExplosion(missile->position);
+			//std::cout << "Collsion" << std::endl;
 		}
 
 	}
@@ -948,6 +948,62 @@ void finalizeApplication(void) {
 	cleanupShaderPrograms();
 }
 
+void menuCamera(int menuItemID) {
+	gameState.move_camera = true;
+	gameState.camera_index = menuItemID;
+	gameState.initial_camera_position = gameState.camera_position;
+}
+
+void menuSun(int menuItemID)
+{	
+	switch (menuItemID)
+	{
+	case 1:
+		gameState.sunOn = false;
+		gameState.skybox->load_skybox(SKYBOX_NIGHT_TEXTURE_NAME, gameState.skybox->night_suffixes);
+		glUseProgram(commonShaderProgram.program);
+		glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
+		glUseProgram(0);
+		break;
+	case 2:
+		gameState.sunOn = true;
+		gameState.skybox->load_skybox(SKYBOX_DAY_TEXTURE_NAME, gameState.skybox->day_suffixes);
+		glUseProgram(commonShaderProgram.program);
+		glUniform3f(commonShaderProgram.locations.fogColor, 0.5f, 0.5f, 0.5f);
+		glUseProgram(0);
+		break;
+	}
+}
+
+void menuFlash(int menuItemID)
+{
+	switch (menuItemID)
+	{
+		case 1:
+			gameState.reflectorOn = false;
+			glUseProgram(0);
+			break;
+		case 2:
+			gameState.reflectorOn = true;
+			glUseProgram(0);
+			break;
+	}
+}
+
+void myMenu(int menuItemID) {
+
+	switch (menuItemID) {
+	
+	// Add Banner
+	case 1:
+		break;
+
+	// Exit program
+	case 2:
+		exit(0);
+		break;
+	}
+}
 
 /**
  * \brief Entry point of the application.
@@ -995,6 +1051,37 @@ int main(int argc, char** argv) {
 	// initialize pgr-framework (GL, DevIl, etc.)
 	if (!pgr::initialize(pgr::OGL_VER_MAJOR, pgr::OGL_VER_MINOR))
 		pgr::dieWithError("pgr init failed, required OpenGL not supported?");
+
+	/* Create menu camera. */
+	int idCamera = glutCreateMenu(menuCamera);
+	glutAddMenuEntry("Camera 1", 2);
+	glutAddMenuEntry("Camera 2", 1);
+	glutAddMenuEntry("Camera 3", 3);
+
+	int idSunPosition = glutCreateMenu(menuSun);
+	glutAddMenuEntry("Night", 1);
+	glutAddMenuEntry("Day", 2);
+
+
+	int idFlash = glutCreateMenu(menuFlash);
+	glutAddMenuEntry("On", 1);
+	glutAddMenuEntry("Off", 2);
+
+
+	//int idPoint = glutCreateMenu(menuPoint);
+	//glutAddMenuEntry("Pointlight on", 1);
+	//glutAddMenuEntry("Pointlight off", 2);
+
+	/*Create main menu*/
+	glutCreateMenu(myMenu);
+	glutAddSubMenu("Camera", idCamera);
+	glutAddSubMenu("Sun", idSunPosition);
+	glutAddSubMenu("Flash", idFlash);
+	glutAddMenuEntry("GameOver", 1);
+	glutAddMenuEntry("Quit", 2);
+
+	/* Menu will be invoked by the right button. */
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	// init your stuff - shaders & program, buffers, locations, state of the application
 	initApplication();
