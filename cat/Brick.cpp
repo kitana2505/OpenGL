@@ -14,7 +14,7 @@ void Brick::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 			//for (auto location : locations) {
 			position = BRICK_INITIAL_POS;
 			glm::mat4 location = glm::scale(globalModelMatrix, glm::vec3(BRICK_SCALE));
-			//location = glm::translate(location, glm::vec3);
+			location = glm::translate(location, glm::vec3(position));
 			location = glm::rotate(location, BRICK_ROTATION, glm::vec3(1, 0, 0));
 				glBindVertexArray(geometry->vertexArrayObject);
 				setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);

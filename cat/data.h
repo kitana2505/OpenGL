@@ -38,8 +38,8 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT, KEY_SPACE};
 
 //brick
 #define BRICK_MODEL "data/brick/brick.obj"
-#define BRICK_SCALE  3.0f
-#define BRICK_INITIAL_POS glm::vec3(10.0f, 2.0f, -10.0f)
+#define BRICK_SCALE  0.5f
+#define BRICK_INITIAL_POS glm::vec3(28.0f,0.0f,-5.0f)
 #define BRICK_ROTATION 0.0f
 
 //house

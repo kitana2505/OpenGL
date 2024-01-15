@@ -184,7 +184,6 @@ void shooting(ObjectList objects, float elapsedTime)
 
 	// test collisions among objects in the scene
 	//checkCollisions();
-	//newMissile->draw();
 	missleList.push_back(newMissile);
 	gameState.launchMissile = false;
 }
@@ -465,7 +464,7 @@ void drawScene(void)
 	glUniform3f(commonShaderProgram.locations.reflectorDirection, cameraDirection.x, cameraDirection.y, cameraDirection.z);
 	glUseProgram(0);
 
-	/*for (ObjectInstance* object : objects) {   // for (auto object : objects) {
+	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->draw(viewMatrix, projectionMatrix);
 	}
@@ -474,8 +473,8 @@ void drawScene(void)
 		if (object != nullptr)
 			object->draw(viewMatrix, projectionMatrix);
 	}
-	*/
-	objects[5]->draw(viewMatrix, projectionMatrix);
+	
+	//objects[5]->draw(viewMatrix, projectionMatrix);
 }
 
 
