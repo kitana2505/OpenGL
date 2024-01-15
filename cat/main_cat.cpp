@@ -57,7 +57,7 @@ ObjectList objects;
 // shared shader programs
 ShaderProgram commonShaderProgram;
 FireShaderProgram fireShaderProgram;
-BrickShaderProgram brickShaderProgram;
+ShaderProgram brickShaderProgram;
 SkyboxShaderProgram skyboxShaderProgram;
 MissileShaderProgram missileShaderProgram;
 ObjectList missleList;
@@ -285,6 +285,8 @@ void loadShaderPrograms() //define at least 1 shader obj
 	//fog
 	commonShaderProgram.locations.fogColor = glGetUniformLocation(commonShaderProgram.program, "fogColor");
 
+	
+
 	commonShaderProgram.initialized = true;
 
 	// push vertex shader and fragment shader
@@ -325,7 +327,7 @@ void loadShaderPrograms() //define at least 1 shader obj
 	// push vertex shader and fragment shader
 	GLuint shaders5[] = {
 	  pgr::createShaderFromFile(GL_VERTEX_SHADER,"brickShader.vert"),
-	  pgr::createShaderFromFile(GL_FRAGMENT_SHADER, "brickShader.frag"),
+	  pgr::createShaderFromFile(GL_FRAGMENT_SHADER,"brickShader.frag"),
 	  0
 	};
 
@@ -333,17 +335,17 @@ void loadShaderPrograms() //define at least 1 shader obj
 	brickShaderProgram.program = pgr::createProgram(shaders5);
 
 	// get position and texture coordinates attributes locations
-	brickShaderProgram.posLocation = glGetAttribLocation(fireShaderProgram.program, "position");
-	brickShaderProgram.texCoordLocation = glGetAttribLocation(fireShaderProgram.program, "texCoord");
+	brickShaderProgram.locations.position = glGetAttribLocation(brickShaderProgram.program, "position");
+	brickShaderProgram.locations.texCoord = glGetAttribLocation(brickShaderProgram.program, "texCoord");
 	// get uniforms locations
 	//brickShaderProgram.texCoordLocation = 1;
-	brickShaderProgram.PVMmatrixLocation = glGetUniformLocation(fireShaderProgram.program, "PVMmatrix");
-	brickShaderProgram.VmatrixLocation = glGetUniformLocation(fireShaderProgram.program, "Vmatrix");
-	brickShaderProgram.timeLocation = glGetUniformLocation(fireShaderProgram.program, "time");
-	brickShaderProgram.texSamplerLocation = glGetUniformLocation(fireShaderProgram.program, "texSampler");
-	brickShaderProgram.frameDurationLocation = glGetUniformLocation(fireShaderProgram.program, "frameDuration");
-	brickShaderProgram.brickTex = glGetUniformLocation(fireShaderProgram.program, "brickTex");
-	brickShaderProgram.mossTex = glGetUniformLocation(fireShaderProgram.program, "brickTex");
+	brickShaderProgram.locations.PVMmatrix = glGetUniformLocation(brickShaderProgram.program, "PVMmatrix");
+	brickShaderProgram.locations.Vmatrix = glGetUniformLocation(brickShaderProgram.program, "Vmatrix");
+	//brickShaderProgram.locations.t = glGetUniformLocation(brickShaderProgram.program, "time");
+	brickShaderProgram.locations.texSampler = glGetUniformLocation(brickShaderProgram.program, "texSampler");
+	//brickShaderProgram.frameDurationLocation = glGetUniformLocation(brickShaderProgram.program, "frameDuration");
+	//brickShaderProgram.brickTex = glGetUniformLocation(brickShaderProgram.program, "brickTex");
+	brickShaderProgram.locations.mossTex = glGetUniformLocation(brickShaderProgram.program, "mossTex");
 
 
 
@@ -463,7 +465,7 @@ void drawScene(void)
 	glUniform3f(commonShaderProgram.locations.reflectorDirection, cameraDirection.x, cameraDirection.y, cameraDirection.z);
 	glUseProgram(0);
 
-	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
+	/*for (ObjectInstance* object : objects) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->draw(viewMatrix, projectionMatrix);
 	}
@@ -472,6 +474,8 @@ void drawScene(void)
 		if (object != nullptr)
 			object->draw(viewMatrix, projectionMatrix);
 	}
+	*/
+	objects[5]->draw(viewMatrix, projectionMatrix);
 }
 
 
@@ -777,7 +781,7 @@ void timerCb(int)
 	if (gameState.keyMap[KEY_SPACE] == true)
 	{
 		gameState.launchMissile = true;
-		shooting(objects, gameState.elapsedTime);
+		//shooting(objects, gameState.elapsedTime);
 	}
 #endif // task_1_0
 
@@ -812,7 +816,7 @@ void initApplication() {
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
 	objects.push_back(gameState.fire2);
-	Brick* brick = new Brick(&commonShaderProgram, &brickShaderProgram);
+	Brick* brick = new Brick(&brickShaderProgram);
 	objects.push_back(brick);
 	//objects.push_back(gameState.fire);
 	//objects.push_back(gameState.missile);

@@ -9,15 +9,16 @@ void Brick::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 void Brick::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 {
 	if (initialized && (shaderProgram != nullptr)) {
-		glUseProgram(brickShdr->program);
+		glUseProgram(shaderProgram->program);
 		for (auto geometry : geometries) {
 			//for (auto location : locations) {
 			position = BRICK_INITIAL_POS;
 			glm::mat4 location = glm::scale(globalModelMatrix, glm::vec3(BRICK_SCALE));
-			location = glm::translate(location, BRICK_INITIAL_POS);
-			location = glm::rotate(location, BRICK_ROTATION, glm::vec3(0, 1, 0));
+			//location = glm::translate(location, glm::vec3);
+			location = glm::rotate(location, BRICK_ROTATION, glm::vec3(1, 0, 0));
 				glBindVertexArray(geometry->vertexArrayObject);
 				setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
+				//setTransformUniforms(*shaderProgram,localModelMatrix, viewMatrix, projectionMatrix);
 				setMaterialUniforms(
 					*shaderProgram,
 					geometry->ambient,
@@ -42,9 +43,8 @@ void Brick::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 	}
 }
 
-Brick::Brick(ShaderProgram* shdrPrg, BrickShaderProgram* brickshdrPrg) : ObjectInstance(shdrPrg),  initialized(false)
+Brick::Brick(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg),  initialized(false)
 {
-	brickShdr = brickshdrPrg;
 	//this->shaderProgram = shdrPrg;
 	if (loadMultipleMeshes(BRICK_MODEL, shdrPrg, geometries) != true) {
 		std::cerr << "initializeModels():brick model loading failed." << std::endl;
@@ -57,10 +57,15 @@ Brick::Brick(ShaderProgram* shdrPrg, BrickShaderProgram* brickshdrPrg) : ObjectI
 	//locations.emplace_back(location);
 
 
-	GLuint brickTex = pgr::createTexture("data/brick/brick.jpg"); // load textures by PGR framework
+	//GLuint brickTex = pgr::createTexture("data/brick/brick.jpg"); // load textures by PGR framework
 	GLuint mossTex = pgr::createTexture("data/brick/moss.png");
-	glActiveTexture(GL_TEXTURE0); // select texture unit 0
-	glBindTexture(GL_TEXTURE_2D, brickTex);
+	glActiveTexture(GL_TEXTURE1); // select texture unit 1
+	glBindTexture(GL_TEXTURE_2D, mossTex);
+	glUseProgram(shdrPrg->program);
+	GLint mossTexLoc = glGetUniformLocation(shdrPrg->program, "mossTex"); //ID on shader program
+	glUniform1i(mossTexLoc, 1);
+	/*glActiveTexture(GL_TEXTURE0); // select texture unit 0
+	glBindTexture(GL_TEXTURE_CUBE_MAP, brickTex);
 	glActiveTexture(GL_TEXTURE1); // select texture unit 1
 	glBindTexture(GL_TEXTURE_2D, mossTex);
 	// get locations of the uniform fragment shader attributes
@@ -69,7 +74,8 @@ Brick::Brick(ShaderProgram* shdrPrg, BrickShaderProgram* brickshdrPrg) : ObjectI
 	glUseProgram(brickshdrPrg->program);
 	glUniform1i(brickshdrPrg->brickTex, 0); // brick texture is bound to texture unit 0
 	glUniform1i(brickshdrPrg->mossTex, 1); // moss texture is bound to texture unit 1
-
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	*/
 	//TODO
 	//glDrawElement()...?
 

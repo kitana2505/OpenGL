@@ -8,7 +8,7 @@ class Brick : public ObjectInstance
 {
 public:
 
-	Brick(ShaderProgram* shdrPrg, BrickShaderProgram* brickshdrPrg);
+	Brick(ShaderProgram* shdrPrg);
 	~Brick();
 
 	void update(float elapsedTime, const glm::mat4* parentModelMatrix) override;

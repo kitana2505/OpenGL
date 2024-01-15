@@ -4,15 +4,15 @@ uniform mat4 PVMmatrix;     // Projection * View * Model --> model to clip coord
 
 in vec3 position;           // vertex position in world space
 in vec2 texCoord;           // incoming texture coordinates
-uniform float scale;
+//uniform float scale;
 
 smooth out vec2 texCoord_v; // outgoing vertex texture coordinates
 
 void main() {
 
   // vertex position after the projection (gl_Position is predefined output variable)
-  vec3 pos=scale*position;
-  gl_Position = PVMmatrix * vec4(pos, 1);   // outgoing vertex in clip coordinates
+  //vec3 pos=scale*position;
+  gl_Position = PVMmatrix * vec4(position, 1);   // outgoing vertex in clip coordinates
  
   // outputs entering the fragment shader
   texCoord_v = texCoord;

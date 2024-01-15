@@ -37,8 +37,8 @@ typedef struct _BrickShaderProgram {
 	GLint VmatrixLocation;       // = -1;
 	GLint timeLocation;          // = -1;
 	GLint texSamplerLocation;    // = -1;
-	GLint frameDurationLocation; // = -1;
-	GLint brickTex; // brick texture sampler – texture unit 0
+	//GLint frameDurationLocation; // = -1;
+	//GLint brickTex; // brick texture sampler – texture unit 0
 	GLint mossTex;
 
 }BrickShaderProgram;
@@ -121,6 +121,7 @@ typedef struct _ShaderProgram {
 		GLint fireSpecular;
 		GLint fogColor;
 
+		GLint mossTex;
 	} locations;
 
 
@@ -130,6 +131,37 @@ typedef struct _ShaderProgram {
 		locations.PVMmatrix = -1;
 		locations.normal = -1;
 		locations.texCoord = -1;
+
+
+		locations.Vmatrix = -1;
+		locations.Mmatrix = -1;
+		locations.normalMatrix = -1;
+
+		// material 
+		locations.diffuse = -1;
+		locations.ambient = -1;
+		locations.specular = -1;
+		locations.shininess = -1;
+		// texture
+		locations.useTexture = -1;
+		locations.texSampler = -1;
+
+		// light
+		locations.reflectorPosition = -1;
+		locations.reflectorDirection = -1;
+		locations.flashlightOn = -1;
+		locations.sunOn = -1;
+		locations.sunStrength = -1;
+
+		locations.firePosition = -1;
+		locations.fireStrength = -1;
+		locations.fireFallof = -1;
+		locations.fireDiffuse = -1;
+		locations.fireAmbient = -1;
+		locations.fireSpecular = -1;
+		locations.fogColor = -1;
+
+		locations.mossTex = -1;
 	}
 
 } ShaderProgram;
