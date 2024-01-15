@@ -750,7 +750,8 @@ void timerCb(int)
 	// update the application state
 	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
 		if (object != nullptr)
-			object->update(deltaTime, &sceneRootMatrix);
+			//object->update(deltaTime, &sceneRootMatrix);
+			object->update(time/1000, &sceneRootMatrix);
 	}
 	if (gameState.keyMap[KEY_SPACE] == true)
 	{
