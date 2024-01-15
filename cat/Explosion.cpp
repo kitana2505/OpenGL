@@ -11,6 +11,7 @@ ExplosionShaderProgram* explosionShader;
 
 void Explosion::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 	//elapsed_time3 += currentTime;
+	currentTime = elapsedTime;
 	ObjectInstance::update(elapsedTime, parentModelMatrix);
 }
 
@@ -48,8 +49,8 @@ void Explosion::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMat
 	glUniform2i(explosionShader->frames, 8, 2);
 	glUniform1f(explosionShader->scale, 1.0f);
 
-	if (initialized && (shaderProgram != nullptr)) {
-		glUseProgram(shaderProgram->program);
+	if (initialized && (explosionShader != nullptr)) {
+		glUseProgram(explosionShader->program);
 		for (auto geometry : geometries) {
 			glBindVertexArray(geometry->vertexArrayObject);
 			glBindTexture(GL_TEXTURE_2D, geometry->texture);

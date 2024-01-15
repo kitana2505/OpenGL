@@ -31,4 +31,5 @@ void main() {
 
   // sample proper frame of the texture to get a fragment color  
   color_f = sampleTexture(frame);
+ // color_f = vec4(1.0f, 0.0f,0.0f,0.0f);
 }

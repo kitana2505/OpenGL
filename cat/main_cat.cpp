@@ -339,17 +339,17 @@ void loadShaderPrograms() //define at least 1 shader obj
 	explosionShaderProgram.program = pgr::createProgram(shaders4);
 
 	// get position and texture coordinates attributes locations
-	explosionShaderProgram.posLocation = glGetAttribLocation(fireShaderProgram.program, "position");
-	explosionShaderProgram.texCoordLocation = glGetAttribLocation(fireShaderProgram.program, "texCoord");
+	explosionShaderProgram.posLocation = glGetAttribLocation(explosionShaderProgram.program, "position");
+	explosionShaderProgram.texCoordLocation = glGetAttribLocation(explosionShaderProgram.program, "texCoord");
 	// get uniforms locations
 	//explosionShaderProgram.texCoordLocation = 1;
-	explosionShaderProgram.PVMmatrixLocation = glGetUniformLocation(fireShaderProgram.program, "PVMmatrix");
-	explosionShaderProgram.VmatrixLocation = glGetUniformLocation(fireShaderProgram.program, "Vmatrix");
-	explosionShaderProgram.timeLocation = glGetUniformLocation(fireShaderProgram.program, "time");
-	explosionShaderProgram.texSamplerLocation = glGetUniformLocation(fireShaderProgram.program, "texSampler");
-	explosionShaderProgram.frameDurationLocation = glGetUniformLocation(fireShaderProgram.program, "frameDuration");
-	explosionShaderProgram.frames = glGetUniformLocation(fireShaderProgram.program, "pattern");
-	explosionShaderProgram.scale = glGetUniformLocation(fireShaderProgram.program, "scale");
+	explosionShaderProgram.PVMmatrixLocation = glGetUniformLocation(explosionShaderProgram.program, "PVMmatrix");
+	explosionShaderProgram.VmatrixLocation = glGetUniformLocation(explosionShaderProgram.program, "Vmatrix");
+	explosionShaderProgram.timeLocation = glGetUniformLocation(explosionShaderProgram.program, "time");
+	explosionShaderProgram.texSamplerLocation = glGetUniformLocation(explosionShaderProgram.program, "texSampler");
+	explosionShaderProgram.frameDurationLocation = glGetUniformLocation(explosionShaderProgram.program, "frameDuration");
+	explosionShaderProgram.frames = glGetUniformLocation(explosionShaderProgram.program, "pattern");
+	explosionShaderProgram.scale = glGetUniformLocation(explosionShaderProgram.program, "scale");
 
 
 	assert(commonShaderProgram.locations.PVMmatrix != -1);
@@ -480,7 +480,14 @@ void drawScene(void)
 	glDisable(GL_DEPTH_TEST);
 	for (ObjectInstance* object : gameState.explosions) {   // for (auto object : objects) {
 		if (object != nullptr)
-			object->draw(viewMatrix, projectionMatrix);
+			// TODO: cung xem gium em cho nay, textureFrames voi frameDuration  ko phai la property cua ObjectInstance, chi co Explosion moi co
+			// anh xem asteroid.cpp, line 699, dieu kien de xoa' cai' Explosion nha
+			if (object->currentTime > object->startTime + object->textureFrames * object->frameDuration) {
+				object->destroyed = true;
+			}
+			if (object->destroyed == false){
+				object->draw(viewMatrix, projectionMatrix);
+			}
 	}
 	glEnable(GL_DEPTH_TEST);
 }
@@ -850,7 +857,7 @@ void timerCb(int)
 	}
 	for (ObjectInstance* object : gameState.explosions) {   // for (auto object : objects) {
 		if (object != nullptr)
-			object->update(deltaTime, &sceneRootMatrix);
+			object->update(gameState.elapsedTime, &sceneRootMatrix);
 	}
 	if (gameState.keyMap[KEY_SPACE] == true)
 	{
