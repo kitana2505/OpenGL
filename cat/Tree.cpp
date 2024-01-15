@@ -50,9 +50,13 @@ Tree::Tree(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(false)
 		//geometries[0]->texture= pgr::createTexture("\data\Spruce_obj");;
 		initialized = true;
 	}
+	float RANGE = 10;
 	for (float i = -SCENE_WIDTH; i < SCENE_WIDTH; i+= TREE_SPACING) {
 		for (float j = -SCENE_WIDTH; j < SCENE_WIDTH; j+= TREE_SPACING) {
-			
+
+			if (i < RANGE && i > RANGE) continue;
+			if (j < RANGE && j > -RANGE) continue;
+
 			float x = i + (rand()%80 +10.0f)* TREE_SPACING /100;
 			float z = j +(rand() %80 +10.0f)* TREE_SPACING /100;
 
