@@ -43,6 +43,8 @@ uniform mat4 normalMatrix;
 uniform vec3 reflectorPosition; 
 uniform vec3 reflectorDirection; 
 uniform int reflectorOn;
+uniform float reflectorSpotCosCutOff;
+uniform int reflectorExponent;
 uniform int sunOn;
 uniform float sunStrength;
 uniform int explodeOn;
@@ -126,8 +128,8 @@ void setupLights() {
   flashlight.ambient       = vec3(0.5f);
   flashlight.diffuse       = vec3(1.0);
   flashlight.specular      = vec3(0.1f);
-  flashlight.spotCosCutOff = 0.3f;
-  flashlight.spotExponent  = 50;
+  flashlight.spotCosCutOff = reflectorSpotCosCutOff;
+  flashlight.spotExponent  = reflectorExponent;
   flashlight.strength = 5;
 
   flashlight.position = (Vmatrix * vec4(reflectorPosition,1.0)).xyz;

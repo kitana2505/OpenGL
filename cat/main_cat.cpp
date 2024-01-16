@@ -268,6 +268,8 @@ void loadShaderPrograms() //define at least 1 shader obj
 	commonShaderProgram.locations.reflectorPosition = glGetUniformLocation(commonShaderProgram.program, "reflectorPosition");
 	commonShaderProgram.locations.reflectorDirection = glGetUniformLocation(commonShaderProgram.program, "reflectorDirection");
 	commonShaderProgram.locations.flashlightOn = glGetUniformLocation(commonShaderProgram.program, "reflectorOn");
+	commonShaderProgram.locations.reflectorSpotCosCutOff = glGetUniformLocation(commonShaderProgram.program, "reflectorSpotCosCutOff");
+	commonShaderProgram.locations.reflectorExponent = glGetUniformLocation(commonShaderProgram.program, "reflectorExponent");
 	commonShaderProgram.locations.sunOn = glGetUniformLocation(commonShaderProgram.program, "sunOn");
 	commonShaderProgram.locations.sunStrength = glGetUniformLocation(commonShaderProgram.program, "sunStrength");
 
@@ -437,6 +439,8 @@ void drawScene(void)
 	setLights();
 	glUniform3f(commonShaderProgram.locations.reflectorPosition, cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	glUniform3f(commonShaderProgram.locations.reflectorDirection, cameraDirection.x, cameraDirection.y, cameraDirection.z);
+	glUniform1f(commonShaderProgram.locations.reflectorSpotCosCutOff, 0.6f);
+	glUniform1i(commonShaderProgram.locations.reflectorExponent, 30);
 	glUseProgram(0);
 
 	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
