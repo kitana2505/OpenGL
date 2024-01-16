@@ -95,15 +95,16 @@ typedef struct _ShaderProgram {
 		GLint flashlightOn;
 		GLint reflectorSpotCosCutOff;
 		GLint reflectorExponent;
+		GLint time;
 		GLint sunOn;
 		GLfloat sunStrength;
 
 		GLint firePosition;  
 		GLint fireStrength;
-		GLint fireFallof;
-		GLint fireDiffuse;
-		GLint fireAmbient;
-		GLint fireSpecular;
+		//GLint fireFallof;
+		//GLint fireDiffuse;
+		//GLint fireAmbient;
+		//GLint fireSpecular;
 		GLint fogColor;
 
 	} locations;

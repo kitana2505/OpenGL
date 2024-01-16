@@ -121,12 +121,12 @@ Fire2::Fire2(ShaderProgram* shdrPrg, FireShaderProgram* fireShaderProgram)
 		this->localModelMatrix = glm::scale(localModelMatrix, FIRE_SCALE);
 		this->localModelMatrix = glm::translate(localModelMatrix, glm::vec3(FIRE_TRANSLATE));
 		glUseProgram(shaderProgram->program);
-		glUniform3f(shaderProgram->locations.fireAmbient, 0.0f, 0.0f, 0.0f);
-		glUniform3f(shaderProgram->locations.fireDiffuse, 1.0f, 0.4f, 0.0f);
-		glUniform3f(shaderProgram->locations.fireSpecular, 1.5f, 0.5f, 0.0f);
+		//glUniform3f(shaderProgram->locations.fireAmbient, 0.0f, 0.0f, 0.0f);
+		//glUniform3f(shaderProgram->locations.fireDiffuse, 1.0f, 0.4f, 0.0f);
+		//glUniform3f(shaderProgram->locations.fireSpecular, 1.5f, 0.5f, 0.0f);
 		glUniform3f(shaderProgram->locations.firePosition, 0, 0, 0);
 		glUniform1f(shaderProgram->locations.fireStrength, 5);
-		glUniform1f(shaderProgram->locations.fireFallof, 1.5f);
+		//glUniform1f(shaderProgram->locations.fireFallof, 1.5f);
 		glUseProgram(0);
 
 	}

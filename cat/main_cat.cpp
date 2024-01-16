@@ -272,15 +272,16 @@ void loadShaderPrograms() //define at least 1 shader obj
 	commonShaderProgram.locations.reflectorExponent = glGetUniformLocation(commonShaderProgram.program, "reflectorExponent");
 	commonShaderProgram.locations.sunOn = glGetUniformLocation(commonShaderProgram.program, "sunOn");
 	commonShaderProgram.locations.sunStrength = glGetUniformLocation(commonShaderProgram.program, "sunStrength");
+	commonShaderProgram.locations.time = glGetUniformLocation(commonShaderProgram.program, "time");
 
 
 	//fire
 	commonShaderProgram.locations.firePosition = glGetUniformLocation(commonShaderProgram.program, "firePosition");
 	commonShaderProgram.locations.fireStrength = glGetUniformLocation(commonShaderProgram.program, "fireStrength");
-	commonShaderProgram.locations.fireFallof = glGetUniformLocation(commonShaderProgram.program, "fireFallof");
-	commonShaderProgram.locations.fireDiffuse = glGetUniformLocation(commonShaderProgram.program, "fireDiffuse");
-	commonShaderProgram.locations.fireSpecular = glGetUniformLocation(commonShaderProgram.program, "fireSpecular");
-	commonShaderProgram.locations.fireAmbient = glGetUniformLocation(commonShaderProgram.program, "fireAmbient");
+	//commonShaderProgram.locations.fireFallof = glGetUniformLocation(commonShaderProgram.program, "fireFallof");
+	//commonShaderProgram.locations.fireDiffuse = glGetUniformLocation(commonShaderProgram.program, "fireDiffuse");
+	//commonShaderProgram.locations.fireSpecular = glGetUniformLocation(commonShaderProgram.program, "fireSpecular");
+	//commonShaderProgram.locations.fireAmbient = glGetUniformLocation(commonShaderProgram.program, "fireAmbient");
 
 	//fog
 	commonShaderProgram.locations.fogColor = glGetUniformLocation(commonShaderProgram.program, "fogColor");
@@ -437,8 +438,12 @@ void drawScene(void)
 
 
 	setLights();
+	glUniform1f(commonShaderProgram.locations.time, gameState.elapsedTime);
+
 	glUniform3f(commonShaderProgram.locations.reflectorPosition, cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	glUniform3f(commonShaderProgram.locations.reflectorDirection, cameraDirection.x, cameraDirection.y, cameraDirection.z);
+	//glUniform3f(commonShaderProgram.locations.reflectorPosition, objects[1]->position.x, objects[1]->position.y, objects[1]->position.z);
+	//glUniform3f(commonShaderProgram.locations.reflectorDirection, objects[1]->direction.x, objects[1]->direction.y, objects[1]->direction.z);
 	glUniform1f(commonShaderProgram.locations.reflectorSpotCosCutOff, 0.6f);
 	glUniform1i(commonShaderProgram.locations.reflectorExponent, 30);
 	glUseProgram(0);
@@ -742,7 +747,7 @@ void timerCb(int)
 {
 #ifndef SKELETON // @task_1_0
 	const glm::mat4 sceneRootMatrix = glm::mat4(1.0f);
-
+	gameState.elapsedTime = 0.001f * (float)glutGet(GLUT_ELAPSED_TIME);
 	//float elapsedTime = 0.001f * static_cast<float>(glutGet(GLUT_ELAPSED_TIME)); // milliseconds => seconds
 	float time = glutGet(GLUT_ELAPSED_TIME);
 	float deltaTime = (time - gameState.last_update) / 1000;
