@@ -54,10 +54,13 @@ const float density=0.0007;
 
 smooth out vec2 texCoord_v;
 smooth out vec4 color_v;
-smooth out float visibility;
-smooth out vec4 fogColor_v;
+//smooth out float visibility;
+//smooth out vec4 fogColor_v;
 
-vec4 spotLight(Light light, Material material, vec3 vertexPosition, vec3 vertexNormal) {
+smooth out vec3 vertexPosition;
+smooth out vec3 vertexNormal;
+
+/*vec4 spotLight(Light light, Material material, vec3 vertexPosition, vec3 vertexNormal) {
 
   vec3 ret = vec3(0.0);
 
@@ -131,19 +134,29 @@ void setupLights() {
   flashlight.spotDirection = normalize( (Vmatrix * vec4(reflectorDirection,0.0)).xyz);
 
 }
+*/
 
 void main() {
+	//setupLights();
 
-  setupLights();
 
-  vec3 vertexPosition = (Vmatrix * Mmatrix * vec4(position, 1.0)).xyz;         // vertex in eye coordinates
-  vec3 vertexNormal   = normalize( (Vmatrix * normalMatrix * vec4(normal, 0.0) ).xyz);   // normal in eye coordinates by NormalMatrix
+
+  vertexPosition = (Vmatrix * Mmatrix * vec4(position, 1.0)).xyz;         
+  vertexNormal   = normalize( (Vmatrix * normalMatrix * vec4(normal, 0.0) ).xyz); 
+
+
+
+
+  
+
+  //vec3 vertexPosition = (Vmatrix * Mmatrix * vec4(position, 1.0)).xyz;         // vertex in eye coordinates
+  //vec3 vertexNormal   = normalize( (Vmatrix * normalMatrix * vec4(normal, 0.0) ).xyz);   // normal in eye coordinates by NormalMatrix
 
   vec3 globalAmbientLight = vec3(0.05f);
   vec4 outputColor = vec4(material.diffuse * globalAmbientLight, 0.0);
   //vec4 outputColor = vec4(0.5,0.5,0, 1.0);
 
-  if(sunOn==1){
+ /* if(sunOn==1){
    outputColor += directionalLight(sun, material, vertexPosition, vertexNormal);
   }
 
@@ -156,7 +169,11 @@ void main() {
   gl_Position = PVMmatrix * vec4(position, 1);   // out:v vertex in clip coordinates
   float distance = pow(distance(flashlight.position, vertexPosition), 2);
   visibility=clamp(1/(distance*density), 0.0f, 1.0f);
-  fogColor_v=vec4(fogColor, 1.0f);
+  fogColor_v=vec4(fogColor, 1.0f);*/
+
+
+
+  gl_Position = PVMmatrix * vec4(position, 1);
   color_v = outputColor;
   texCoord_v = texCoord;
 }
