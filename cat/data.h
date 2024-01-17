@@ -29,7 +29,10 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT, KEY_SPACE};
 #define CAT_SCALE  0.5f
 #define CAT_INITIAL_POS glm::vec3(0, 0.9, -10)
 #define CAT_ROTATION 0.0f
+//banner
 
+#define BANNER_TEXTURE_NAME  "data/banner/gameOver.png"
+#define BANNER_SIZE      5.0f
 //missile
 #define MISSILE_MAX_DISTANCE       1.5f
 #define MISSILE_LAUNCH_TIME_DELAY  0.25f // seconds
@@ -149,5 +152,19 @@ const float flameVertexData[flameNumQuadVertices * 5] = {
 	   1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
 	  -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
 	   1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+};
+
+//
+// "game over" banner geometry definition 
+//
+
+const int bannerNumQuadVertices = 4;
+const float bannerVertexData[bannerNumQuadVertices * 5] = {
+
+	// x      y      z     u     v
+	-1.0f,  0.15f, 0.0f, 0.0f, 1.0f,
+	-1.0f, -0.15f, 0.0f, 0.0f, 0.0f,
+	 1.0f,  0.15f, 0.0f, 3.0f, 1.0f,
+	 1.0f, -0.15f, 0.0f, 3.0f, 0.0f
 };
 #endif // __DATA_H

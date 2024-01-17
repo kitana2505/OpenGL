@@ -56,6 +56,18 @@ typedef struct _MissileShaderProgram {
 
 }MissileShaderProgram;
 
+/*struct BannerShaderProgram {
+	// identifier for the shader program
+	GLuint program;           // = 0;
+	// vertex attributes locations
+	GLint posLocation;        // = -1;
+	GLint texCoordLocation;   // = -1;
+	// uniforms locations
+	GLint PVMmatrixLocation;  // = -1;
+	GLint timeLocation;       // = -1;
+	GLint texSamplerLocation; // = -1;
+} bannerShaderProgram;*/
+
 typedef struct _SkyboxShaderProgram {
 	GLuint program;
 	GLint screenCoord; 
@@ -103,6 +115,8 @@ typedef struct _ShaderProgram {
 		GLint fireAmbient;
 		GLint fireSpecular;
 		GLint fogColor;
+
+		GLfloat time;
 
 	} locations;
 

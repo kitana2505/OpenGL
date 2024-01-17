@@ -47,6 +47,7 @@
 #include "Skybox.h"
 #include "Animal_cat.h"
 #include "Missile.h"
+#include "Banner.h"
 
 //constexpr int WINDOW_WIDTH = 500;
 //constexpr int WINDOW_HEIGHT = 500;
@@ -59,6 +60,7 @@ FireShaderProgram fireShaderProgram;
 SkyboxShaderProgram skyboxShaderProgram;
 MissileShaderProgram missileShaderProgram;
 ObjectList missleList;
+ShaderProgram bannerShaderProgram;
 
 
 // -----------------------  OpenGL stuff ---------------------------------
@@ -108,6 +110,9 @@ struct _GameState {
 	 float ufoMissileLaunchTime;
 	 Missile* missile;
 	 bool launchMissile;
+
+	 bool gameOver;
+	 Banner* banner;
 
 }gameState;
 
@@ -186,6 +191,25 @@ void shooting(ObjectList objects, float elapsedTime)
 	missleList.push_back(newMissile);
 	gameState.launchMissile = false;
 }
+
+
+void createBanner(void) {
+	Banner* newBanner = new Banner(&commonShaderProgram);
+
+	newBanner->size = BANNER_SIZE;
+	newBanner->position = glm::vec3(0.0f, 0.0f, 0.0f);
+	newBanner->direction = glm::vec3(0.0f, 1.0f, 0.0f);
+	newBanner->speed = 0.0f;
+	newBanner->size = 1.0f;
+
+	newBanner->destroyed = false;
+
+	newBanner->startTime = gameState.elapsedTime;
+	newBanner->currentTime = newBanner->startTime;
+	gameState.banner = newBanner;
+	//return newBanner;
+}
+
 const std::string skyboxVShader(
 	"#version 140\n"
 	"\n"
@@ -320,7 +344,22 @@ void loadShaderPrograms() //define at least 1 shader obj
 	skyboxShaderProgram.Sampler = glGetUniformLocation(skyboxShaderProgram.program, "skyboxSampler");
 	skyboxShaderProgram.iPVM = glGetUniformLocation(skyboxShaderProgram.program, "inversePVmatrix");
 
+	GLuint shaders7[] = {
+		pgr::createShaderFromFile(GL_VERTEX_SHADER, "banner.vert"),
+		pgr::createShaderFromFile(GL_FRAGMENT_SHADER, "banner.frag"),
+		0
+	};
 
+	bannerShaderProgram.program = pgr::createProgram(shaders7);
+	bannerShaderProgram.locations.position = glGetAttribLocation(bannerShaderProgram.program, "position");
+	//commonShaderProgram.locations.color = glGetAttribLocation(commonShaderProgram.program, "color");
+
+	// other attributes and uniforms
+	bannerShaderProgram.locations.PVMmatrix = glGetUniformLocation(bannerShaderProgram.program, "PVMmatrix");
+
+	bannerShaderProgram.locations.texSampler = glGetUniformLocation(bannerShaderProgram.program, "texSampler");
+	bannerShaderProgram.locations.texCoord = glGetAttribLocation(bannerShaderProgram.program, "texCoord");
+	bannerShaderProgram.locations.time = glGetUniformLocation(bannerShaderProgram.program, "time");
 
 
 	assert(commonShaderProgram.locations.PVMmatrix != -1);
@@ -427,7 +466,7 @@ void drawScene(void)
 		cameraUpVector
 	);
 	projectionMatrix = glm::perspective(glm::radians(60.0f), gameState.windowWidth / (float)gameState.windowHeight, 0.1f, 200.0f);
-	
+
 	// setup camera & projection transform
 	glUseProgram(commonShaderProgram.program);
 	glEnable(GL_DEPTH_TEST);
@@ -448,6 +487,11 @@ void drawScene(void)
 		if (object != nullptr)
 			object->draw(viewMatrix, projectionMatrix);
 	}
+	if (gameState.banner != nullptr){
+		gameState.banner->draw(viewMatrix, projectionMatrix);
+	}
+
+	
 }
 
 
@@ -536,7 +580,7 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
 		break;
 	case 'n':
 	case 'N':
-		case GLUT_KEY_DOWN:
+		//case GLUT_KEY_DOWN:
 		if (gameState.sunOn) {
 			gameState.sunOn = false;
 			gameState.skybox->load_skybox(SKYBOX_NIGHT_TEXTURE_NAME, gameState.skybox->night_suffixes);
@@ -564,6 +608,13 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
 		//if (gameState.gameOver != true)
 		gameState.keyMap[KEY_SPACE] = true;
 		//gameState.launchMissile = true;
+		break;
+
+	case 'g':
+	case 'G':
+		//case GLUT_KEY_DOWN:
+		gameState.gameOver = true;
+		createBanner();
 		break;
 	}
 }
@@ -597,7 +648,15 @@ void keyboardUpCb(unsigned char keyReleased, int mouseX, int mouseY) {
 		//case GLUT_KEY_DOWN:
 		gameState.keyMap[BACKWARD] = false;
 		break;
+
+	case 'g':
+	case 'G':
+		//case GLUT_KEY_Up:
+		gameState.gameOver = false;
+		break;
 	}
+
+
 }
 //
 /**
@@ -738,7 +797,7 @@ void timerCb(int)
 {
 #ifndef SKELETON // @task_1_0
 	const glm::mat4 sceneRootMatrix = glm::mat4(1.0f);
-
+	gameState.elapsedTime = 0.001f * (float)glutGet(GLUT_ELAPSED_TIME);
 	//float elapsedTime = 0.001f * static_cast<float>(glutGet(GLUT_ELAPSED_TIME)); // milliseconds => seconds
 	float time = glutGet(GLUT_ELAPSED_TIME);
 	float deltaTime = (time - gameState.last_update) / 1000;
@@ -750,10 +809,25 @@ void timerCb(int)
 		if (object != nullptr)
 			object->update(deltaTime, &sceneRootMatrix);
 	}
+	if (gameState.banner != nullptr)
+		gameState.banner->update(gameState.elapsedTime, &sceneRootMatrix);
+
 	if (gameState.keyMap[KEY_SPACE] == true)
 	{
 		gameState.launchMissile = true;
 		shooting(objects, gameState.elapsedTime);
+	}
+	if ((gameState.gameOver == true) && (gameState.banner != NULL)) {
+		gameState.banner->currentTime = gameState.elapsedTime;
+	}
+	// game over? -> create banner with scrolling text "game over"
+	if (gameState.gameOver == true) {
+		gameState.keyMap[KEY_SPACE] = false;
+		if (gameState.banner == NULL) {
+			// if game over and banner still not created -> create banner
+			createBanner();
+
+		}
 	}
 #endif // task_1_0
 
@@ -778,7 +852,7 @@ void initApplication() {
 	//objects.push_back(new Triangle(&commonShaderProgram));
 	// objects.push_back(new SingleMesh(&commonShaderProgram));
 	//objects.push_back(new Tree(&commonShaderProgram));
-
+	gameState.banner = NULL;
 	//gameState.fire = new Fire(&commonShaderProgram, &fireShaderProgram);
 	gameState.fire2 = new Fire2(&commonShaderProgram, &fireShaderProgram);
 	gameState.skybox = new Skybox(&skyboxShaderProgram);
