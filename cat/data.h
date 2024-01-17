@@ -43,8 +43,9 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT, KEY_SPACE};
 #define HOUSE_TRANSLATE glm::vec3(5.0f,0.8f,0)
 
 //trees
-#define TREE_MODEL "data/Spruce_obj/Spruce.obj"
-#define TREE_SPACING 5.0f
+#define TREE_SPACING 10.0f
+//#define TREE_MODEL "data/Spruce_obj/Spruce.obj"
+#define TREE_MODEL "data/tree/Tree.obj"
 #define TREE_SCALE 2.0f
 
 //grass
@@ -128,12 +129,12 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 #define PLAYER_WALKING_SPEED  2.0f
 #define PLAYER_RUNNING_SPEED  4.5f
 #define PLAYER_HEIGHT  0.5f
-#define CAM_INIT_PLAYER glm::vec3(11.48f, 1.0f, -12.06f)
+#define CAM_INIT_PLAYER glm::vec3(6.69, 1.0f, -19.63f)
 
 //camera
 #define CAMERA_COUNT 4;
 #define STATIC_CAMERA_1 glm::vec3(-80,15,20)
-#define STATIC_CAMERA_2 glm::vec3(17.0f,15.0f,-12.0f)
+#define STATIC_CAMERA_2 glm::vec3(25.0f,25.0f,-22.0f)
 
 //Skybox
 #define SKYBOX_DAY_TEXTURE_NAME "data/skybox/miramar"

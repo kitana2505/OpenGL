@@ -397,8 +397,6 @@ void drawScene(void)
 	switch (gameState.camera_index) {
 	case 0:
 		gameState.target_camera_position = gameState.player_position;
-		gameState.cameraElevationAngle = 0.0f;
-		gameState.cameraRotationAngle = 125.0f;
 		break;
 	case 1:
 		gameState.target_camera_position = CAT_INITIAL_POS * glm::vec3(1.0f, 1.0f, 0.5f);
@@ -761,6 +759,8 @@ void timerCb(int)
 	//std::cout << gameState.player_position.x << std::endl;
 	//std::cout << gameState.player_position.y << std::endl;
 	//std::cout << gameState.player_position.z << std::endl;
+	//std::cout << gameState.cameraRotationAngle << std::endl;
+	//std::cout << "-----------------------------------" << std::endl;
 #endif // task_1_0
 
 	// and plan a new event
@@ -806,7 +806,7 @@ void initApplication() {
 	gameState.player_position = CAM_INIT_PLAYER;
 	gameState.player_direction = CAM_INIT_PLAYER;
 	gameState.cameraElevationAngle = 0.0f;
-	gameState.cameraRotationAngle = 125.0f;
+	gameState.cameraRotationAngle = 90;
 
 	//initiali night environment
 	gameState.sunOn = false;
