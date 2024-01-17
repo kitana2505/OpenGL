@@ -285,6 +285,7 @@ void loadShaderPrograms() //define at least 1 shader obj
 
 	//fog
 	commonShaderProgram.locations.fogColor = glGetUniformLocation(commonShaderProgram.program, "fogColor");
+	//commonShaderProgram.locations.fogOn = glGetUniformLocation(commonShaderProgram.program, "fogOn");
 
 	commonShaderProgram.initialized = true;
 
@@ -365,7 +366,7 @@ void setLights() {
 		glUniform1i(commonShaderProgram.locations.sunOn, 1);
 	}
 	else {
-		glUniform1f(commonShaderProgram.locations.sunStrength, 0.7f);
+		glUniform1f(commonShaderProgram.locations.sunStrength, 0.0f);
 		glUniform1i(commonShaderProgram.locations.sunOn, 1);
 	}if (gameState.reflectorOn) {
 		glUniform1i(commonShaderProgram.locations.flashlightOn, 1);

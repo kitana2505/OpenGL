@@ -44,11 +44,12 @@ uniform float explodeTime;
 
 uniform vec3 firePosition;
 uniform float fireStrength;
-uniform float fireFallof;
-uniform vec3 fireDiffuse;
-uniform vec3 fireAmbient;
-uniform vec3 fireSpecular;
+//uniform float fireFallof;
+//uniform vec3 fireDiffuse;
+//uniform vec3 fireAmbient;
+//uniform vec3 fireSpecular;
 uniform vec3 fogColor;
+//uniform int fogOn;
 
 const float density=0.0007;
 
