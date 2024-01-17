@@ -8,6 +8,6 @@ out vec4 color_f;              // outgoing fragment color
 void main() {
 
   // fragment color is given only by the texture
-  //color_f = texture(texSampler, texCoord_v);
-  color_f = vec4(0.0f,1.0f,1.0f,1.0f);
+  color_f = texture(texSampler, texCoord_v);
+  //color_f = vec4(1.0f,1.0f,1.0f,1.0f);
 }

@@ -32,7 +32,7 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT, KEY_SPACE};
 //banner
 
 #define BANNER_TEXTURE_NAME  "data/banner/gameOver.png"
-#define BANNER_SIZE      5.0f
+#define BANNER_SIZE      1.0f
 //missile
 #define MISSILE_MAX_DISTANCE       1.5f
 #define MISSILE_LAUNCH_TIME_DELAY  0.25f // seconds
@@ -161,10 +161,16 @@ const float flameVertexData[flameNumQuadVertices * 5] = {
 const int bannerNumQuadVertices = 4;
 const float bannerVertexData[bannerNumQuadVertices * 5] = {
 
-	// x      y      z     u     v
+	/*// x      y      z     u     v
 	-1.0f,  0.15f, 0.0f, 0.0f, 1.0f,
 	-1.0f, -0.15f, 0.0f, 0.0f, 0.0f,
 	 1.0f,  0.15f, 0.0f, 3.0f, 1.0f,
-	 1.0f, -0.15f, 0.0f, 3.0f, 0.0f
+	 1.0f, -0.15f, 0.0f, 3.0f, 0.0f*/
+
+	 // x      y      z     u     v
+ 0.1f*SCENE_WIDTH,  0.0f, 0.1f * SCENE_DEPTH, 0.0f, 1.0f,
+ 0.1f * SCENE_WIDTH,  10.0f, 0.1f * SCENE_DEPTH, 0.0f, 0.0f,
+  -0.1f * SCENE_WIDTH,  0.0f, -0.1f * SCENE_DEPTH, 3.0f, 1.0f,
+   -0.1f * SCENE_WIDTH, 10.0f, -0.1f * SCENE_DEPTH, 3.0f, 0.0f
 };
 #endif // __DATA_H

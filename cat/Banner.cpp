@@ -17,9 +17,25 @@ void Banner::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 
 		glUseProgram(shaderProgram->program);
 
-		glm::mat4 matrix = glm::translate(glm::mat4(1.0f), position);
+		//glm::mat4 matrix = glm::translate(glm::mat4(1.0f), position);
+		//matrix = glm::scale(matrix, glm::vec3(size));
+
+		//glm::mat4 PVMmatrix = projectionMatrix * viewMatrix * matrix;
+
+		glm::mat4 billboardRotationMatrix = glm::mat4(
+			viewMatrix[0],
+			viewMatrix[1],
+			viewMatrix[2],
+			glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
+		);
+		// inverse view rotation
+		billboardRotationMatrix = glm::transpose(billboardRotationMatrix);
+
+		glm::mat4 matrix = glm::mat4(1.0f);
+		matrix = glm::translate(matrix, position);
 		matrix = glm::scale(matrix, glm::vec3(size));
 
+		matrix = matrix * billboardRotationMatrix; // make billboard to face the camera
 		glm::mat4 PVMmatrix = projectionMatrix * viewMatrix * matrix;
 		glUniformMatrix4fv(shaderProgram->locations.PVMmatrix, 1, GL_FALSE, glm::value_ptr(PVMmatrix));        // model-view-projection
 		glUniform1f(shaderProgram->locations.time, currentTime - startTime);
