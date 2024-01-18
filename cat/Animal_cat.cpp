@@ -53,8 +53,11 @@ Cat::Cat(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(false)
 	location = glm::rotate(location, CAT_ROTATION, glm::vec3(0, 1, 0));
 	locations.emplace_back(location);
 
-	CHECK_GL_ERROR();
+	this->position = CAT_INITIAL_POS;
+	this->direction = -CAT_INITIAL_POS;
 
+	CHECK_GL_ERROR();
+	initialized = true;
 }
 Cat::~Cat() {
 	for (auto geometry : geometries) {

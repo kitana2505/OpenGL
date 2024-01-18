@@ -6,7 +6,7 @@
 
 /**
  * \file    object.h : this file contains the parent of all objects in the scene
- * \author  Vonášek Michal
+ * \author  VonÃ¡Å¡ek Michal
  * \date    2023/05/05
  */
 typedef struct _FireShaderProgram {
@@ -26,6 +26,23 @@ typedef struct _FireShaderProgram {
 
 }FireShaderProgram;
 
+
+typedef struct _ExplosionShaderProgram {
+	// identifier for the shader program
+	GLuint program;              // = 0;
+	// vertex attributes locations
+	GLint posLocation;           // = -1;
+	GLint texCoordLocation;      // = -1;
+	// uniforms locations
+	GLint PVMmatrixLocation;     // = -1;
+	GLint VmatrixLocation;       // = -1;
+	GLint timeLocation;          // = -1;
+	GLint texSamplerLocation;    // = -1;
+	GLint frameDurationLocation; // = -1;
+	GLint frames;
+	GLint scale;
+}ExplosionShaderProgram;
+
 typedef struct _BrickShaderProgram {
 	// identifier for the shader program
 	GLuint program;              // = 0;
@@ -38,7 +55,7 @@ typedef struct _BrickShaderProgram {
 	GLint timeLocation;          // = -1;
 	GLint texSamplerLocation;    // = -1;
 	//GLint frameDurationLocation; // = -1;
-	//GLint brickTex; // brick texture sampler – texture unit 0
+	//GLint brickTex; // brick texture sampler â€“ texture unit 0
 	GLint mossTex;
 
 }BrickShaderProgram;
@@ -47,12 +64,12 @@ typedef struct _MissileShaderProgram {
 	// identifier for the shader program
 	GLuint program;          // = 0;
 	// vertex attributes locations
-	GLint posLocation;       // = -1;
-	GLint colorLocation;     // = -1;
-	GLint normalLocation;    // = -1;
-	GLint texCoordLocation;  // = -1;
+	GLint posLocation;       
+	GLint colorLocation;     
+	GLint normalLocation;    
+	GLint texCoordLocation;  
 	// uniforms locations
-	GLint PVMmatrixLocation;    // = -1;
+	GLint PVMmatrixLocation;    
 	GLint VmatrixLocation;      // = -1;  view/camera matrix
 	GLint MmatrixLocation;      // = -1;  modeling matrix
 	GLint normalMatrixLocation; // = -1;  inverse transposed Mmatrix
@@ -60,16 +77,16 @@ typedef struct _MissileShaderProgram {
 	GLint timeLocation;         // = -1; elapsed time in seconds
 
 	// material 
-	GLint diffuseLocation;    // = -1;
-	GLint ambientLocation;    // = -1;
-	GLint specularLocation;   // = -1;
-	GLint shininessLocation;  // = -1;
+	GLint diffuseLocation;    
+	GLint ambientLocation;    
+	GLint specularLocation;   
+	GLint shininessLocation;  
 	// texture
-	GLint useTextureLocation; // = -1; 
-	GLint texSamplerLocation; // = -1;
+	GLint useTextureLocation; 
+	GLint texSamplerLocation; 
 	// reflector related uniforms
-	GLint reflectorPositionLocation;  // = -1; 
-	GLint reflectorDirectionLocation; // = -1;
+	GLint reflectorPositionLocation;   
+	GLint reflectorDirectionLocation; 
 
 }MissileShaderProgram;
 
@@ -115,7 +132,7 @@ typedef struct _ShaderProgram {
 
 		GLint firePosition;  
 		GLint fireStrength;
-		GLint fireFallof;
+		//GLint fireFallof;
 		GLint fireDiffuse;
 		GLint fireAmbient;
 		GLint fireSpecular;
@@ -207,6 +224,8 @@ public:
 
 	float startTime;
 	float currentTime;
+	float frameDuration;
+	int textureFrames;
 
 	ShaderProgram* shaderProgram;
 
