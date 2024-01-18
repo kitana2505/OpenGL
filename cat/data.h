@@ -15,7 +15,7 @@
 #define WINDOW_TITLE   "CAT"
 
 /// keys used in the key map
-enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT, KEY_SPACE};
+enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 
 #define SCENE_WIDTH  100.0f
 #define SCENE_HEIGHT 100.0f
@@ -38,10 +38,10 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT, KEY_SPACE};
 #define TURTLE_SPEED    0.5f
 
 //missile
-#define MISSILE_MAX_DISTANCE       1.5f
-#define MISSILE_LAUNCH_TIME_DELAY  0.25f // seconds
-#define MISSILE_SIZE     0.0085f
-#define MISSILE_SPEED              1.5f
+#define MISSILE_MAX_DISTANCE       3.5f
+#define MISSILE_LAUNCH_TIME_DELAY  0.25 // seconds
+#define MISSILE_SIZE     0.25f
+#define MISSILE_SPEED              1.0f
 
 
 //house
@@ -138,6 +138,9 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 #define PLAYER_HEIGHT  0.5f
 #define CAM_INIT_PLAYER glm::vec3(6.69, 1.0f, -19.63f)
 
+// explosion size
+#define EXPLOSION_SIZE 0.5f;
+
 //camera
 #define CAMERA_COUNT 4;
 #define STATIC_CAMERA_1 glm::vec3(-80,15,20)
@@ -159,6 +162,15 @@ const float flameVertexData[flameNumQuadVertices * 5] = {
 	   1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
 	  -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
 	   1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+};
+const int explosionNumQuadVertices = 4;
+const float explosionVertexData[explosionNumQuadVertices * 5] = {
+
+	// x      y     z     u     v
+	-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+	 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+	-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+	 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
 };
 
 // default shaders - color per vertex and matrix multiplication
