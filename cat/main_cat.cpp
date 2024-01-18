@@ -48,6 +48,7 @@
 #include "Animal_cat.h"
 #include "Animal_turtle.h"
 #include "Missile.h"
+#include "Brick.h"
 #include "Animal_rabbit.h"
 #include "Explosion.h"
 
@@ -60,6 +61,7 @@ ObjectList objects;
 // shared shader programs
 ShaderProgram commonShaderProgram;
 FireShaderProgram fireShaderProgram;
+ShaderProgram brickShaderProgram;
 ExplosionShaderProgram explosionShaderProgram;
 SkyboxShaderProgram skyboxShaderProgram;
 MissileShaderProgram missileShaderProgram;
@@ -189,9 +191,10 @@ void shooting(ObjectList objects, float elapsedTime)
 	Missile* newMissile = Missile::createMissile(&commonShaderProgram, missilePosition, missileDirection, gameState.missileLaunchTime, gameState.elapsedTime);
 	//}
 
+
+	// test collisions among objects in the scene
+	
 	gameState.missleList.push_back(newMissile);
-
-
 	gameState.launchMissile = false;
 }
 const std::string skyboxVShader(
@@ -291,8 +294,6 @@ void loadShaderPrograms() //define at least 1 shader obj
 	//fog
 	commonShaderProgram.locations.fogColor = glGetUniformLocation(commonShaderProgram.program, "fogColor");
 
-	//explosion
-
 
 	commonShaderProgram.initialized = true;
 
@@ -331,6 +332,28 @@ void loadShaderPrograms() //define at least 1 shader obj
 	skyboxShaderProgram.Sampler = glGetUniformLocation(skyboxShaderProgram.program, "skyboxSampler");
 	skyboxShaderProgram.iPVM = glGetUniformLocation(skyboxShaderProgram.program, "inversePVmatrix");
 
+	// push vertex shader and fragment shader
+	GLuint shaders5[] = {
+	  pgr::createShaderFromFile(GL_VERTEX_SHADER,"brickShader.vert"),
+	  pgr::createShaderFromFile(GL_FRAGMENT_SHADER,"brickShader.frag"),
+	  0
+	};
+
+	// create the program with two shaders
+	brickShaderProgram.program = pgr::createProgram(shaders5);
+
+	// get position and texture coordinates attributes locations
+	brickShaderProgram.locations.position = glGetAttribLocation(brickShaderProgram.program, "position");
+	brickShaderProgram.locations.texCoord = glGetAttribLocation(brickShaderProgram.program, "texCoord");
+	// get uniforms locations
+	//brickShaderProgram.texCoordLocation = 1;
+	brickShaderProgram.locations.PVMmatrix = glGetUniformLocation(brickShaderProgram.program, "PVMmatrix");
+	brickShaderProgram.locations.Vmatrix = glGetUniformLocation(brickShaderProgram.program, "Vmatrix");
+	//brickShaderProgram.locations.t = glGetUniformLocation(brickShaderProgram.program, "time");
+	brickShaderProgram.locations.texSampler = glGetUniformLocation(brickShaderProgram.program, "texSampler");
+	//brickShaderProgram.frameDurationLocation = glGetUniformLocation(brickShaderProgram.program, "frameDuration");
+	//brickShaderProgram.brickTex = glGetUniformLocation(brickShaderProgram.program, "brickTex");
+	brickShaderProgram.locations.mossTex = glGetUniformLocation(brickShaderProgram.program, "mossTex");
 
 	// exlosion shader
 	GLuint shaders4[] = {
@@ -913,7 +936,7 @@ void timerCb(int)
 	}
 	if (gameState.keyMap[KEY_SPACE] == true)
 	{
-		//gameState.launchMissile = true;
+		gameState.launchMissile = true;		
 		shooting(objects, gameState.elapsedTime);
 	}
 
@@ -971,6 +994,8 @@ void initApplication() {
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
+	Brick* brick = new Brick(&brickShaderProgram);
+	objects.push_back(brick);
 	Rabbit* rabbit1 = new Rabbit(&commonShaderProgram);
 	rabbit1->position = RABBIT_INITIAL_POS;
 	Rabbit* rabbit2 = new Rabbit(&commonShaderProgram);
@@ -980,6 +1005,7 @@ void initApplication() {
   objects.push_back(new Tree(&commonShaderProgram));
 	objects.push_back(new Turtle(&commonShaderProgram));
 	
+
 	//objects.push_back(gameState.fire);
 	//objects.push_back(gameState.missile);
 	rabbitList.push_back(rabbit1);

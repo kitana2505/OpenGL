@@ -10,8 +10,10 @@ void Ground::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 
 void Ground::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 {
+	CHECK_GL_ERROR();
 	if (initialized && (shaderProgram != nullptr)) {
 		glUseProgram(shaderProgram->program);
+		CHECK_GL_ERROR();
 		glEnable(GL_DEPTH_TEST);
 		CHECK_GL_ERROR();
 		for (auto geometry : geometries) {
