@@ -30,6 +30,13 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define CAT_INITIAL_POS glm::vec3(0, 0.9, -10)
 #define CAT_ROTATION 0.0f
 
+
+//Rabbit
+#define RABBIT_MODEL  "data/animal_rabbit/rabbit.obj"
+#define RABBIT_SCALE  0.3f
+#define RABBIT_INITIAL_POS glm::vec3(20.0, 0.9, -20)
+#define RABBIT_ROTATION 0.0f
+
 //turtle
 #define TURTLE_MODEL  "data/airplane/11803_Airplane_v1_l1.obj"
 #define TURTLE_SCALE 2.0f

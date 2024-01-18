@@ -48,7 +48,9 @@
 #include "Animal_cat.h"
 #include "Animal_turtle.h"
 #include "Missile.h"
+#include "Animal_rabbit.h"
 #include "Explosion.h"
+
 
 //constexpr int WINDOW_WIDTH = 500;
 //constexpr int WINDOW_HEIGHT = 500;
@@ -61,6 +63,9 @@ FireShaderProgram fireShaderProgram;
 ExplosionShaderProgram explosionShaderProgram;
 SkyboxShaderProgram skyboxShaderProgram;
 MissileShaderProgram missileShaderProgram;
+ObjectList missleList;
+ObjectList rabbitList;
+
 
 
 // -----------------------  OpenGL stuff ---------------------------------
@@ -477,6 +482,31 @@ void drawScene(void)
 		if (object != nullptr)
 			object->draw(viewMatrix, projectionMatrix);
 	}
+
+	glEnable(GL_STENCIL_TEST);
+	// set the stencil operations - if the stencil test and depth test are passed than
+	// value in the stencil buffer is replaced with the object ID (byte 1..255, 0 ... background)
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	// ========  END OF SOLUTION - TASK 6_3-1  ======== //
+	CHECK_GL_ERROR();
+	// draw asteroids
+	int id = 0; //for background
+	// store asteroid ID to stencil buffer
+	for (ObjectList::iterator it = rabbitList.begin(); it != rabbitList.end(); ++it) {
+		// ======== BEGIN OF SOLUTION - TASK 6_3-2 ======== //
+			// set the stencil test function
+			// -> stencil test always passes and reference value for stencil test is set to be object ID (id+1)
+		glStencilFunc(GL_ALWAYS, id + 1, -1);
+		// ========  END OF SOLUTION - TASK 6_3-2  ======== //
+		CHECK_GL_ERROR();
+
+		Rabbit* rabbit_x = (Rabbit*)(*it);
+		rabbit_x->draw( viewMatrix, projectionMatrix);
+		id++;
+	}
+	// disable stencil test
+	glDisable(GL_STENCIL_TEST);
+
 	glDisable(GL_DEPTH_TEST);
 	for (ObjectInstance* object : gameState.explosions) {   // for (auto object : objects) {
 		if (object != nullptr)
@@ -489,7 +519,9 @@ void drawScene(void)
 			}
 	}
 	glEnable(GL_DEPTH_TEST);
+
 }
+
 
 
 // -----------------------  Window callbacks ---------------------------------
@@ -701,7 +733,7 @@ void specialKeyboardUpCb(int specKeyReleased, int mouseX, int mouseY) {
 	}
 } // key released
 
-// -----------------------  Mouse ---------------------------------
+// -----------------------  mouse ---------------------------------
 // three events - mouse click, mouse drag, and mouse move with no button pressed
 
 // 
@@ -716,12 +748,36 @@ void specialKeyboardUpCb(int specKeyReleased, int mouseX, int mouseY) {
  * \param mouseY mouse (cursor) Y position
  */
 void mouseCb(int buttonPressed, int buttonState, int mouseX, int mouseY) {
-	unsigned char objectID = 0;
-	glReadPixels(mouseX, glutGet(GLUT_WINDOW_HEIGHT) - mouseY - 1, 1, 1,
-		GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, &objectID
-	);
-	if (buttonState == 1) {
-		return;
+
+	if ((buttonPressed == GLUT_LEFT_BUTTON) && (buttonState == GLUT_DOWN)) {
+		unsigned char rabbitID = 0;
+		glReadPixels(mouseX, glutGet(GLUT_WINDOW_HEIGHT) - mouseY - 1, 1, 1,
+			GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, &rabbitID
+		);
+		if (buttonState == 1) {
+			return;
+		}
+
+		if (rabbitID == 0) {
+			// background was clicked
+			printf("Clicked on background\n");
+		}
+		else {
+
+			// object was clicked
+			printf("Clicked on object with ID: %d\n", (int)rabbitID);
+
+			ObjectList::iterator it = rabbitList.begin();
+			std::advance(it, rabbitID - 1);
+			Rabbit* rabbit_x = (Rabbit*)(*it);
+			if (rabbit_x->destroyed == false) {
+				rabbit_x->destroyed = true;	
+				rabbitList.erase(it);
+				// remove asteroid
+				//insertExplosion(asteroid->position);  // insert explosion billboard
+			}
+
+		}
 	}
 }
 
@@ -843,9 +899,9 @@ void timerCb(int)
 	// update the application state
 	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
 		if (object != nullptr)
-			//object->update(deltaTime, &sceneRootMatrix);
-			object->update(time/1000, &sceneRootMatrix);
+		  object->update(time/1000, &sceneRootMatrix);
 	}
+    
 	for (ObjectInstance* object : gameState.missleList) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->update(gameState.elapsedTime, &sceneRootMatrix);
@@ -853,6 +909,7 @@ void timerCb(int)
 	for (ObjectInstance* object : gameState.explosions) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->update(gameState.elapsedTime, &sceneRootMatrix);
+
 	}
 	if (gameState.keyMap[KEY_SPACE] == true)
 	{
@@ -914,12 +971,20 @@ void initApplication() {
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
+	Rabbit* rabbit1 = new Rabbit(&commonShaderProgram);
+	rabbit1->position = RABBIT_INITIAL_POS;
+	Rabbit* rabbit2 = new Rabbit(&commonShaderProgram);
+	rabbit2->position = rabbit1->position + glm::vec3(4.0f, 0.0f, 0.0f);
+	Rabbit* rabbit3 = new Rabbit(&commonShaderProgram);
+	rabbit3->position = rabbit2->position + glm::vec3(4.0f, 0.0f, 0.0f);
   objects.push_back(new Tree(&commonShaderProgram));
 	objects.push_back(new Turtle(&commonShaderProgram));
 	
 	//objects.push_back(gameState.fire);
 	//objects.push_back(gameState.missile);
-
+	rabbitList.push_back(rabbit1);
+	rabbitList.push_back(rabbit2);
+	rabbitList.push_back(rabbit3);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	// init your Application
 	// - setup the initial application state
@@ -939,7 +1004,7 @@ void initApplication() {
 	glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
 	glUseProgram(0);
 
-	//mouse
+	//Mouse
 	glutWarpPointer(gameState.windowWidth / 2, gameState.windowHeight / 2);
 
 
