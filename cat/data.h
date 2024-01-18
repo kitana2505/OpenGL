@@ -29,8 +29,15 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define CAT_SCALE  0.5f
 #define CAT_INITIAL_POS glm::vec3(0, 0.9, -10)
 #define CAT_ROTATION 0.0f
-//banner
 
+//mushroom
+#define MUSHROOM_MODEL  "data/mushroom/mushroom.obj"
+#define MUSHROOM_SCALE  0.5f
+#define MUSHROOM_INITIAL_POS glm::vec3(7, 0.9, -12)
+#define MUSHROOM_ROTATION 0.0f
+//#define MUSHROOM_TEXTURE  "data/mushroom/texture.png"
+
+//banner
 #define BANNER_TEXTURE_NAME  "data/banner/scrollrain.jpg"
 #define BANNER_SIZE      1.0f
 

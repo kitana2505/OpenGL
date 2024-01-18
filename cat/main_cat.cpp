@@ -52,7 +52,8 @@
 #include "Brick.h"
 #include "Animal_rabbit.h"
 #include "Explosion.h"
-
+//#include "Mushroom.h"
+#include "Teapot.h"
 
 //constexpr int WINDOW_WIDTH = 500;
 //constexpr int WINDOW_HEIGHT = 500;
@@ -592,17 +593,17 @@ void drawScene(void)
 	glUniform1f(brickShaderProgram.locations.reflectorSpotCosCutOff, 0.6f);
 	glUniform1i(brickShaderProgram.locations.reflectorExponent, 30);
 	glUseProgram(0);
-
+	CHECK_GL_ERROR();
 	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->draw(viewMatrix, projectionMatrix);
 	}
-
+	CHECK_GL_ERROR();
 	for (ObjectInstance* object : gameState.missleList) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->draw(viewMatrix, projectionMatrix);
 	}
-
+	CHECK_GL_ERROR();
 	glm::mat4 orthoProjectionMatrix_banner = glm::ortho(
 		0.0f,  1.0f,
 		0.0f, 1.0f,
@@ -1149,6 +1150,7 @@ void initApplication() {
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
 	Brick* brick = new Brick(&brickShaderProgram);
+	CHECK_GL_ERROR();
 	objects.push_back(brick);
 	Rabbit* rabbit1 = new Rabbit(&commonShaderProgram);
 	rabbit1->position = RABBIT_INITIAL_POS;
@@ -1156,8 +1158,9 @@ void initApplication() {
 	rabbit2->position = rabbit1->position + glm::vec3(4.0f, 0.0f, 0.0f);
 	Rabbit* rabbit3 = new Rabbit(&commonShaderProgram);
 	rabbit3->position = rabbit2->position + glm::vec3(4.0f, 0.0f, 0.0f);
-  objects.push_back(new Tree(&commonShaderProgram));
+    objects.push_back(new Tree(&commonShaderProgram));
 	objects.push_back(new Turtle(&commonShaderProgram));
+	objects.push_back(new Teapot(&commonShaderProgram));
 	
 
 	//objects.push_back(gameState.fire);
