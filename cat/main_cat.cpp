@@ -480,8 +480,7 @@ void drawScene(void)
 	glDisable(GL_DEPTH_TEST);
 	for (ObjectInstance* object : gameState.explosions) {   // for (auto object : objects) {
 		if (object != nullptr)
-			// TODO: cung xem gium em cho nay, textureFrames voi frameDuration  ko phai la property cua ObjectInstance, chi co Explosion moi co
-			// anh xem asteroid.cpp, line 699, dieu kien de xoa' cai' Explosion nha
+			// std::cout << object->textureFrames << " : " << object->frameDuration << std::endl;
 			if (object->currentTime > object->startTime + object->textureFrames * object->frameDuration) {
 				object->destroyed = true;
 			}
@@ -799,7 +798,7 @@ void insertExplosion(const glm::vec3& position) {
 	newExplosion->size = EXPLOSION_SIZE;
 	newExplosion->direction = glm::vec3(0.0f, 0.0f, 1.0f);
 
-	newExplosion->frameDuration = 0.1f;
+	newExplosion->frameDuration = 0.05f;
 	newExplosion->textureFrames = 16;
 	newExplosion->position = position;
 
@@ -813,17 +812,12 @@ void checkCollisions()
 	for (auto it = gameState.missleList.begin(); it != gameState.missleList.end(); ++ it)
 	{
 		Missile* missile = (Missile*)(*it);
-		if (pointInSphere(missile->position, fire_obj->position, fire_obj->size))
+		if (pointInSphere(missile->position, fire_obj->position, fire_obj->size*1.5))
 		{
+			insertExplosion(fire_obj->position);
+			//std::cout << "Collsion" << std::endl;
 			missile->destroyed = true;
-			//insertExplosion(fire_obj->position);
-			insertExplosion(glm::vec3(5.0f));
-			//fire_obj->destroyed = true;
 
-			std::cout << "Collsion" << std::endl;
-			std::cout << fire_obj->position.x << std::endl;
-			std::cout << fire_obj->position.y << std::endl;
-			std::cout << fire_obj->position.z << std::endl;
 		}
 
 	}

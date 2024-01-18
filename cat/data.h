@@ -34,7 +34,7 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define MISSILE_MAX_DISTANCE       3.5f
 #define MISSILE_LAUNCH_TIME_DELAY  0.25 // seconds
 #define MISSILE_SIZE     0.25f
-#define MISSILE_SPEED              1.0f
+#define MISSILE_SPEED              2.5f
 
 
 //house
@@ -131,7 +131,7 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 #define CAM_INIT_PLAYER glm::vec3(17.8f, 1.0f, -12.9f)
 
 // explosion size
-#define EXPLOSION_SIZE 5.0f;
+#define EXPLOSION_SIZE 2.5f;
 #define EXPLOSION_TEXTURE_NAME "data/explosion/explode.png"
 
 

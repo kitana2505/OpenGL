@@ -193,6 +193,8 @@ public:
 
 	float startTime;
 	float currentTime;
+	float frameDuration;
+	int textureFrames;
 
 	ShaderProgram* shaderProgram;
 
