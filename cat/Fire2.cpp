@@ -125,8 +125,8 @@ Fire2::Fire2(ShaderProgram* shdrPrg, FireShaderProgram* fireShaderProgram)
 		glUniform3f(shaderProgram->locations.fireDiffuse, 1.0f, 0.4f, 0.0f);
 		glUniform3f(shaderProgram->locations.fireSpecular, 1.5f, 0.5f, 0.0f);
 		glUniform3f(shaderProgram->locations.firePosition, 0, 0, 0);
-		glUniform1f(shaderProgram->locations.fireStrength, 5);
-		glUniform1f(shaderProgram->locations.fireFallof, 1.5f);
+		glUniform1f(shaderProgram->locations.fireStrength, 10);
+		//glUniform1f(shaderProgram->locations.fireFallof, 1.5f);
 		glUseProgram(0);
 
 	}

@@ -20,5 +20,5 @@ private:
 
 	bool initialized;  ///< object has the shader with defined locations
 	std::vector<glm::mat4> locations;
-	bool useLighting = false;
+	bool useLighting = true;
 };

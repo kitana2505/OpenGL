@@ -65,11 +65,14 @@ vec4 spotLight(Light light, Material material, vec3 vertexPosition, vec3 vertexN
   vec3 L = normalize(light.position-vertexPosition);
   vec3 R = reflect(-L, vertexNormal);
   vec3 V = normalize(-vertexPosition);
+  float NdotL = max(0.0, dot(vertexNormal, L));
+  float RdotV = max(0.0, dot(R, V));
+
   float ndot=dot(light.spotDirection,-L);
   float spot=pow(max(ndot,0),light.spotExponent);
   if(ndot>cos(light.spotCosCutOff)){
-		ret += max(dot(L,vertexNormal),0)*material.diffuse * light.diffuse*spot;//diffuse
-		ret += max(dot(R, V),0)*material.specular * light.specular*spot; //specular
+		ret += NdotL*material.diffuse * light.diffuse*spot;//diffuse
+		ret += RdotV*material.specular * light.specular*spot; //specular
 		ret*=light.strength/pow(distance, 0.2);;/// 
 		
 	}
@@ -83,12 +86,14 @@ vec4 fireLight(mat4 VMatrix, Material material, vec3 vertexPosition, vec3 vertex
   vec3 L = normalize(firePosition - vertexPosition);
   vec3 R = reflect(-L, vertexNormal);
   vec3 V = normalize(-vertexPosition);
+  float NdotL = max(0.0, dot(vertexNormal, L));
+  float RdotV = max(0.0, dot(R, V));
 
-  ret += max(dot(L,vertexNormal),0)*material.diffuse * fireDiffuse;//diffuse
-  ret += max(dot(R, V),0)*material.specular * fireSpecular; //specular
+  ret += NdotL*material.diffuse * fireDiffuse;//diffuse
+  ret += RdotV*material.specular * fireSpecular; //specular
 
   ret*= fireStrength;
-  ret/=(pow(distance, fireFallof));
+  //ret/=(pow(distance, fireFallof));
   
 
   return vec4(ret, 1.0);
@@ -102,8 +107,11 @@ vec4 directionalLight(Light light, Material material, vec3 vertexPosition, vec3 
   vec3 L = normalize(light.position);
   vec3 R = reflect(-L, vertexNormal);
   vec3 V = normalize(-vertexPosition);
-  ret += max(dot(L,vertexNormal),0)*material.diffuse * light.diffuse;//diffuse
-  ret += max(dot(R, V),0)*material.specular * light.specular; //specular
+  float NdotL = max(0.0, dot(vertexNormal, L));
+  float RdotV = max(0.0, dot(R, V));
+
+  ret += NdotL*material.diffuse * light.diffuse;//diffuse
+  ret += RdotV*material.specular * light.specular; //specular
   ret*=light.strength;
   return vec4(ret, 1.0);
 }

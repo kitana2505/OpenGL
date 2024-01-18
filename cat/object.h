@@ -30,12 +30,12 @@ typedef struct _MissileShaderProgram {
 	// identifier for the shader program
 	GLuint program;          // = 0;
 	// vertex attributes locations
-	GLint posLocation;       // = -1;
-	GLint colorLocation;     // = -1;
-	GLint normalLocation;    // = -1;
-	GLint texCoordLocation;  // = -1;
+	GLint posLocation;       
+	GLint colorLocation;     
+	GLint normalLocation;    
+	GLint texCoordLocation;  
 	// uniforms locations
-	GLint PVMmatrixLocation;    // = -1;
+	GLint PVMmatrixLocation;    
 	GLint VmatrixLocation;      // = -1;  view/camera matrix
 	GLint MmatrixLocation;      // = -1;  modeling matrix
 	GLint normalMatrixLocation; // = -1;  inverse transposed Mmatrix
@@ -43,16 +43,16 @@ typedef struct _MissileShaderProgram {
 	GLint timeLocation;         // = -1; elapsed time in seconds
 
 	// material 
-	GLint diffuseLocation;    // = -1;
-	GLint ambientLocation;    // = -1;
-	GLint specularLocation;   // = -1;
-	GLint shininessLocation;  // = -1;
+	GLint diffuseLocation;    
+	GLint ambientLocation;    
+	GLint specularLocation;   
+	GLint shininessLocation;  
 	// texture
-	GLint useTextureLocation; // = -1; 
-	GLint texSamplerLocation; // = -1;
+	GLint useTextureLocation; 
+	GLint texSamplerLocation; 
 	// reflector related uniforms
-	GLint reflectorPositionLocation;  // = -1; 
-	GLint reflectorDirectionLocation; // = -1;
+	GLint reflectorPositionLocation;   
+	GLint reflectorDirectionLocation; 
 
 }MissileShaderProgram;
 
@@ -98,7 +98,7 @@ typedef struct _ShaderProgram {
 
 		GLint firePosition;  
 		GLint fireStrength;
-		GLint fireFallof;
+		//GLint fireFallof;
 		GLint fireDiffuse;
 		GLint fireAmbient;
 		GLint fireSpecular;

@@ -39,13 +39,14 @@
 #include "object.h"
 //#include "triangle.h"
 //#include "singlemesh.h"
-#include "Fire.h"
+//#include "Fire.h"
 #include "Fire2.h"
 #include "Tree.h"
 #include "House.h"
 #include "Ground.h"
 #include "Skybox.h"
 #include "Animal_cat.h"
+#include "Animal_turtle.h"
 #include "Missile.h"
 
 //constexpr int WINDOW_WIDTH = 500;
@@ -93,7 +94,7 @@ struct _GameState {
 
 	/// Sunlight should be on/off
 	bool sunOn;
-	 Fire* fire;
+	 //Fire* fire;
 	 Fire2* fire2;
 	// Firewood* firewood;
 	 Skybox* skybox;
@@ -275,7 +276,7 @@ void loadShaderPrograms() //define at least 1 shader obj
 	//fire
 	commonShaderProgram.locations.firePosition = glGetUniformLocation(commonShaderProgram.program, "firePosition");
 	commonShaderProgram.locations.fireStrength = glGetUniformLocation(commonShaderProgram.program, "fireStrength");
-	commonShaderProgram.locations.fireFallof = glGetUniformLocation(commonShaderProgram.program, "fireFallof");
+	//commonShaderProgram.locations.fireFallof = glGetUniformLocation(commonShaderProgram.program, "fireFallof");
 	commonShaderProgram.locations.fireDiffuse = glGetUniformLocation(commonShaderProgram.program, "fireDiffuse");
 	commonShaderProgram.locations.fireSpecular = glGetUniformLocation(commonShaderProgram.program, "fireSpecular");
 	commonShaderProgram.locations.fireAmbient = glGetUniformLocation(commonShaderProgram.program, "fireAmbient");
@@ -435,6 +436,7 @@ void drawScene(void)
 
 
 	setLights();
+	// tight reflector to camera
 	glUniform3f(commonShaderProgram.locations.reflectorPosition, cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	glUniform3f(commonShaderProgram.locations.reflectorDirection, cameraDirection.x, cameraDirection.y, cameraDirection.z);
 	glUseProgram(0);
@@ -748,7 +750,8 @@ void timerCb(int)
 	// update the application state
 	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
 		if (object != nullptr)
-			object->update(deltaTime, &sceneRootMatrix);
+			//object->update(deltaTime, &sceneRootMatrix);
+			object->update(time/1000, &sceneRootMatrix);
 	}
 	if (gameState.keyMap[KEY_SPACE] == true)
 	{
@@ -789,12 +792,14 @@ void initApplication() {
 	gameState.fire2 = new Fire2(&commonShaderProgram, &fireShaderProgram);
 	gameState.skybox = new Skybox(&skyboxShaderProgram);
 	//gameState.missile = new Missile(&commonShaderProgram, &missileShaderProgram);
+	objects.push_back(gameState.fire2);
 	objects.push_back(gameState.skybox);
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
-	objects.push_back(new Tree(&commonShaderProgram));
-	objects.push_back(gameState.fire2);
+  objects.push_back(new Tree(&commonShaderProgram));
+	objects.push_back(new Turtle(&commonShaderProgram));
+	
 	//objects.push_back(gameState.fire);
 	//objects.push_back(gameState.missile);
 
