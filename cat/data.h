@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------------------------
 /**
  * \file    data.h
- * \author  Michal Von�ek
+ * \author  Michal Vonášek
  * \date    2023
  * \brief   Basic defines and data structures.
  */
@@ -30,6 +30,13 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define CAT_INITIAL_POS glm::vec3(0, 0.9, -10)
 #define CAT_ROTATION 0.0f
 
+//turtle
+#define TURTLE_MODEL  "data/airplane/11803_Airplane_v1_l1.obj"
+#define TURTLE_SCALE 2.0f
+#define TURTLE_INITIAL_POS glm::vec3(-5.0f,8.0f, 15.0f)
+#define TURTLE_ROTATION 90.0f
+#define TURTLE_SPEED    0.5f
+
 //missile
 #define MISSILE_MAX_DISTANCE       3.5f
 #define MISSILE_LAUNCH_TIME_DELAY  0.25 // seconds
@@ -43,8 +50,8 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define HOUSE_TRANSLATE glm::vec3(5.0f,0.8f,0)
 
 //trees
-#define TREE_MODEL "data/Spruce_obj/Spruce.obj"
-#define TREE_SPACING 5.0f
+#define TREE_SPACING 10.0f
+#define TREE_MODEL "data/tree/Tree.obj"
 #define TREE_SCALE 2.0f
 
 //grass
@@ -128,7 +135,7 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 #define PLAYER_WALKING_SPEED  2.0f
 #define PLAYER_RUNNING_SPEED  4.5f
 #define PLAYER_HEIGHT  0.5f
-#define CAM_INIT_PLAYER glm::vec3(17.8f, 1.0f, -12.9f)
+#define CAM_INIT_PLAYER glm::vec3(6.69, 1.0f, -19.63f)
 
 // explosion size
 #define EXPLOSION_SIZE 2.5f;
@@ -138,7 +145,7 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 //camera
 #define CAMERA_COUNT 4;
 #define STATIC_CAMERA_1 glm::vec3(-80,15,20)
-#define STATIC_CAMERA_2 glm::vec3(17.0f,15.0f,-12.0f)
+#define STATIC_CAMERA_2 glm::vec3(17.0f,30.0f,-12.0f)
 
 //Skybox
 #define SKYBOX_DAY_TEXTURE_NAME "data/skybox/miramar"
@@ -165,4 +172,54 @@ const float explosionVertexData[explosionNumQuadVertices * 5] = {
 	 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
 };
 
+// default shaders - color per vertex and matrix multiplication
+const std::string colorVertexShaderSrc(
+    "#version 140\n"
+    "uniform mat4 PVMmatrix;\n"
+    "in vec3 position;\n"
+    "in vec3 color;\n"
+    "smooth out vec4 theColor;\n"
+    "void main() {\n"
+    "  gl_Position = PVMmatrix * vec4(position, 1.0);\n"
+    "  theColor = vec4(color, 1.0);\n"
+    "}\n"
+);
+
+const std::string colorFragmentShaderSrc(
+    "#version 140\n"
+    "smooth in vec4 theColor;\n"
+    "out vec4 outputColor;\n"
+    "void main() {\n"
+    "  outputColor = theColor;\n"
+    "}\n"
+);
+
+// each vertex shader receives screen space coordinates and calculates world direction
+const std::string skyboxFarPlaneVertexShaderSrc(
+    "#version 140\n"
+    "\n"
+    "uniform mat4 inversePVmatrix;\n"
+    "in vec2 screenCoord;\n"
+    "out vec3 texCoord_v;\n"
+    "\n"
+    "void main() {\n"
+    "  vec4 farplaneCoord = vec4(screenCoord, 0.9999, 1.0);\n"
+    "  vec4 worldViewCoord = inversePVmatrix * farplaneCoord;\n"
+    "  texCoord_v = worldViewCoord.xyz / worldViewCoord.w;\n"
+    "  gl_Position = farplaneCoord;\n"
+    "}\n"
+);
+
+// fragment shader uses interpolated 3D tex coords to sample cube map
+const std::string skyboxFarPlaneFragmentShaderSrc(
+    "#version 140\n"
+    "\n"
+    "uniform samplerCube skyboxSampler;\n"
+    "in vec3 texCoord_v;\n"
+    "out vec4 color_f;\n"
+    "\n"
+    "void main() {\n"
+    "  color_f = texture(skyboxSampler, texCoord_v);\n"
+    "}\n"
+);
 #endif // __DATA_H

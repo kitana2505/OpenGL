@@ -1,6 +1,6 @@
 	//----------------------------------------------------------------------------------------
 /**
- * \file    skeleton.cpp : This file contains the 'main' function and callbacks.
+ * \file    skeleton.cpp : This file contains the 'main' function and callbackcallbacks.
 			Program execution begins and ends there.
  * \author  Jaroslav Sloup, Petr Felkel
  * \date    2022/03/03
@@ -16,7 +16,7 @@
   *
   *
   * Comment your code using the [doxygen](https://www.doxygen.nl/index.html) documenting system style.
-  * Create "doxygen" directory, make it current by "cd doxygen", prepare a configuration file with "doxygen -g" and edit the details.
+  * Create "doxygen" directory, make it current by "cd doxygen", prepare a configuration file with "doxygen -g" and edit the details.timer
   *
   * Start by renaming of this file from skeleton.cpp to <your_name>.cpp and the project to <your_name>.vcxproj
   *
@@ -39,13 +39,14 @@
 #include "object.h"
 //#include "triangle.h"
 //#include "singlemesh.h"
-#include "Fire.h"
+//#include "Fire.h"
 #include "Fire2.h"
 #include "Tree.h"
 #include "House.h"
 #include "Ground.h"
 #include "Skybox.h"
 #include "Animal_cat.h"
+#include "Animal_turtle.h"
 #include "Missile.h"
 #include "Explosion.h"
 
@@ -94,10 +95,8 @@ struct _GameState {
 
 	/// Sunlight should be on/off
 	bool sunOn;
-	Fire* fire;
-	Fire2* fire2;
-	// Firewood* firewood;
-	 Skybox* skybox;
+	Fire2* fire2; 
+	Skybox* skybox;
 
 	/// number of wood stacks in inventory
 	//int wood_in_inventory = 0;
@@ -279,7 +278,7 @@ void loadShaderPrograms() //define at least 1 shader obj
 	//fire
 	commonShaderProgram.locations.firePosition = glGetUniformLocation(commonShaderProgram.program, "firePosition");
 	commonShaderProgram.locations.fireStrength = glGetUniformLocation(commonShaderProgram.program, "fireStrength");
-	commonShaderProgram.locations.fireFallof = glGetUniformLocation(commonShaderProgram.program, "fireFallof");
+	//commonShaderProgram.locations.fireFallof = glGetUniformLocation(commonShaderProgram.program, "fireFallof");
 	commonShaderProgram.locations.fireDiffuse = glGetUniformLocation(commonShaderProgram.program, "fireDiffuse");
 	commonShaderProgram.locations.fireSpecular = glGetUniformLocation(commonShaderProgram.program, "fireSpecular");
 	commonShaderProgram.locations.fireAmbient = glGetUniformLocation(commonShaderProgram.program, "fireAmbient");
@@ -437,7 +436,7 @@ void drawScene(void)
 	case 2:
 		gameState.target_camera_position = CAM_INIT_PLAYER;
 		gameState.cameraElevationAngle = 0.0f;
-		gameState.cameraRotationAngle = 135.0f;
+		gameState.cameraRotationAngle = 125.0f;
 		break;
 	case 3:
 		gameState.target_camera_position = STATIC_CAMERA_2;
@@ -464,6 +463,7 @@ void drawScene(void)
 
 
 	setLights();
+	// tight reflector to camera
 	glUniform3f(commonShaderProgram.locations.reflectorPosition, cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	glUniform3f(commonShaderProgram.locations.reflectorDirection, cameraDirection.x, cameraDirection.y, cameraDirection.z);
 	glUseProgram(0);
@@ -709,7 +709,7 @@ void specialKeyboardUpCb(int specKeyReleased, int mouseX, int mouseY) {
  * \brief React to mouse button press and release (mouse click).
  * When the user presses and releases mouse buttons in the window, each press
  * and each release generates a mouse callback (including release after dragging).
- *
+ *f
  * \param buttonPressed button code (GLUT_LEFT_BUTTON, GLUT_MIDDLE_BUTTON, or GLUT_RIGHT_BUTTON)
  * \param buttonState GLUT_DOWN when pressed, GLUT_UP when released
  * \param mouseX mouse (cursor) X position
@@ -843,7 +843,8 @@ void timerCb(int)
 	// update the application state
 	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
 		if (object != nullptr)
-			object->update(deltaTime, &sceneRootMatrix);
+			//object->update(deltaTime, &sceneRootMatrix);
+			object->update(time/1000, &sceneRootMatrix);
 	}
 	for (ObjectInstance* object : gameState.missleList) {   // for (auto object : objects) {
 		if (object != nullptr)
@@ -874,8 +875,13 @@ void timerCb(int)
 	// check collision
 	checkCollisions();
 
-
-#endif // task_1_0
+	//std::cout << gameState.player_position.x << std::endl;
+	//std::cout << gameState.player_position.y << std::endl;
+	//std::cout << gameState.player_position.z << std::endl;
+	//std::cout << gameState.cameraRotationAngle << std::endl;
+	//std::cout << "-----------------------------------" << std::endl;
+  
+#endif
 
 	// and plan a new event
 	glutTimerFunc(33, timerCb, 0); //how many ms to react??
@@ -908,6 +914,9 @@ void initApplication() {
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
+  objects.push_back(new Tree(&commonShaderProgram));
+	objects.push_back(new Turtle(&commonShaderProgram));
+	
 	//objects.push_back(gameState.fire);
 	//objects.push_back(gameState.missile);
 
@@ -919,7 +928,7 @@ void initApplication() {
 	gameState.player_position = CAM_INIT_PLAYER;
 	gameState.player_direction = CAM_INIT_PLAYER;
 	gameState.cameraElevationAngle = 0.0f;
-	gameState.cameraRotationAngle = 135.0f;
+	gameState.cameraRotationAngle = 90;
 
 	//initiali night environment
 	gameState.sunOn = false;
@@ -950,6 +959,63 @@ void finalizeApplication(void) {
 	cleanupShaderPrograms();
 }
 
+void menuCamera(int menuItemID) {
+	gameState.move_camera = true;
+	gameState.camera_index = menuItemID;
+	gameState.initial_camera_position = gameState.camera_position;
+}
+
+void menuSun(int menuItemID)
+{	
+	switch (menuItemID)
+	{
+	case 1:
+		gameState.sunOn = false;
+		gameState.skybox->load_skybox(SKYBOX_NIGHT_TEXTURE_NAME, gameState.skybox->night_suffixes);
+		glUseProgram(commonShaderProgram.program);
+		glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
+		glUseProgram(0);
+		break;
+	case 2:
+		gameState.sunOn = true;
+		gameState.skybox->load_skybox(SKYBOX_DAY_TEXTURE_NAME, gameState.skybox->day_suffixes);
+		glUseProgram(commonShaderProgram.program);
+		glUniform3f(commonShaderProgram.locations.fogColor, 0.5f, 0.5f, 0.5f);
+		glUseProgram(0);
+		break;
+	}
+}
+
+void menuFlash(int menuItemID)
+{
+	switch (menuItemID)
+	{
+		case 1:
+			gameState.reflectorOn = false;
+			glUseProgram(0);
+			break;
+		case 2:
+			gameState.reflectorOn = true;
+			glUseProgram(0);
+			break;
+	}
+}
+
+void myMenu(int menuItemID) {
+
+	switch (menuItemID) {
+	
+	// Add Banner
+	case 1:
+		// show Banner
+		break;
+
+	// Exit program
+	case 2:
+		exit(0);
+		break;
+	}
+}
 
 /**
  * \brief Entry point of the application.
@@ -997,6 +1063,38 @@ int main(int argc, char** argv) {
 	// initialize pgr-framework (GL, DevIl, etc.)
 	if (!pgr::initialize(pgr::OGL_VER_MAJOR, pgr::OGL_VER_MINOR))
 		pgr::dieWithError("pgr init failed, required OpenGL not supported?");
+
+	/* Create menu camera. */
+	int idCamera = glutCreateMenu(menuCamera);
+	glutAddMenuEntry("Free Camera", 0);
+	glutAddMenuEntry("Camera 1", 2);
+	glutAddMenuEntry("Camera 2", 1);
+	glutAddMenuEntry("Camera 3", 3);
+
+	int idSunPosition = glutCreateMenu(menuSun);
+	glutAddMenuEntry("Night", 1);
+	glutAddMenuEntry("Day", 2);
+
+
+	int idFlash = glutCreateMenu(menuFlash);
+	glutAddMenuEntry("On", 1);
+	glutAddMenuEntry("Off", 2);
+
+
+	//int idPoint = glutCreateMenu(menuPoint);
+	//glutAddMenuEntry("Pointlight on", 1);
+	//glutAddMenuEntry("Pointlight off", 2);
+
+	/*Create main menu*/
+	glutCreateMenu(myMenu);
+	glutAddSubMenu("Camera", idCamera);
+	glutAddSubMenu("Sun", idSunPosition);
+	glutAddSubMenu("Flash", idFlash);
+	glutAddMenuEntry("GameOver", 1);
+	glutAddMenuEntry("Quit", 2);
+
+	/* Menu will be invoked by the right button. */
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	// init your stuff - shaders & program, buffers, locations, state of the application
 	initApplication();

@@ -2,7 +2,7 @@
 #include <cmath>
 #include <math.h>
 #include "Missile.h"
-#include "spline.h"
+//#include "spline.h"
 const int missileTrianglesCount = 4;
 // temp constants used for missileVertices array contents definition
 const float invSqrt2 = (float)(1.0 / sqrt(2.0));
@@ -70,6 +70,34 @@ const float missileVertices[] = {
 	  0.0f, -1.0f, -invSqrt2,
 };
 
+bool isVectorNull(const glm::vec3& vect) {
+
+	return !vect.x && !vect.y && !vect.z;
+}
+
+glm::mat4 Missile::alignObject(const glm::vec3& position, const glm::vec3& front, const glm::vec3& up) {
+
+	glm::vec3 z = -glm::normalize(front);
+
+	if (isVectorNull(z))
+		z = glm::vec3(0.0, 0.0, 1.0);
+
+	glm::vec3 x = glm::normalize(glm::cross(up, z));
+
+	if (isVectorNull(x))
+		x = glm::vec3(1.0, 0.0, 0.0);
+
+	glm::vec3 y = glm::cross(z, x);
+	//mat4 matrix = mat4(1.0f);
+	glm::mat4 matrix = glm::mat4(
+		x.x, x.y, x.z, 0.0,
+		y.x, y.y, y.z, 0.0,
+		z.x, z.y, z.z, 0.0,
+		position.x, position.y, position.z, 1.0
+	);
+
+	return matrix;
+}
 
 
 void Missile::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
