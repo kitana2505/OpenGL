@@ -786,11 +786,11 @@ void initApplication() {
 	gameState.fire2 = new Fire2(&commonShaderProgram, &fireShaderProgram);
 	gameState.skybox = new Skybox(&skyboxShaderProgram);
 	//gameState.missile = new Missile(&commonShaderProgram, &missileShaderProgram);
+	objects.push_back(gameState.fire2);
 	objects.push_back(gameState.skybox);
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
-	objects.push_back(gameState.fire2);
 	objects.push_back(new Turtle(&commonShaderProgram));
 	//objects.push_back(gameState.fire);
 	//objects.push_back(gameState.missile);

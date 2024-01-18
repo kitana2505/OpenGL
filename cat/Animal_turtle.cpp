@@ -50,7 +50,7 @@ void Turtle::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 	direction = glm::normalize(evaluateClosedCurve_1stDerivative(curveData, curveSize, curveParamT));
 	localModelMatrix = alignObject(position, direction, glm::vec3(0.0f, 1.0f, 0.0f));
 	localModelMatrix = glm::scale(localModelMatrix, glm::vec3(size));
-	localModelMatrix = glm::rotate(localModelMatrix, glm::radians(180.0f), glm::vec3(0, 1, 0));
+	localModelMatrix = glm::rotate(localModelMatrix, glm::radians(TURTLE_ROTATION), glm::vec3(0, 1, 0));
 
 	//localModelMatrix = glm::translate(glm::mat4(1.0f), position);
 	//glm::mat4 modelMatrix = alignObject(position, direction, glm::vec3(0.0f, 0.0f, 1.0f));
