@@ -167,10 +167,17 @@ const float bannerVertexData[bannerNumQuadVertices * 5] = {
 	 1.0f,  0.15f, 0.0f, 3.0f, 1.0f,
 	 1.0f, -0.15f, 0.0f, 3.0f, 0.0f*/
 
-	 // x      y      z     u     v
+	/* // x      y      z     u     v
  0.1f*SCENE_WIDTH,  0.0f, 0.1f * SCENE_DEPTH, 0.0f, 1.0f,
  0.1f * SCENE_WIDTH,  10.0f, 0.1f * SCENE_DEPTH, 0.0f, 0.0f,
   -0.1f * SCENE_WIDTH,  0.0f, -0.1f * SCENE_DEPTH, 3.0f, 1.0f,
-   -0.1f * SCENE_WIDTH, 10.0f, -0.1f * SCENE_DEPTH, 3.0f, 0.0f
+   -0.1f * SCENE_WIDTH, 10.0f, -0.1f * SCENE_DEPTH, 3.0f, 0.0f*/
+
+	//CAM_INIT_PLAYER glm::vec3(17.8f, 1.0f, -12.9f)
+   // x      y      z     u     v
+17.8f,  0.0f, 0.0f, 0.0f, 1.0f,
+17.8f,  1.0f, 0.0f, 0.0f, 0.0f,
+ 0.0f,  0.0f, -12.9f, 3.0f, 1.0f,
+  0.0f, 1.0f,-12.9f, 3.0f, 0.0f
 };
 #endif // __DATA_H
