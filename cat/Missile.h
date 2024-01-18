@@ -14,6 +14,8 @@ public:
 
 	void update(float elapsedTime, const glm::mat4* parentModelMatrix) override;
 	void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) override;
+	glm::mat4 alignObject(const glm::vec3& position, const glm::vec3& front, const glm::vec3& up);
+
 	static Missile* createMissile(ShaderProgram* shdrPrg, const glm::vec3& missilePosition, const glm::vec3& missileDirection, float& missileLaunchTime, float elapsedTime); // dont need to create Missile instance
 	// should return the created Missile return
 private:

@@ -47,7 +47,6 @@ Tree::Tree(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(false)
 		std::cerr << "initializeModels(): Vegetation model loading failed." << std::endl;
 	}
 	else {
-		//geometries[0]->texture= pgr::createTexture("\data\Spruce_obj");;
 		initialized = true;
 	}
 	float RANGE = 5;

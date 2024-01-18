@@ -51,7 +51,6 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 
 //trees
 #define TREE_SPACING 10.0f
-//#define TREE_MODEL "data/Spruce_obj/Spruce.obj"
 #define TREE_MODEL "data/tree/Tree.obj"
 #define TREE_SCALE 2.0f
 
