@@ -1005,6 +1005,7 @@ void myMenu(int menuItemID) {
 	
 	// Add Banner
 	case 1:
+		// show Banner
 		break;
 
 	// Exit program
@@ -1063,6 +1064,7 @@ int main(int argc, char** argv) {
 
 	/* Create menu camera. */
 	int idCamera = glutCreateMenu(menuCamera);
+	glutAddMenuEntry("Free Camera", 0);
 	glutAddMenuEntry("Camera 1", 2);
 	glutAddMenuEntry("Camera 2", 1);
 	glutAddMenuEntry("Camera 3", 3);
