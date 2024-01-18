@@ -58,6 +58,7 @@ ObjectList objects;
 // shared shader programs
 ShaderProgram commonShaderProgram;
 FireShaderProgram fireShaderProgram;
+ExplosionShaderProgram explosionShaderProgram;
 SkyboxShaderProgram skyboxShaderProgram;
 MissileShaderProgram missileShaderProgram;
 
@@ -333,33 +334,22 @@ void loadShaderPrograms() //define at least 1 shader obj
 		0
 	};
 
-	struct ExplosionShaderProgram {
-		// identifier for the shader program
-		GLuint program;              // = 0;
-		// vertex attributes locations
-		GLint posLocation;           // = -1;
-		GLint texCoordLocation;      // = -1;
-		// uniforms locations
-		GLint PVMmatrixLocation;     // = -1;
-		GLint VmatrixLocation;       // = -1;
-		GLint timeLocation;          // = -1;
-		GLint texSamplerLocation;    // = -1;
-		GLint frameDurationLocation; // = -1;
+	// create the program with two shaders
+	explosionShaderProgram.program = pgr::createProgram(shaders4);
 
-	} explosionShaderProgram;
+	// get position and texture coordinates attributes locations
+	explosionShaderProgram.posLocation = glGetAttribLocation(explosionShaderProgram.program, "position");
+	explosionShaderProgram.texCoordLocation = glGetAttribLocation(explosionShaderProgram.program, "texCoord");
+	// get uniforms locations
+	//explosionShaderProgram.texCoordLocation = 1;
+	explosionShaderProgram.PVMmatrixLocation = glGetUniformLocation(explosionShaderProgram.program, "PVMmatrix");
+	explosionShaderProgram.VmatrixLocation = glGetUniformLocation(explosionShaderProgram.program, "Vmatrix");
+	explosionShaderProgram.timeLocation = glGetUniformLocation(explosionShaderProgram.program, "time");
+	explosionShaderProgram.texSamplerLocation = glGetUniformLocation(explosionShaderProgram.program, "texSampler");
+	explosionShaderProgram.frameDurationLocation = glGetUniformLocation(explosionShaderProgram.program, "frameDuration");
+	explosionShaderProgram.frames = glGetUniformLocation(explosionShaderProgram.program, "pattern");
+	explosionShaderProgram.scale = glGetUniformLocation(explosionShaderProgram.program, "scale");
 
-	  // create the program with two shaders
-	  explosionShaderProgram.program = pgr::createProgram(shaders4);
-
-	  // get position and texture coordinates attributes locations
-	  explosionShaderProgram.posLocation      = glGetAttribLocation(explosionShaderProgram.program, "position");
-	  explosionShaderProgram.texCoordLocation = glGetAttribLocation(explosionShaderProgram.program, "texCoord");
-	  // get uniforms locations
-	  explosionShaderProgram.PVMmatrixLocation     = glGetUniformLocation(explosionShaderProgram.program, "PVMmatrix");
-	  explosionShaderProgram.VmatrixLocation       = glGetUniformLocation(explosionShaderProgram.program, "Vmatrix");
-	  explosionShaderProgram.timeLocation          = glGetUniformLocation(explosionShaderProgram.program, "time");
-	  explosionShaderProgram.texSamplerLocation    = glGetUniformLocation(explosionShaderProgram.program, "texSampler");
-	  explosionShaderProgram.frameDurationLocation = glGetUniformLocation(explosionShaderProgram.program, "frameDuration");
 
 	assert(commonShaderProgram.locations.PVMmatrix != -1);
 	assert(commonShaderProgram.locations.position != -1);
@@ -487,11 +477,18 @@ void drawScene(void)
 		if (object != nullptr)
 			object->draw(viewMatrix, projectionMatrix);
 	}
-
+	glDisable(GL_DEPTH_TEST);
 	for (ObjectInstance* object : gameState.explosions) {   // for (auto object : objects) {
 		if (object != nullptr)
-			object->draw(viewMatrix, projectionMatrix);
+			// std::cout << object->textureFrames << " : " << object->frameDuration << std::endl;
+			if (object->currentTime > object->startTime + object->textureFrames * object->frameDuration) {
+				object->destroyed = true;
+			}
+			if (object->destroyed == false){
+				object->draw(viewMatrix, projectionMatrix);
+			}
 	}
+	glEnable(GL_DEPTH_TEST);
 }
 
 
@@ -790,7 +787,7 @@ bool pointInSphere(const glm::vec3& point, const glm::vec3& center, float radius
 
 void insertExplosion(const glm::vec3& position) {
 
-	Explosion* newExplosion = new Explosion(&commonShaderProgram);
+	Explosion* newExplosion = new Explosion(&commonShaderProgram,&explosionShaderProgram);
 
 	newExplosion->speed = 0.0f;
 	newExplosion->destroyed = false;
@@ -801,7 +798,7 @@ void insertExplosion(const glm::vec3& position) {
 	newExplosion->size = EXPLOSION_SIZE;
 	newExplosion->direction = glm::vec3(0.0f, 0.0f, 1.0f);
 
-	newExplosion->frameDuration = 0.1f;
+	newExplosion->frameDuration = 0.05f;
 	newExplosion->textureFrames = 16;
 	newExplosion->position = position;
 
@@ -815,11 +812,12 @@ void checkCollisions()
 	for (auto it = gameState.missleList.begin(); it != gameState.missleList.end(); ++ it)
 	{
 		Missile* missile = (Missile*)(*it);
-		if (pointInSphere(missile->position, fire_obj->position, fire_obj->size))
+		if (pointInSphere(missile->position, fire_obj->position, fire_obj->size*1.5))
 		{
-			missile->destroyed = true;
-			insertExplosion(missile->position);
+			insertExplosion(fire_obj->position);
 			//std::cout << "Collsion" << std::endl;
+			missile->destroyed = true;
+
 		}
 
 	}
@@ -849,6 +847,10 @@ void timerCb(int)
 			object->update(time/1000, &sceneRootMatrix);
 	}
 	for (ObjectInstance* object : gameState.missleList) {   // for (auto object : objects) {
+		if (object != nullptr)
+			object->update(gameState.elapsedTime, &sceneRootMatrix);
+	}
+	for (ObjectInstance* object : gameState.explosions) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->update(gameState.elapsedTime, &sceneRootMatrix);
 	}

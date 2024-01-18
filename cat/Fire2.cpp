@@ -133,7 +133,7 @@ Fire2::Fire2(ShaderProgram* shdrPrg, FireShaderProgram* fireShaderProgram)
 	}
 
 	//initialize flames2
-	flames2->texture = pgr::createTexture(EXPLOSION_TEXTURE_NAME);
+	flames2->texture = pgr::createTexture(FIRE_TEXTURE_NAME);
 	CHECK_GL_ERROR();
 	glGenVertexArrays(1, &(flames2->vertexArrayObject));
 	glBindVertexArray(flames2->vertexArrayObject);

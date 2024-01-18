@@ -122,9 +122,8 @@ void Missile::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatri
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(size));
 
 	// angular speed = 2*pi*frequency => path = angular speed * time
-//const float frequency = 2.0f; // per second
-//const float angle = 2.0f * M_PI * frequency * (currentTime - startTime); // angle in radians
-	const float angle = 180.0f * M_PI / 180;
+	const float frequency = 1.0f; // per second
+	const float angle = 5.0f * M_PI * frequency * (currentTime - startTime); // angle in radians
 	localModelMatrix = glm::rotate(modelMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
 
 	if (initialized && (shaderProgram != nullptr)) {

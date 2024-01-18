@@ -51,6 +51,7 @@ uniform vec3 fireSpecular;
 uniform vec3 fogColor;
 
 const float density=0.0007;
+//smooth out position, normal//in FS: in position, normal
 
 smooth out vec2 texCoord_v;
 smooth out vec4 color_v;
@@ -143,7 +144,7 @@ void setupLights() {
 void main() {
 
   setupLights();
-
+  // transform vertex and normals to cameraspace -> send as output attribute to VS
   vec3 vertexPosition = (Vmatrix * Mmatrix * vec4(position, 1.0)).xyz;         // vertex in eye coordinates
   vec3 vertexNormal   = normalize( (Vmatrix * normalMatrix * vec4(normal, 0.0) ).xyz);   // normal in eye coordinates by NormalMatrix
 

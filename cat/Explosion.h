@@ -8,15 +8,14 @@ extern const float invSqrt2;
 class Explosion : public ObjectInstance
 {
 public:
-	float frameDuration;
-	int textureFrames;
-
-	Explosion(ShaderProgram* shdrPrg);
+	Explosion(ShaderProgram* shdrPrg, ExplosionShaderProgram* explosionShaderProgram);
 	~Explosion();
+
 
 	void update(float elapsedTime, const glm::mat4* parentModelMatrix) override;
 	void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) override;
 private:
 	bool initialized;  ///< object has the shader with defined locations
 	std::vector<glm::mat4> locations;
+	ObjectGeometry* geometry;
 };

@@ -41,7 +41,7 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define MISSILE_MAX_DISTANCE       3.5f
 #define MISSILE_LAUNCH_TIME_DELAY  0.25 // seconds
 #define MISSILE_SIZE     0.25f
-#define MISSILE_SPEED              1.0f
+#define MISSILE_SPEED              2.5f
 
 
 //house
@@ -116,7 +116,7 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define HIGH_FIRE_THRESHOLD 5
 #define MEDIUM_FIRE_THRESHOLD 2
 const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
-#define EXPLOSION_TEXTURE_NAME "data/flames/fire2.jpg"
+#define FIRE_TEXTURE_NAME "data/flames/fire2.jpg"
 
 //fire big
 #define FIRE_BIG_SCALE  glm::vec3(0.125f, 0.20f, 0.25f)
@@ -138,7 +138,9 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 #define CAM_INIT_PLAYER glm::vec3(6.69, 1.0f, -19.63f)
 
 // explosion size
-#define EXPLOSION_SIZE 0.5f;
+#define EXPLOSION_SIZE 2.5f;
+#define EXPLOSION_TEXTURE_NAME "data/explosion/explode.png"
+
 
 //camera
 #define CAMERA_COUNT 4;
