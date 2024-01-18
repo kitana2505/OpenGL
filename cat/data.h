@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------------------------
 /**
  * \file    data.h
- * \author  Michal Von�ek
+ * \author  Michal Vonášek
  * \date    2023
  * \brief   Basic defines and data structures.
  */
@@ -50,8 +50,9 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEYS_COUNT, KEY_SPACE};
 #define HOUSE_TRANSLATE glm::vec3(5.0f,0.8f,0)
 
 //trees
-#define TREE_MODEL "data/Spruce_obj/Spruce.obj"
-#define TREE_SPACING 5.0f
+#define TREE_SPACING 10.0f
+//#define TREE_MODEL "data/Spruce_obj/Spruce.obj"
+#define TREE_MODEL "data/tree/Tree.obj"
 #define TREE_SCALE 2.0f
 
 //grass
@@ -135,7 +136,7 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 #define PLAYER_WALKING_SPEED  2.0f
 #define PLAYER_RUNNING_SPEED  4.5f
 #define PLAYER_HEIGHT  0.5f
-#define CAM_INIT_PLAYER glm::vec3(17.8f, 1.0f, -12.9f)
+#define CAM_INIT_PLAYER glm::vec3(6.69, 1.0f, -19.63f)
 
 //camera
 #define CAMERA_COUNT 4;

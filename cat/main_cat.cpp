@@ -1,6 +1,6 @@
 	//----------------------------------------------------------------------------------------
 /**
- * \file    skeleton.cpp : This file contains the 'main' function and callbacks.
+ * \file    skeleton.cpp : This file contains the 'main' function and callbackcallbacks.
 			Program execution begins and ends there.
  * \author  Jaroslav Sloup, Petr Felkel
  * \date    2022/03/03
@@ -16,7 +16,7 @@
   *
   *
   * Comment your code using the [doxygen](https://www.doxygen.nl/index.html) documenting system style.
-  * Create "doxygen" directory, make it current by "cd doxygen", prepare a configuration file with "doxygen -g" and edit the details.
+  * Create "doxygen" directory, make it current by "cd doxygen", prepare a configuration file with "doxygen -g" and edit the details.timer
   *
   * Start by renaming of this file from skeleton.cpp to <your_name>.cpp and the project to <your_name>.vcxproj
   *
@@ -409,7 +409,7 @@ void drawScene(void)
 	case 2:
 		gameState.target_camera_position = CAM_INIT_PLAYER;
 		gameState.cameraElevationAngle = 0.0f;
-		gameState.cameraRotationAngle = 135.0f;
+		gameState.cameraRotationAngle = 125.0f;
 		break;
 	case 3:
 		gameState.target_camera_position = STATIC_CAMERA_2;
@@ -758,6 +758,12 @@ void timerCb(int)
 		gameState.launchMissile = true;
 		shooting(objects, gameState.elapsedTime);
 	}
+
+	//std::cout << gameState.player_position.x << std::endl;
+	//std::cout << gameState.player_position.y << std::endl;
+	//std::cout << gameState.player_position.z << std::endl;
+	//std::cout << gameState.cameraRotationAngle << std::endl;
+	//std::cout << "-----------------------------------" << std::endl;
 #endif // task_1_0
 
 	// and plan a new event
@@ -791,7 +797,9 @@ void initApplication() {
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
+  objects.push_back(new Tree(&commonShaderProgram));
 	objects.push_back(new Turtle(&commonShaderProgram));
+	
 	//objects.push_back(gameState.fire);
 	//objects.push_back(gameState.missile);
 
@@ -803,7 +811,7 @@ void initApplication() {
 	gameState.player_position = CAM_INIT_PLAYER;
 	gameState.player_direction = CAM_INIT_PLAYER;
 	gameState.cameraElevationAngle = 0.0f;
-	gameState.cameraRotationAngle = 135.0f;
+	gameState.cameraRotationAngle = 90;
 
 	//initiali night environment
 	gameState.sunOn = false;

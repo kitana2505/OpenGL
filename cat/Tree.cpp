@@ -50,9 +50,12 @@ Tree::Tree(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(false)
 		//geometries[0]->texture= pgr::createTexture("\data\Spruce_obj");;
 		initialized = true;
 	}
+	float RANGE = 5;
 	for (float i = -SCENE_WIDTH; i < SCENE_WIDTH; i+= TREE_SPACING) {
 		for (float j = -SCENE_WIDTH; j < SCENE_WIDTH; j+= TREE_SPACING) {
-			
+			if (i < RANGE && i > RANGE) continue;
+			if (j < RANGE && j > -RANGE) continue;
+
 			float x = i + (rand()%80 +10.0f)* TREE_SPACING /100;
 			float z = j +(rand() %80 +10.0f)* TREE_SPACING /100;
 
@@ -62,7 +65,7 @@ Tree::Tree(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(false)
 			glm::mat4 location = glm::scale(globalModelMatrix, glm::vec3(randScale + TREE_SCALE));
 			//location = glm::rotate(location, randRotation, glm::vec3(0, 1, 0));
 			location = glm::translate(location, glm::vec3(x /( randScale*TREE_SCALE), 1,z / (randScale * TREE_SCALE)));
-			location = glm::rotate(location, -1.6f, glm::vec3(1, 0, 0));;
+			location = glm::rotate(location, 0.0f, glm::vec3(1, 0, 0));;
 			
 			locations.emplace_back(location);
 		}
