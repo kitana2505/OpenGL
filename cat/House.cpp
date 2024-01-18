@@ -48,8 +48,10 @@ House::House(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(fals
 		//geometries[0]->texture= pgr::createTexture("\data\Spruce_obj");;
 		initialized = true;
 	}
+	direction = glm::vec3(0.0f, 1.0f, 0.0f);
+	position = HOUSE_TRANSLATE;
 	glm::mat4 location = glm::scale(globalModelMatrix, glm::vec3(HOUSE_SCALE));
-	location = glm::translate(location, HOUSE_TRANSLATE);
+	location = glm::translate(location, position);
 	locations.emplace_back(location);
 
 	CHECK_GL_ERROR();
