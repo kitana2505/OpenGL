@@ -20,7 +20,7 @@ void main() {
   float localTime = time * decay;
   // localTime = 0;
 
-  vec2 offset = vec2( 0.0,-(floor(localTime) - localTime)); //u,v
+  vec2 offset = vec2( 0.0,-(floor(localTime) - localTime)*8); //u,v
 
   // outputs entering the fragment shader
   texCoord_v = texCoord + offset;

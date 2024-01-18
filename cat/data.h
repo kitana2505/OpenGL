@@ -31,7 +31,7 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define CAT_ROTATION 0.0f
 //banner
 
-#define BANNER_TEXTURE_NAME  "data/banner/gameOver.png"
+#define BANNER_TEXTURE_NAME  "data/banner/scrollrain.jpg"
 #define BANNER_SIZE      1.0f
 
 //Rabbit

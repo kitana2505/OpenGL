@@ -777,8 +777,14 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
 	case 'g':
 	case 'G':
 		//case GLUT_KEY_DOWN:
+		if (gameState.gameOver == false){
 		gameState.gameOver = true;
 		createBanner();
+		}
+		else  {
+			gameState.gameOver = false;
+			gameState.banner = NULL;
+		}
 		break;
 	}
 }
@@ -816,7 +822,7 @@ void keyboardUpCb(unsigned char keyReleased, int mouseX, int mouseY) {
 	case 'g':
 	case 'G':
 		//case GLUT_KEY_Up:
-		gameState.gameOver = false;
+		//gameState.gameOver = false;
 
 	case ' ':
 		gameState.keyMap[KEY_SPACE] = false;
@@ -1174,6 +1180,8 @@ void initApplication() {
 	gameState.sunOn = false;
 	gameState.reflectorOn = true;
 
+	//init gameOver
+	gameState.gameOver = false;
 	// set initial fog color to black
 	glUseProgram(commonShaderProgram.program);
 	glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
