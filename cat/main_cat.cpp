@@ -413,8 +413,8 @@ void drawScene(void)
 		break;
 	case 3:
 		gameState.target_camera_position = STATIC_CAMERA_2;
-		gameState.cameraElevationAngle = -45.0f;
-		gameState.cameraRotationAngle = 135.0f;
+		gameState.cameraElevationAngle = ELEVATION_ANGLE_2;
+		gameState.cameraRotationAngle = ROTATION_ANGLE_2;
 		break;
 	}
 	glm::vec3 cameraPosition = move_camera();
