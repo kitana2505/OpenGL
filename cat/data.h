@@ -29,7 +29,10 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define CAT_SCALE  0.5f
 #define CAT_INITIAL_POS glm::vec3(0, 0.9, -10)
 #define CAT_ROTATION 0.0f
+//banner
 
+#define BANNER_TEXTURE_NAME  "data/banner/gameOver.png"
+#define BANNER_SIZE      1.0f
 
 //Rabbit
 #define RABBIT_MODEL  "data/animal_rabbit/rabbit.obj"
@@ -174,6 +177,35 @@ const float flameVertexData[flameNumQuadVertices * 5] = {
 	  -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
 	   1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
 };
+
+
+//
+// "game over" banner geometry definition 
+//
+
+const int bannerNumQuadVertices = 4;
+const float bannerVertexData[bannerNumQuadVertices * 5] = {
+
+	/*// x      y      z     u     v
+	-1.0f,  0.15f, 0.0f, 0.0f, 1.0f,
+	-1.0f, -0.15f, 0.0f, 0.0f, 0.0f,
+	 1.0f,  0.15f, 0.0f, 3.0f, 1.0f,
+	 1.0f, -0.15f, 0.0f, 3.0f, 0.0f*/
+
+	/* // x      y      z     u     v
+ 0.1f*SCENE_WIDTH,  0.0f, 0.1f * SCENE_DEPTH, 0.0f, 1.0f,
+ 0.1f * SCENE_WIDTH,  10.0f, 0.1f * SCENE_DEPTH, 0.0f, 0.0f,
+  -0.1f * SCENE_WIDTH,  0.0f, -0.1f * SCENE_DEPTH, 3.0f, 1.0f,
+   -0.1f * SCENE_WIDTH, 10.0f, -0.1f * SCENE_DEPTH, 3.0f, 0.0f*/
+
+	//CAM_INIT_PLAYER glm::vec3(17.8f, 1.0f, -12.9f)
+   // x      y      z     u     v
+17.8f,  0.0f, 0.0f, 0.0f, 1.0f,
+17.8f,  1.0f, 0.0f, 0.0f, 0.0f,
+ 0.0f,  0.0f, -12.9f, 3.0f, 1.0f,
+  0.0f, 1.0f,-12.9f, 3.0f, 0.0f
+};
+
 const int explosionNumQuadVertices = 4;
 const float explosionVertexData[explosionNumQuadVertices * 5] = {
 
@@ -234,4 +266,5 @@ const std::string skyboxFarPlaneFragmentShaderSrc(
     "  color_f = texture(skyboxSampler, texCoord_v);\n"
     "}\n"
 );
+
 #endif // __DATA_H
