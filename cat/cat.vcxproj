@@ -153,10 +153,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animal_cat.cpp" />
+    <ClCompile Include="Brick.cpp" />
+    <ClCompile Include="Animal_rabbit.cpp" />
+    <ClCompile Include="Animal_turtle.cpp" />
     <ClCompile Include="data\fire_wood\big.cpp" />
     <ClCompile Include="data\fire_wood\fireplace.cpp" />
     <ClCompile Include="data\fire_wood\medium.cpp" />
     <ClCompile Include="data\fire_wood\small.cpp" />
+    <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="Fire.cpp" />
     <ClCompile Include="Fire2.cpp" />
     <ClCompile Include="Ground.cpp" />
@@ -164,16 +168,19 @@
     <ClCompile Include="main_cat.cpp" />
     <ClCompile Include="Missile.cpp" />
     <ClCompile Include="Skybox.cpp" />
-    <ClCompile Include="spline.cpp" />
     <ClCompile Include="Tree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animal_cat.h" />
+    <ClInclude Include="Brick.h" />
+    <ClInclude Include="Animal_rabbit.h" />
+    <ClInclude Include="Animal_turtle.h" />
     <ClInclude Include="data.h" />
     <ClInclude Include="data\fire_wood\big.h" />
     <ClInclude Include="data\fire_wood\fireplace.h" />
     <ClInclude Include="data\fire_wood\medium.h" />
     <ClInclude Include="data\fire_wood\small.h" />
+    <ClInclude Include="Explosion.h" />
     <ClInclude Include="fire.h" />
     <ClInclude Include="Fire2.h" />
     <ClInclude Include="Ground.h" />
@@ -181,12 +188,15 @@
     <ClInclude Include="Missile.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="Skybox.h" />
-    <ClInclude Include="spline.h" />
     <ClInclude Include="Tree.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="brickShader.frag" />
+    <None Include="brickShader.vert" />
     <None Include="commonShader.frag" />
     <None Include="commonShader.vert" />
+    <None Include="explosion.frag" />
+    <None Include="explosion.vert" />
     <None Include="fireShader.frag" />
     <None Include="fireShader.vert" />
   </ItemGroup>

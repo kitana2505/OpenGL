@@ -120,6 +120,7 @@ Fire2::Fire2(ShaderProgram* shdrPrg, FireShaderProgram* fireShaderProgram)
 		initialized = true;
 		this->localModelMatrix = glm::scale(localModelMatrix, FIRE_SCALE);
 		this->localModelMatrix = glm::translate(localModelMatrix, glm::vec3(FIRE_TRANSLATE));
+		this->size = FIRE_SIZE;
 		glUseProgram(shaderProgram->program);
 		//glUniform3f(shaderProgram->locations.fireAmbient, 0.0f, 0.0f, 0.0f);
 		//glUniform3f(shaderProgram->locations.fireDiffuse, 1.0f, 0.4f, 0.0f);
@@ -132,7 +133,7 @@ Fire2::Fire2(ShaderProgram* shdrPrg, FireShaderProgram* fireShaderProgram)
 	}
 
 	//initialize flames2
-	flames2->texture = pgr::createTexture(EXPLOSION_TEXTURE_NAME);
+	flames2->texture = pgr::createTexture(FIRE_TEXTURE_NAME);
 	CHECK_GL_ERROR();
 	glGenVertexArrays(1, &(flames2->vertexArrayObject));
 	glBindVertexArray(flames2->vertexArrayObject);
