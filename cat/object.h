@@ -172,7 +172,7 @@ typedef struct _ShaderProgram {
 
 		locations.firePosition = -1;
 		locations.fireStrength = -1;
-		locations.fireFallof = -1;
+		//locations.fireFallof = -1;
 		locations.fireDiffuse = -1;
 		locations.fireAmbient = -1;
 		locations.fireSpecular = -1;
