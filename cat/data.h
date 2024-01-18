@@ -32,8 +32,8 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 
 //turtle
 #define TURTLE_MODEL  "data/airplane/11803_Airplane_v1_l1.obj"
-#define TURTLE_SCALE 5.0f
-#define TURTLE_INITIAL_POS glm::vec3(10.0f,15.0f, 15.0f)
+#define TURTLE_SCALE 2.0f
+#define TURTLE_INITIAL_POS glm::vec3(-5.0f,8.0f, 15.0f)
 #define TURTLE_ROTATION 90.0f
 #define TURTLE_SPEED    0.5f
 
@@ -144,9 +144,7 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 //camera
 #define CAMERA_COUNT 4;
 #define STATIC_CAMERA_1 glm::vec3(-80,15,20)
-#define STATIC_CAMERA_2 glm::vec3(25.0f,40.0f,-12.0f)
-#define ELEVATION_ANGLE_2  -60.0f
-#define ROTATION_ANGLE_2  135.0f
+#define STATIC_CAMERA_2 glm::vec3(17.0f,30.0f,-12.0f)
 
 //Skybox
 #define SKYBOX_DAY_TEXTURE_NAME "data/skybox/miramar"
