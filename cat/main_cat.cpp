@@ -1,6 +1,6 @@
 	//----------------------------------------------------------------------------------------
 /**
- * \file    skeleton.cpp : This file contains the 'main' function and callbacks.
+ * \file    skeleton.cpp : This file contains the 'main' function and callbackcallbacks.
 			Program execution begins and ends there.
  * \author  Jaroslav Sloup, Petr Felkel
  * \date    2022/03/03
@@ -16,7 +16,7 @@
   *
   *
   * Comment your code using the [doxygen](https://www.doxygen.nl/index.html) documenting system style.
-  * Create "doxygen" directory, make it current by "cd doxygen", prepare a configuration file with "doxygen -g" and edit the details.
+  * Create "doxygen" directory, make it current by "cd doxygen", prepare a configuration file with "doxygen -g" and edit the details.timer
   *
   * Start by renaming of this file from skeleton.cpp to <your_name>.cpp and the project to <your_name>.vcxproj
   *
@@ -39,15 +39,20 @@
 #include "object.h"
 //#include "triangle.h"
 //#include "singlemesh.h"
-#include "Fire.h"
+//#include "Fire.h"
 #include "Fire2.h"
 #include "Tree.h"
 #include "House.h"
 #include "Ground.h"
 #include "Skybox.h"
 #include "Animal_cat.h"
+#include "Animal_turtle.h"
 #include "Missile.h"
 #include "Banner.h"
+#include "Brick.h"
+#include "Animal_rabbit.h"
+#include "Explosion.h"
+
 
 //constexpr int WINDOW_WIDTH = 500;
 //constexpr int WINDOW_HEIGHT = 500;
@@ -57,10 +62,13 @@ ObjectList objects;
 // shared shader programs
 ShaderProgram commonShaderProgram;
 FireShaderProgram fireShaderProgram;
+ShaderProgram brickShaderProgram;
+ExplosionShaderProgram explosionShaderProgram;
 SkyboxShaderProgram skyboxShaderProgram;
 MissileShaderProgram missileShaderProgram;
 ObjectList missleList;
 ShaderProgram bannerShaderProgram;
+ObjectList rabbitList;
 
 
 // -----------------------  OpenGL stuff ---------------------------------
@@ -95,10 +103,8 @@ struct _GameState {
 
 	/// Sunlight should be on/off
 	bool sunOn;
-	 Fire* fire;
-	 Fire2* fire2;
-	// Firewood* firewood;
-	 Skybox* skybox;
+	Fire2* fire2; 
+	Skybox* skybox;
 
 	/// number of wood stacks in inventory
 	//int wood_in_inventory = 0;
@@ -113,6 +119,9 @@ struct _GameState {
 
 	 bool gameOver;
 	 Banner* banner;
+
+	 ObjectList missleList;
+	 ObjectList explosions;
 
 }gameState;
 
@@ -174,21 +183,22 @@ void move_player(float deltaTime) {
 
 void shooting(ObjectList objects, float elapsedTime)
 {
+	if (gameState.launchMissile == false) { return; }
 	//if (gameState.keyMap[KEY_SPACE] == true) {
 		// missile position and direction
-	glm::vec3 missilePosition = objects[3]->position;
-	glm::vec3 missileDirection = objects[3]->direction;
+	glm::vec3 missilePosition = objects[4]->position + glm::vec3(0.0f, CAT_SCALE/5.0f, 4.5f);
+	glm::vec3 missileDirection = objects[4]->direction;
 
 	//missilePosition += missileDirection * 1.5f * CAT_SCALE;
-	missilePosition += missileDirection  * CAT_SCALE;
+	missilePosition += missileDirection * CAT_SCALE * 0.25f;
 	//MissileShaderProgram* missileShader = new MissileShaderProgram;
-	Missile* newMissile = Missile::createMissile(&commonShaderProgram, missilePosition, missileDirection, gameState.missileLaunchTime,gameState.elapsedTime);
+	Missile* newMissile = Missile::createMissile(&commonShaderProgram, missilePosition, missileDirection, gameState.missileLaunchTime, gameState.elapsedTime);
 	//}
 
+
 	// test collisions among objects in the scene
-	//checkCollisions();
-	//newMissile->draw();
-	missleList.push_back(newMissile);
+	
+	gameState.missleList.push_back(newMissile);
 	gameState.launchMissile = false;
 }
 
@@ -292,20 +302,26 @@ void loadShaderPrograms() //define at least 1 shader obj
 	commonShaderProgram.locations.reflectorPosition = glGetUniformLocation(commonShaderProgram.program, "reflectorPosition");
 	commonShaderProgram.locations.reflectorDirection = glGetUniformLocation(commonShaderProgram.program, "reflectorDirection");
 	commonShaderProgram.locations.flashlightOn = glGetUniformLocation(commonShaderProgram.program, "reflectorOn");
+	commonShaderProgram.locations.reflectorSpotCosCutOff = glGetUniformLocation(commonShaderProgram.program, "reflectorSpotCosCutOff");
+	commonShaderProgram.locations.reflectorExponent = glGetUniformLocation(commonShaderProgram.program, "reflectorExponent");
 	commonShaderProgram.locations.sunOn = glGetUniformLocation(commonShaderProgram.program, "sunOn");
 	commonShaderProgram.locations.sunStrength = glGetUniformLocation(commonShaderProgram.program, "sunStrength");
+	commonShaderProgram.locations.time = glGetUniformLocation(commonShaderProgram.program, "time");
 
 
 	//fire
 	commonShaderProgram.locations.firePosition = glGetUniformLocation(commonShaderProgram.program, "firePosition");
 	commonShaderProgram.locations.fireStrength = glGetUniformLocation(commonShaderProgram.program, "fireStrength");
-	commonShaderProgram.locations.fireFallof = glGetUniformLocation(commonShaderProgram.program, "fireFallof");
-	commonShaderProgram.locations.fireDiffuse = glGetUniformLocation(commonShaderProgram.program, "fireDiffuse");
-	commonShaderProgram.locations.fireSpecular = glGetUniformLocation(commonShaderProgram.program, "fireSpecular");
-	commonShaderProgram.locations.fireAmbient = glGetUniformLocation(commonShaderProgram.program, "fireAmbient");
+	//commonShaderProgram.locations.fireFallof = glGetUniformLocation(commonShaderProgram.program, "fireFallof");
+	//commonShaderProgram.locations.fireDiffuse = glGetUniformLocation(commonShaderProgram.program, "fireDiffuse");
+	//commonShaderProgram.locations.fireSpecular = glGetUniformLocation(commonShaderProgram.program, "fireSpecular");
+	//commonShaderProgram.locations.fireAmbient = glGetUniformLocation(commonShaderProgram.program, "fireAmbient");
+
 
 	//fog
 	commonShaderProgram.locations.fogColor = glGetUniformLocation(commonShaderProgram.program, "fogColor");
+	//commonShaderProgram.locations.fogOn = glGetUniformLocation(commonShaderProgram.program, "fogOn");
+
 
 	commonShaderProgram.initialized = true;
 
@@ -314,7 +330,7 @@ void loadShaderPrograms() //define at least 1 shader obj
 	  pgr::createShaderFromFile(GL_VERTEX_SHADER,"fireShader.vert"),
 	  pgr::createShaderFromFile(GL_FRAGMENT_SHADER, "fireShader.frag"),
 	  0
-		};
+	};
 
 	// create the program with two shaders
 	fireShaderProgram.program = pgr::createProgram(shaders2);
@@ -344,6 +360,7 @@ void loadShaderPrograms() //define at least 1 shader obj
 	skyboxShaderProgram.Sampler = glGetUniformLocation(skyboxShaderProgram.program, "skyboxSampler");
 	skyboxShaderProgram.iPVM = glGetUniformLocation(skyboxShaderProgram.program, "inversePVmatrix");
 
+
 	GLuint shaders7[] = {
 		pgr::createShaderFromFile(GL_VERTEX_SHADER, "banner.vert"),
 		pgr::createShaderFromFile(GL_FRAGMENT_SHADER, "banner.frag"),
@@ -360,6 +377,53 @@ void loadShaderPrograms() //define at least 1 shader obj
 	bannerShaderProgram.locations.texSampler = glGetUniformLocation(bannerShaderProgram.program, "texSampler");
 	bannerShaderProgram.locations.texCoord = glGetAttribLocation(bannerShaderProgram.program, "texCoord");
 	bannerShaderProgram.locations.time = glGetUniformLocation(bannerShaderProgram.program, "time");
+
+	// push vertex shader and fragment shader
+	GLuint shaders5[] = {
+	  pgr::createShaderFromFile(GL_VERTEX_SHADER,"brickShader.vert"),
+	  pgr::createShaderFromFile(GL_FRAGMENT_SHADER,"brickShader.frag"),
+	  0
+	};
+
+	// create the program with two shaders
+	brickShaderProgram.program = pgr::createProgram(shaders5);
+
+	// get position and texture coordinates attributes locations
+	brickShaderProgram.locations.position = glGetAttribLocation(brickShaderProgram.program, "position");
+	brickShaderProgram.locations.texCoord = glGetAttribLocation(brickShaderProgram.program, "texCoord");
+	// get uniforms locations
+	//brickShaderProgram.texCoordLocation = 1;
+	brickShaderProgram.locations.PVMmatrix = glGetUniformLocation(brickShaderProgram.program, "PVMmatrix");
+	brickShaderProgram.locations.Vmatrix = glGetUniformLocation(brickShaderProgram.program, "Vmatrix");
+	//brickShaderProgram.locations.t = glGetUniformLocation(brickShaderProgram.program, "time");
+	brickShaderProgram.locations.texSampler = glGetUniformLocation(brickShaderProgram.program, "texSampler");
+	//brickShaderProgram.frameDurationLocation = glGetUniformLocation(brickShaderProgram.program, "frameDuration");
+	//brickShaderProgram.brickTex = glGetUniformLocation(brickShaderProgram.program, "brickTex");
+	brickShaderProgram.locations.mossTex = glGetUniformLocation(brickShaderProgram.program, "mossTex");
+
+	// exlosion shader
+	GLuint shaders4[] = {
+		pgr::createShaderFromFile(GL_VERTEX_SHADER,"explosion.vert"),
+		pgr::createShaderFromFile(GL_FRAGMENT_SHADER, "explosion.frag"),
+		0
+	};
+
+	// create the program with two shaders
+	explosionShaderProgram.program = pgr::createProgram(shaders4);
+
+	// get position and texture coordinates attributes locations
+	explosionShaderProgram.posLocation = glGetAttribLocation(explosionShaderProgram.program, "position");
+	explosionShaderProgram.texCoordLocation = glGetAttribLocation(explosionShaderProgram.program, "texCoord");
+	// get uniforms locations
+	//explosionShaderProgram.texCoordLocation = 1;
+	explosionShaderProgram.PVMmatrixLocation = glGetUniformLocation(explosionShaderProgram.program, "PVMmatrix");
+	explosionShaderProgram.VmatrixLocation = glGetUniformLocation(explosionShaderProgram.program, "Vmatrix");
+	explosionShaderProgram.timeLocation = glGetUniformLocation(explosionShaderProgram.program, "time");
+	explosionShaderProgram.texSamplerLocation = glGetUniformLocation(explosionShaderProgram.program, "texSampler");
+	explosionShaderProgram.frameDurationLocation = glGetUniformLocation(explosionShaderProgram.program, "frameDuration");
+	explosionShaderProgram.frames = glGetUniformLocation(explosionShaderProgram.program, "pattern");
+	explosionShaderProgram.scale = glGetUniformLocation(explosionShaderProgram.program, "scale");
+
 
 
 	assert(commonShaderProgram.locations.PVMmatrix != -1);
@@ -401,7 +465,7 @@ void setLights() {
 		glUniform1i(commonShaderProgram.locations.sunOn, 1);
 	}
 	else {
-		glUniform1f(commonShaderProgram.locations.sunStrength, 0.7f);
+		glUniform1f(commonShaderProgram.locations.sunStrength, 0.0f);
 		glUniform1i(commonShaderProgram.locations.sunOn, 1);
 	}if (gameState.reflectorOn) {
 		glUniform1i(commonShaderProgram.locations.flashlightOn, 1);
@@ -447,7 +511,7 @@ void drawScene(void)
 	case 2:
 		gameState.target_camera_position = CAM_INIT_PLAYER;
 		gameState.cameraElevationAngle = 0.0f;
-		gameState.cameraRotationAngle = 135.0f;
+		gameState.cameraRotationAngle = 125.0f;
 		break;
 	case 3:
 		gameState.target_camera_position = STATIC_CAMERA_2;
@@ -474,8 +538,13 @@ void drawScene(void)
 
 
 	setLights();
+	glUniform1f(commonShaderProgram.locations.time, gameState.elapsedTime);
 	glUniform3f(commonShaderProgram.locations.reflectorPosition, cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	glUniform3f(commonShaderProgram.locations.reflectorDirection, cameraDirection.x, cameraDirection.y, cameraDirection.z);
+	//glUniform3f(commonShaderProgram.locations.reflectorPosition, objects[1]->position.x, objects[1]->position.y, objects[1]->position.z);
+	//glUniform3f(commonShaderProgram.locations.reflectorDirection, objects[1]->direction.x, objects[1]->direction.y, objects[1]->direction.z);
+	glUniform1f(commonShaderProgram.locations.reflectorSpotCosCutOff, 0.6f);
+	glUniform1i(commonShaderProgram.locations.reflectorExponent, 30);
 	glUseProgram(0);
 
 	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
@@ -483,16 +552,55 @@ void drawScene(void)
 			object->draw(viewMatrix, projectionMatrix);
 	}
 
-	for (ObjectInstance* object : missleList) {   // for (auto object : objects) {
+	for (ObjectInstance* object : gameState.missleList) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->draw(viewMatrix, projectionMatrix);
 	}
+
 	if (gameState.banner != nullptr){
 		gameState.banner->draw(viewMatrix, projectionMatrix);
 	}
 
-	
+	glEnable(GL_STENCIL_TEST);
+	// set the stencil operations - if the stencil test and depth test are passed than
+	// value in the stencil buffer is replaced with the object ID (byte 1..255, 0 ... background)
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	// ========  END OF SOLUTION - TASK 6_3-1  ======== //
+	CHECK_GL_ERROR();
+	// draw asteroids
+	int id = 0; //for background
+	// store asteroid ID to stencil buffer
+	for (ObjectList::iterator it = rabbitList.begin(); it != rabbitList.end(); ++it) {
+		// ======== BEGIN OF SOLUTION - TASK 6_3-2 ======== //
+			// set the stencil test function
+			// -> stencil test always passes and reference value for stencil test is set to be object ID (id+1)
+		glStencilFunc(GL_ALWAYS, id + 1, -1);
+		// ========  END OF SOLUTION - TASK 6_3-2  ======== //
+		CHECK_GL_ERROR();
+
+		Rabbit* rabbit_x = (Rabbit*)(*it);
+		rabbit_x->draw( viewMatrix, projectionMatrix);
+		id++;
+	}
+	// disable stencil test
+	glDisable(GL_STENCIL_TEST);
+
+	glDisable(GL_DEPTH_TEST);
+	for (ObjectInstance* object : gameState.explosions) {   // for (auto object : objects) {
+		if (object != nullptr)
+			// std::cout << object->textureFrames << " : " << object->frameDuration << std::endl;
+			if (object->currentTime > object->startTime + object->textureFrames * object->frameDuration) {
+				object->destroyed = true;
+			}
+			if (object->destroyed == false){
+				object->draw(viewMatrix, projectionMatrix);
+			}
+	}
+	glEnable(GL_DEPTH_TEST);
+
+
 }
+
 
 
 // -----------------------  Window callbacks ---------------------------------
@@ -607,7 +715,7 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
 	case ' ': // launch missile
 		//if (gameState.gameOver != true)
 		gameState.keyMap[KEY_SPACE] = true;
-		//gameState.launchMissile = true;
+		gameState.launchMissile = true;
 		break;
 
 	case 'g':
@@ -653,6 +761,11 @@ void keyboardUpCb(unsigned char keyReleased, int mouseX, int mouseY) {
 	case 'G':
 		//case GLUT_KEY_Up:
 		gameState.gameOver = false;
+
+	case ' ':
+		gameState.keyMap[KEY_SPACE] = false;
+		gameState.launchMissile = false;
+
 		break;
 	}
 
@@ -715,7 +828,7 @@ void specialKeyboardUpCb(int specKeyReleased, int mouseX, int mouseY) {
 	}
 } // key released
 
-// -----------------------  Mouse ---------------------------------
+// -----------------------  mouse ---------------------------------
 // three events - mouse click, mouse drag, and mouse move with no button pressed
 
 // 
@@ -723,19 +836,43 @@ void specialKeyboardUpCb(int specKeyReleased, int mouseX, int mouseY) {
  * \brief React to mouse button press and release (mouse click).
  * When the user presses and releases mouse buttons in the window, each press
  * and each release generates a mouse callback (including release after dragging).
- *
+ *f
  * \param buttonPressed button code (GLUT_LEFT_BUTTON, GLUT_MIDDLE_BUTTON, or GLUT_RIGHT_BUTTON)
  * \param buttonState GLUT_DOWN when pressed, GLUT_UP when released
  * \param mouseX mouse (cursor) X position
  * \param mouseY mouse (cursor) Y position
  */
 void mouseCb(int buttonPressed, int buttonState, int mouseX, int mouseY) {
-	unsigned char objectID = 0;
-	glReadPixels(mouseX, glutGet(GLUT_WINDOW_HEIGHT) - mouseY - 1, 1, 1,
-		GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, &objectID
-	);
-	if (buttonState == 1) {
-		return;
+
+	if ((buttonPressed == GLUT_LEFT_BUTTON) && (buttonState == GLUT_DOWN)) {
+		unsigned char rabbitID = 0;
+		glReadPixels(mouseX, glutGet(GLUT_WINDOW_HEIGHT) - mouseY - 1, 1, 1,
+			GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, &rabbitID
+		);
+		if (buttonState == 1) {
+			return;
+		}
+
+		if (rabbitID == 0) {
+			// background was clicked
+			printf("Clicked on background\n");
+		}
+		else {
+
+			// object was clicked
+			printf("Clicked on object with ID: %d\n", (int)rabbitID);
+
+			ObjectList::iterator it = rabbitList.begin();
+			std::advance(it, rabbitID - 1);
+			Rabbit* rabbit_x = (Rabbit*)(*it);
+			if (rabbit_x->destroyed == false) {
+				rabbit_x->destroyed = true;	
+				rabbitList.erase(it);
+				// remove asteroid
+				//insertExplosion(asteroid->position);  // insert explosion billboard
+			}
+
+		}
 	}
 }
 
@@ -788,8 +925,57 @@ void passiveMouseMotionCb(int mouseX, int mouseY) {
 	// glutPostRedisplay();
 }
 
-// -----------------------  Timer ---------------------------------
 
+bool pointInSphere(const glm::vec3& point, const glm::vec3& center, float radius) {
+	// Calculate the squared distance between the point and the center of the sphere
+	float distanceSquared = glm::dot(point - center, point - center);
+
+	// Check if the squared distance is less than or equal to the squared radius
+	bool insideSphere = distanceSquared <= (radius * radius);
+
+	return insideSphere;
+}
+
+void insertExplosion(const glm::vec3& position) {
+
+	Explosion* newExplosion = new Explosion(&commonShaderProgram,&explosionShaderProgram);
+
+	newExplosion->speed = 0.0f;
+	newExplosion->destroyed = false;
+
+	newExplosion->startTime = gameState.elapsedTime;
+	newExplosion->currentTime = newExplosion->startTime;
+
+	newExplosion->size = EXPLOSION_SIZE;
+	newExplosion->direction = glm::vec3(0.0f, 0.0f, 1.0f);
+
+	newExplosion->frameDuration = 0.05f;
+	newExplosion->textureFrames = 16;
+	newExplosion->position = position;
+
+	gameState.explosions.push_back(newExplosion);
+}
+
+void checkCollisions()
+{
+	auto fire_obj = objects[0];
+	
+	for (auto it = gameState.missleList.begin(); it != gameState.missleList.end(); ++ it)
+	{
+		Missile* missile = (Missile*)(*it);
+		if (pointInSphere(missile->position, fire_obj->position, fire_obj->size*1.5))
+		{
+			insertExplosion(fire_obj->position);
+			//std::cout << "Collsion" << std::endl;
+			missile->destroyed = true;
+
+		}
+
+	}
+
+}
+
+// -----------------------  Timer ---------------------------------
 /**
  * \brief Callback responsible for the scene update.
  */
@@ -799,6 +985,7 @@ void timerCb(int)
 	const glm::mat4 sceneRootMatrix = glm::mat4(1.0f);
 	gameState.elapsedTime = 0.001f * (float)glutGet(GLUT_ELAPSED_TIME);
 	//float elapsedTime = 0.001f * static_cast<float>(glutGet(GLUT_ELAPSED_TIME)); // milliseconds => seconds
+	gameState.elapsedTime = 0.001f * (float)glutGet(GLUT_ELAPSED_TIME);
 	float time = glutGet(GLUT_ELAPSED_TIME);
 	float deltaTime = (time - gameState.last_update) / 1000;
 	gameState.last_update = time;
@@ -807,16 +994,27 @@ void timerCb(int)
 	// update the application state
 	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
 		if (object != nullptr)
-			object->update(deltaTime, &sceneRootMatrix);
+		  object->update(time/1000, &sceneRootMatrix);
+	}
+    
+	for (ObjectInstance* object : gameState.missleList) {   // for (auto object : objects) {
+		if (object != nullptr)
+			object->update(gameState.elapsedTime, &sceneRootMatrix);
+	}
+	for (ObjectInstance* object : gameState.explosions) {   // for (auto object : objects) {
+		if (object != nullptr)
+			object->update(gameState.elapsedTime, &sceneRootMatrix);
+
 	}
 	if (gameState.banner != nullptr)
 		gameState.banner->update(gameState.elapsedTime, &sceneRootMatrix);
 
 	if (gameState.keyMap[KEY_SPACE] == true)
 	{
-		gameState.launchMissile = true;
+		gameState.launchMissile = true;		
 		shooting(objects, gameState.elapsedTime);
 	}
+
 	if ((gameState.gameOver == true) && (gameState.banner != NULL)) {
 		gameState.banner->currentTime = gameState.elapsedTime;
 	}
@@ -830,6 +1028,31 @@ void timerCb(int)
 		}
 	}
 #endif // task_1_0
+
+
+	// destroy missle after certain distance
+	auto it = gameState.missleList.begin();
+	while (it != gameState.missleList.end()) {
+		Missile* missile = (Missile*)(*it);
+		if (missile->destroyed == true) {
+			it = gameState.missleList.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+
+	// check collision
+	checkCollisions();
+
+	//std::cout << gameState.player_position.x << std::endl;
+	//std::cout << gameState.player_position.y << std::endl;
+	//std::cout << gameState.player_position.z << std::endl;
+	//std::cout << gameState.cameraRotationAngle << std::endl;
+	//std::cout << "-----------------------------------" << std::endl;
+  
+#endif
+
 
 	// and plan a new event
 	glutTimerFunc(33, timerCb, 0); //how many ms to react??
@@ -857,14 +1080,28 @@ void initApplication() {
 	gameState.fire2 = new Fire2(&commonShaderProgram, &fireShaderProgram);
 	gameState.skybox = new Skybox(&skyboxShaderProgram);
 	//gameState.missile = new Missile(&commonShaderProgram, &missileShaderProgram);
+	objects.push_back(gameState.fire2);
 	objects.push_back(gameState.skybox);
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
-	objects.push_back(gameState.fire2);
+	Brick* brick = new Brick(&brickShaderProgram);
+	objects.push_back(brick);
+	Rabbit* rabbit1 = new Rabbit(&commonShaderProgram);
+	rabbit1->position = RABBIT_INITIAL_POS;
+	Rabbit* rabbit2 = new Rabbit(&commonShaderProgram);
+	rabbit2->position = rabbit1->position + glm::vec3(4.0f, 0.0f, 0.0f);
+	Rabbit* rabbit3 = new Rabbit(&commonShaderProgram);
+	rabbit3->position = rabbit2->position + glm::vec3(4.0f, 0.0f, 0.0f);
+  objects.push_back(new Tree(&commonShaderProgram));
+	objects.push_back(new Turtle(&commonShaderProgram));
+	
+
 	//objects.push_back(gameState.fire);
 	//objects.push_back(gameState.missile);
-
+	rabbitList.push_back(rabbit1);
+	rabbitList.push_back(rabbit2);
+	rabbitList.push_back(rabbit3);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	// init your Application
 	// - setup the initial application state
@@ -873,7 +1110,7 @@ void initApplication() {
 	gameState.player_position = CAM_INIT_PLAYER;
 	gameState.player_direction = CAM_INIT_PLAYER;
 	gameState.cameraElevationAngle = 0.0f;
-	gameState.cameraRotationAngle = 135.0f;
+	gameState.cameraRotationAngle = 90;
 
 	//initiali night environment
 	gameState.sunOn = false;
@@ -884,7 +1121,7 @@ void initApplication() {
 	glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
 	glUseProgram(0);
 
-	//mouse
+	//Mouse
 	glutWarpPointer(gameState.windowWidth / 2, gameState.windowHeight / 2);
 
 
@@ -904,6 +1141,63 @@ void finalizeApplication(void) {
 	cleanupShaderPrograms();
 }
 
+void menuCamera(int menuItemID) {
+	gameState.move_camera = true;
+	gameState.camera_index = menuItemID;
+	gameState.initial_camera_position = gameState.camera_position;
+}
+
+void menuSun(int menuItemID)
+{	
+	switch (menuItemID)
+	{
+	case 1:
+		gameState.sunOn = false;
+		gameState.skybox->load_skybox(SKYBOX_NIGHT_TEXTURE_NAME, gameState.skybox->night_suffixes);
+		glUseProgram(commonShaderProgram.program);
+		glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
+		glUseProgram(0);
+		break;
+	case 2:
+		gameState.sunOn = true;
+		gameState.skybox->load_skybox(SKYBOX_DAY_TEXTURE_NAME, gameState.skybox->day_suffixes);
+		glUseProgram(commonShaderProgram.program);
+		glUniform3f(commonShaderProgram.locations.fogColor, 0.5f, 0.5f, 0.5f);
+		glUseProgram(0);
+		break;
+	}
+}
+
+void menuFlash(int menuItemID)
+{
+	switch (menuItemID)
+	{
+		case 1:
+			gameState.reflectorOn = false;
+			glUseProgram(0);
+			break;
+		case 2:
+			gameState.reflectorOn = true;
+			glUseProgram(0);
+			break;
+	}
+}
+
+void myMenu(int menuItemID) {
+
+	switch (menuItemID) {
+	
+	// Add Banner
+	case 1:
+		// show Banner
+		break;
+
+	// Exit program
+	case 2:
+		exit(0);
+		break;
+	}
+}
 
 /**
  * \brief Entry point of the application.
@@ -951,6 +1245,38 @@ int main(int argc, char** argv) {
 	// initialize pgr-framework (GL, DevIl, etc.)
 	if (!pgr::initialize(pgr::OGL_VER_MAJOR, pgr::OGL_VER_MINOR))
 		pgr::dieWithError("pgr init failed, required OpenGL not supported?");
+
+	/* Create menu camera. */
+	int idCamera = glutCreateMenu(menuCamera);
+	glutAddMenuEntry("Free Camera", 0);
+	glutAddMenuEntry("Camera 1", 2);
+	glutAddMenuEntry("Camera 2", 1);
+	glutAddMenuEntry("Camera 3", 3);
+
+	int idSunPosition = glutCreateMenu(menuSun);
+	glutAddMenuEntry("Night", 1);
+	glutAddMenuEntry("Day", 2);
+
+
+	int idFlash = glutCreateMenu(menuFlash);
+	glutAddMenuEntry("On", 1);
+	glutAddMenuEntry("Off", 2);
+
+
+	//int idPoint = glutCreateMenu(menuPoint);
+	//glutAddMenuEntry("Pointlight on", 1);
+	//glutAddMenuEntry("Pointlight off", 2);
+
+	/*Create main menu*/
+	glutCreateMenu(myMenu);
+	glutAddSubMenu("Camera", idCamera);
+	glutAddSubMenu("Sun", idSunPosition);
+	glutAddSubMenu("Flash", idFlash);
+	glutAddMenuEntry("GameOver", 1);
+	glutAddMenuEntry("Quit", 2);
+
+	/* Menu will be invoked by the right button. */
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	// init your stuff - shaders & program, buffers, locations, state of the application
 	initApplication();

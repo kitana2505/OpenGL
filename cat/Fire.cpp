@@ -32,7 +32,7 @@ void Fire::update_fire_size()
 		fireWoodLocation = glm::rotate(fireWoodLocation, -1.6f, FIRE_ROTATE);
 		glUseProgram(shaderProgram->program);
 		glUniform1f(shaderProgram->locations.fireStrength, SMALL_FIRE_STRENGTH);
-		glUniform1f(shaderProgram->locations.fireFallof, 2.0f);
+		//glUniform1f(shaderProgram->locations.fireFallof, 2.0f);
 		glUseProgram(0);
 	}
 	else if (firesize < HIGH_FIRE_THRESHOLD && firesize >= MEDIUM_FIRE_THRESHOLD && current_fire_size != 1) {
@@ -43,7 +43,7 @@ void Fire::update_fire_size()
 		fireWoodLocation = glm::rotate(fireWoodLocation, -1.6f, FIRE_ROTATE);
 		glUseProgram(shaderProgram->program);
 		glUniform1f(shaderProgram->locations.fireStrength, MEDIUM_FIRE_STRENGTH);
-		glUniform1f(shaderProgram->locations.fireFallof, 1.4f);
+		//glUniform1f(shaderProgram->locations.fireFallof, 1.4f);
 		glUseProgram(0);
 	}
 	else if (firesize >= HIGH_FIRE_THRESHOLD && current_fire_size != 2) {
@@ -54,7 +54,7 @@ void Fire::update_fire_size()
 		fireWoodLocation = glm::rotate(fireWoodLocation, -1.6f, FIRE_ROTATE);
 		glUseProgram(shaderProgram->program);
 		glUniform1f(shaderProgram->locations.fireStrength, HIGH_FIRE_STRENGTH);
-		glUniform1f(shaderProgram->locations.fireFallof, 0.8f);
+		//glUniform1f(shaderProgram->locations.fireFallof, 0.8f);
 		glUseProgram(0);
 	}
 }
@@ -160,12 +160,12 @@ Fire::Fire(ShaderProgram* shdrPrg, FireShaderProgram* fireShaderProgram )
 		this->localModelMatrix = glm::scale(localModelMatrix, FIRE_SCALE);
 		this->localModelMatrix = glm::translate(localModelMatrix, glm::vec3(FIRE_TRANSLATE));
 		glUseProgram(shaderProgram->program);
-		glUniform3f(shaderProgram->locations.fireAmbient, 0.0f,0.0f,0.0f);
-		glUniform3f(shaderProgram->locations.fireDiffuse, 1.0f, 0.4f, 0.0f);
-		glUniform3f(shaderProgram->locations.fireSpecular, 1.5f, 0.5f, 0.0f);
+		//glUniform3f(shaderProgram->locations.fireAmbient, 0.0f,0.0f,0.0f);
+		//glUniform3f(shaderProgram->locations.fireDiffuse, 1.0f, 0.4f, 0.0f);
+		//glUniform3f(shaderProgram->locations.fireSpecular, 1.5f, 0.5f, 0.0f);
 		glUniform3f(shaderProgram->locations.firePosition, 0, 0, 0);
 		glUniform1f(shaderProgram->locations.fireStrength, 5);
-		glUniform1f(shaderProgram->locations.fireFallof, 1.5f);
+		//glUniform1f(shaderProgram->locations.fireFallof, 1.5f);
 		glUseProgram(0);
 		
 	}
