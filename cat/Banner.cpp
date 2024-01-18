@@ -9,13 +9,12 @@ void Banner::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 
 void Banner::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 {
-	for (auto geometry : geometries) {
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glDisable(GL_DEPTH_TEST);
-
-		glUseProgram(shaderProgram->program);
+	glDisable(GL_DEPTH_TEST);
+	glUseProgram(shaderProgram->program);
+	for (auto geometry : geometries) {		
 
 		//glm::mat4 matrix = glm::translate(glm::mat4(1.0f), position);
 		//matrix = glm::scale(matrix, glm::vec3(size));
@@ -35,7 +34,7 @@ void Banner::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 		matrix = glm::translate(matrix, position);
 		matrix = glm::scale(matrix, glm::vec3(size));
 
-		matrix = matrix * billboardRotationMatrix; // make billboard to face the camera
+		//matrix = matrix * billboardRotationMatrix; // make billboard to face the camera
 		glm::mat4 PVMmatrix = projectionMatrix * viewMatrix * matrix;
 		glUniformMatrix4fv(shaderProgram->locations.PVMmatrix, 1, GL_FALSE, glm::value_ptr(PVMmatrix));        // model-view-projection
 		glUniform1f(shaderProgram->locations.time, currentTime - startTime);

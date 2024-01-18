@@ -55,7 +55,7 @@ const float density=0.0007;
 //smooth out position, normal//in FS: in position, normal
 
 smooth out vec2 texCoord_v;
-smooth out vec4 color_v;
+//smooth out vec4 color_v;
 //smooth out float visibility;
 //smooth out vec4 fogColor_v;
 
@@ -156,8 +156,7 @@ void main() {
   //vec3 vertexNormal   = normalize( (Vmatrix * normalMatrix * vec4(normal, 0.0) ).xyz);   // normal in eye coordinates by NormalMatrix
 
 
-  vec3 globalAmbientLight = vec3(0.05f);
-  vec4 outputColor = vec4(material.diffuse * globalAmbientLight, 0.0);
+ 
   //vec4 outputColor = vec4(0.5,0.5,0, 1.0);
 
  /* if(sunOn==1){
@@ -178,6 +177,6 @@ void main() {
 
 
   gl_Position = PVMmatrix * vec4(position, 1);
-  color_v = outputColor;
+  //color_v = outputColor;
   texCoord_v = texCoord;
 }

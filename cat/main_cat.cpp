@@ -203,8 +203,8 @@ void shooting(ObjectList objects, float elapsedTime)
 }
 
 
-void createBanner(void) {
-	Banner* newBanner = new Banner(&commonShaderProgram);
+void createBanner(void) { 
+	Banner* newBanner = new Banner(&bannerShaderProgram);
 
 	newBanner->size = BANNER_SIZE;
 	newBanner->position = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -390,15 +390,50 @@ void loadShaderPrograms() //define at least 1 shader obj
 
 	// get position and texture coordinates attributes locations
 	brickShaderProgram.locations.position = glGetAttribLocation(brickShaderProgram.program, "position");
-	brickShaderProgram.locations.texCoord = glGetAttribLocation(brickShaderProgram.program, "texCoord");
-	// get uniforms locations
-	//brickShaderProgram.texCoordLocation = 1;
+	brickShaderProgram.locations.color = glGetAttribLocation(brickShaderProgram.program, "color");
+
+	// other attributes and uniforms
 	brickShaderProgram.locations.PVMmatrix = glGetUniformLocation(brickShaderProgram.program, "PVMmatrix");
+
+	brickShaderProgram.locations.normal = glGetAttribLocation(brickShaderProgram.program, "normal");
+	brickShaderProgram.locations.texCoord = glGetAttribLocation(brickShaderProgram.program, "texCoord");
+
+	// get uniforms locations
 	brickShaderProgram.locations.Vmatrix = glGetUniformLocation(brickShaderProgram.program, "Vmatrix");
-	//brickShaderProgram.locations.t = glGetUniformLocation(brickShaderProgram.program, "time");
+	brickShaderProgram.locations.Mmatrix = glGetUniformLocation(brickShaderProgram.program, "Mmatrix");
+	brickShaderProgram.locations.normalMatrix = glGetUniformLocation(brickShaderProgram.program, "normalMatrix");
+	// material
+	brickShaderProgram.locations.ambient = glGetUniformLocation(brickShaderProgram.program, "material.ambient");
+	brickShaderProgram.locations.diffuse = glGetUniformLocation(brickShaderProgram.program, "material.diffuse");
+	brickShaderProgram.locations.specular = glGetUniformLocation(brickShaderProgram.program, "material.specular");
+	brickShaderProgram.locations.shininess = glGetUniformLocation(brickShaderProgram.program, "material.shininess");
+	// texture
 	brickShaderProgram.locations.texSampler = glGetUniformLocation(brickShaderProgram.program, "texSampler");
-	//brickShaderProgram.frameDurationLocation = glGetUniformLocation(brickShaderProgram.program, "frameDuration");
-	//brickShaderProgram.brickTex = glGetUniformLocation(brickShaderProgram.program, "brickTex");
+	brickShaderProgram.locations.useTexture = glGetUniformLocation(brickShaderProgram.program, "material.useTexture");
+
+	// flashlight
+	brickShaderProgram.locations.reflectorPosition = glGetUniformLocation(brickShaderProgram.program, "reflectorPosition");
+	brickShaderProgram.locations.reflectorDirection = glGetUniformLocation(brickShaderProgram.program, "reflectorDirection");
+	brickShaderProgram.locations.flashlightOn = glGetUniformLocation(brickShaderProgram.program, "reflectorOn");
+	brickShaderProgram.locations.reflectorSpotCosCutOff = glGetUniformLocation(brickShaderProgram.program, "reflectorSpotCosCutOff");
+	brickShaderProgram.locations.reflectorExponent = glGetUniformLocation(brickShaderProgram.program, "reflectorExponent");
+	brickShaderProgram.locations.sunOn = glGetUniformLocation(brickShaderProgram.program, "sunOn");
+	brickShaderProgram.locations.sunStrength = glGetUniformLocation(brickShaderProgram.program, "sunStrength");
+	brickShaderProgram.locations.time = glGetUniformLocation(brickShaderProgram.program, "time");
+
+
+	//fire
+	brickShaderProgram.locations.firePosition = glGetUniformLocation(brickShaderProgram.program, "firePosition");
+	brickShaderProgram.locations.fireStrength = glGetUniformLocation(brickShaderProgram.program, "fireStrength");
+	//brickShaderProgram.locations.fireFallof = glGetUniformLocation(brickShaderProgram.program, "fireFallof");
+	//brickShaderProgram.locations.fireDiffuse = glGetUniformLocation(brickShaderProgram.program, "fireDiffuse");
+	//brickShaderProgram.locations.fireSpecular = glGetUniformLocation(brickShaderProgram.program, "fireSpecular");
+	//brickShaderProgram.locations.fireAmbient = glGetUniformLocation(brickShaderProgram.program, "fireAmbient");
+
+
+	//fog
+	brickShaderProgram.locations.fogColor = glGetUniformLocation(brickShaderProgram.program, "fogColor");
+	//brickShaderProgram.locations.fogOn = glGetUniformLocation(brickShaderProgram.program, "fogOn");
 	brickShaderProgram.locations.mossTex = glGetUniformLocation(brickShaderProgram.program, "mossTex");
 
 	// exlosion shader
@@ -463,15 +498,21 @@ void setLights() {
 	if (gameState.sunOn) {
 		glUniform1f(commonShaderProgram.locations.sunStrength, 2.0f);
 		glUniform1i(commonShaderProgram.locations.sunOn, 1);
+		glUniform1f(brickShaderProgram.locations.sunStrength, 2.0f);
+		glUniform1i(brickShaderProgram.locations.sunOn, 1);
 	}
 	else {
 		glUniform1f(commonShaderProgram.locations.sunStrength, 0.0f);
 		glUniform1i(commonShaderProgram.locations.sunOn, 1);
+		glUniform1f(brickShaderProgram.locations.sunStrength, 0.0f);
+		glUniform1i(brickShaderProgram.locations.sunOn, 1);
 	}if (gameState.reflectorOn) {
 		glUniform1i(commonShaderProgram.locations.flashlightOn, 1);
+		glUniform1i(brickShaderProgram.locations.flashlightOn, 1);
 	}
 	else {
 		glUniform1i(commonShaderProgram.locations.flashlightOn, 0);
+		glUniform1i(brickShaderProgram.locations.flashlightOn, 0);
 	}
 
 }
@@ -539,12 +580,17 @@ void drawScene(void)
 
 	setLights();
 	glUniform1f(commonShaderProgram.locations.time, gameState.elapsedTime);
+	glUniform1f(brickShaderProgram.locations.time, gameState.elapsedTime);
 	glUniform3f(commonShaderProgram.locations.reflectorPosition, cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	glUniform3f(brickShaderProgram.locations.reflectorPosition, cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	glUniform3f(commonShaderProgram.locations.reflectorDirection, cameraDirection.x, cameraDirection.y, cameraDirection.z);
+	glUniform3f(brickShaderProgram.locations.reflectorDirection, cameraDirection.x, cameraDirection.y, cameraDirection.z);
 	//glUniform3f(commonShaderProgram.locations.reflectorPosition, objects[1]->position.x, objects[1]->position.y, objects[1]->position.z);
 	//glUniform3f(commonShaderProgram.locations.reflectorDirection, objects[1]->direction.x, objects[1]->direction.y, objects[1]->direction.z);
 	glUniform1f(commonShaderProgram.locations.reflectorSpotCosCutOff, 0.6f);
 	glUniform1i(commonShaderProgram.locations.reflectorExponent, 30);
+	glUniform1f(brickShaderProgram.locations.reflectorSpotCosCutOff, 0.6f);
+	glUniform1i(brickShaderProgram.locations.reflectorExponent, 30);
 	glUseProgram(0);
 
 	for (ObjectInstance* object : objects) {   // for (auto object : objects) {
@@ -557,8 +603,16 @@ void drawScene(void)
 			object->draw(viewMatrix, projectionMatrix);
 	}
 
+	glm::mat4 orthoProjectionMatrix_banner = glm::ortho(
+		0.0f,  1.0f,
+		0.0f, 1.0f,
+		-1.0f, 1.0f
+	);
+
+
+
 	if (gameState.banner != nullptr){
-		gameState.banner->draw(viewMatrix, projectionMatrix);
+		gameState.banner->draw(glm::mat4(1.0f), orthoProjectionMatrix_banner); //identity mat
 	}
 
 	glEnable(GL_STENCIL_TEST);
@@ -694,6 +748,7 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
 			gameState.skybox->load_skybox(SKYBOX_NIGHT_TEXTURE_NAME, gameState.skybox->night_suffixes);
 			glUseProgram(commonShaderProgram.program);
 			glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
+			glUniform3f(brickShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
 			glUseProgram(0);
 
 		}
@@ -702,6 +757,7 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
 			gameState.skybox->load_skybox(SKYBOX_DAY_TEXTURE_NAME, gameState.skybox->day_suffixes);
 			glUseProgram(commonShaderProgram.program);
 			glUniform3f(commonShaderProgram.locations.fogColor, 0.5f, 0.5f, 0.5f);
+			glUniform3f(brickShaderProgram.locations.fogColor, 0.5f, 0.5f, 0.5f);
 			glUseProgram(0);
 		}
 		break;
@@ -958,7 +1014,7 @@ void insertExplosion(const glm::vec3& position) {
 
 void checkCollisions()
 {
-	auto fire_obj = objects[0];
+	auto fire_obj = objects[objects.size()-1];
 	
 	for (auto it = gameState.missleList.begin(); it != gameState.missleList.end(); ++ it)
 	{
@@ -1027,7 +1083,7 @@ void timerCb(int)
 
 		}
 	}
-#endif // task_1_0
+//#endif // task_1_0
 
 
 	// destroy missle after certain distance
@@ -1080,7 +1136,8 @@ void initApplication() {
 	gameState.fire2 = new Fire2(&commonShaderProgram, &fireShaderProgram);
 	gameState.skybox = new Skybox(&skyboxShaderProgram);
 	//gameState.missile = new Missile(&commonShaderProgram, &missileShaderProgram);
-	objects.push_back(gameState.fire2);
+	objects.push_back(new Turtle(&commonShaderProgram));
+	
 	objects.push_back(gameState.skybox);
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
@@ -1102,6 +1159,7 @@ void initApplication() {
 	rabbitList.push_back(rabbit1);
 	rabbitList.push_back(rabbit2);
 	rabbitList.push_back(rabbit3);
+	objects.push_back(gameState.fire2);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	// init your Application
 	// - setup the initial application state
@@ -1119,6 +1177,7 @@ void initApplication() {
 	// set initial fog color to black
 	glUseProgram(commonShaderProgram.program);
 	glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
+	glUniform3f(brickShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
 	glUseProgram(0);
 
 	//Mouse
@@ -1156,6 +1215,7 @@ void menuSun(int menuItemID)
 		gameState.skybox->load_skybox(SKYBOX_NIGHT_TEXTURE_NAME, gameState.skybox->night_suffixes);
 		glUseProgram(commonShaderProgram.program);
 		glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
+		glUniform3f(brickShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
 		glUseProgram(0);
 		break;
 	case 2:

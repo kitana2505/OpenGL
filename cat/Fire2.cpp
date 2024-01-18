@@ -60,7 +60,7 @@ void Fire2::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 	}
 }
 void Fire2::draw_flames(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
-{
+{	//draw fire at last
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE);
 	// ========  END OF SOLUTION - TASK 4_2-2  ======== //

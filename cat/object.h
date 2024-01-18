@@ -154,7 +154,7 @@ typedef struct _ShaderProgram {
 
 		GLint fogColor;
 
-		GLfloat time;
+		//GLfloat time;
 		GLint mossTex;
 	} locations;
 

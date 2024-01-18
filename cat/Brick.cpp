@@ -27,6 +27,10 @@ void Brick::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 					geometry->shininess,
 					geometry->texture
 				);
+				glActiveTexture(GL_TEXTURE1); // select texture unit 1
+				glBindTexture(GL_TEXTURE_2D, mossTex);
+				glUniform1i(shaderProgram->locations.mossTex, 1);
+
 
 				glDrawElements(GL_TRIANGLES, geometry->numTriangles * 3, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
@@ -58,12 +62,12 @@ Brick::Brick(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg),  initialized(fal
 
 
 	//GLuint brickTex = pgr::createTexture("data/brick/brick.jpg"); // load textures by PGR framework
-	GLuint mossTex = pgr::createTexture("data/brick/moss.png");
+	mossTex = pgr::createTexture("data/brick/moss.png");
 	glActiveTexture(GL_TEXTURE1); // select texture unit 1
 	glBindTexture(GL_TEXTURE_2D, mossTex);
-	glUseProgram(shdrPrg->program);
-	GLint mossTexLoc = glGetUniformLocation(shdrPrg->program, "mossTex"); //ID on shader program
-	glUniform1i(mossTexLoc, 1);
+	//glUseProgram(shdrPrg->program);
+	//GLint mossTexLoc = glGetUniformLocation(shdrPrg->program, "mossTex"); //ID on shader program
+	glUniform1i(shdrPrg->locations.mossTex, 1);
 	/*glActiveTexture(GL_TEXTURE0); // select texture unit 0
 	glBindTexture(GL_TEXTURE_CUBE_MAP, brickTex);
 	glActiveTexture(GL_TEXTURE1); // select texture unit 1

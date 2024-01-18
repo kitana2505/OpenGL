@@ -200,10 +200,10 @@ const float bannerVertexData[bannerNumQuadVertices * 5] = {
 
 	//CAM_INIT_PLAYER glm::vec3(17.8f, 1.0f, -12.9f)
    // x      y      z     u     v
-17.8f,  0.0f, 0.0f, 0.0f, 1.0f,
-17.8f,  1.0f, 0.0f, 0.0f, 0.0f,
- 0.0f,  0.0f, -12.9f, 3.0f, 1.0f,
-  0.0f, 1.0f,-12.9f, 3.0f, 0.0f
+0.0f,  1.0f, 0.0f, 0.0f, 1.0f, //coord of window, coord of texture
+0.0f,  0.0f, 0.0f, 0.0f, 0.0f,
+ 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+ 1.0f, 0.0f, 0.0f, 1.0f, 0.0f
 };
 
 const int explosionNumQuadVertices = 4;

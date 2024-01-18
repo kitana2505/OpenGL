@@ -24,7 +24,7 @@ uniform sampler2D texSampler;  // sampler for the texture access
 uniform float time;         // time used for simulation of moving lights (such as sun)
 uniform Material material;     // current material
 
-smooth in vec4 color_v;        // incoming fragment color (includes lighting)
+//smooth in vec4 color_v;        // incoming fragment color (includes lighting)
 smooth in vec2 texCoord_v;     // fragment texture coordinates
 //smooth in vec4 fogColor_v;
 float fogDensity = 0.001f;
@@ -150,18 +150,23 @@ void setupLights() {
 
 void main() {
 
- color_f = color_v;
+  vec3 normal = normalize(vertexNormal);
+  vec3 globalAmbientLight = vec3(0.05f);
+  color_f = vec4(material.diffuse * globalAmbientLight, 0.0);
+
+ //color_f = color_v;
+
   setupLights();
 
   if(sunOn==1){
-   color_f += directionalLight(sun, material, vertexPosition, vertexNormal);
+   color_f += directionalLight(sun, material, vertexPosition, normal);
   }
 
  if(reflectorOn==0){
-	color_f += spotLight(flashlight, material, vertexPosition, vertexNormal);
+	color_f += spotLight(flashlight, material, vertexPosition, normal);
  }
   
-  color_f += fireLight(Vmatrix, material, vertexPosition, vertexNormal,fire);
+  color_f += fireLight(Vmatrix, material, vertexPosition, normal,fire);
 
 
   float fogDist = pow(distance(flashlight.position, vertexPosition), 2);

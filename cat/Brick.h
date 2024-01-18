@@ -20,6 +20,7 @@ private:
 
 	bool initialized;  ///< object has the shader with defined locations
 	glm::mat4 location;
+	GLuint mossTex;
 };
 
 
