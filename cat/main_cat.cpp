@@ -103,6 +103,10 @@ struct _GameState {
 
 	/// Sunlight should be on/off
 	bool sunOn;
+
+	//fog can be turned on or off
+	bool fogOn;
+
 	Fire2* fire2; 
 	Skybox* skybox;
 
@@ -122,6 +126,8 @@ struct _GameState {
 
 	 ObjectList missleList;
 	 ObjectList explosions;
+
+
 
 }gameState;
 
@@ -320,7 +326,7 @@ void loadShaderPrograms() //define at least 1 shader obj
 
 	//fog
 	commonShaderProgram.locations.fogColor = glGetUniformLocation(commonShaderProgram.program, "fogColor");
-	//commonShaderProgram.locations.fogOn = glGetUniformLocation(commonShaderProgram.program, "fogOn");
+	commonShaderProgram.locations.fogOn = glGetUniformLocation(commonShaderProgram.program, "fogOn");
 
 
 	commonShaderProgram.initialized = true;
@@ -433,7 +439,7 @@ void loadShaderPrograms() //define at least 1 shader obj
 
 	//fog
 	brickShaderProgram.locations.fogColor = glGetUniformLocation(brickShaderProgram.program, "fogColor");
-	//brickShaderProgram.locations.fogOn = glGetUniformLocation(brickShaderProgram.program, "fogOn");
+	brickShaderProgram.locations.fogOn = glGetUniformLocation(brickShaderProgram.program, "fogOn");
 	brickShaderProgram.locations.mossTex = glGetUniformLocation(brickShaderProgram.program, "mossTex");
 
 	// exlosion shader
@@ -513,7 +519,15 @@ void setLights() {
 	else {
 		glUniform1i(commonShaderProgram.locations.flashlightOn, 0);
 		glUniform1i(brickShaderProgram.locations.flashlightOn, 0);
+	}if (gameState.fogOn) {
+		glUniform1i(commonShaderProgram.locations.fogOn, 1);
+		glUniform1i(brickShaderProgram.locations.fogOn, 1);
 	}
+	else {
+		glUniform1i(commonShaderProgram.locations.fogOn, 0);
+		glUniform1i(brickShaderProgram.locations.fogOn, 0);
+	}
+
 
 }
 
@@ -1178,8 +1192,8 @@ void initApplication() {
 
 	//initiali night environment
 	gameState.sunOn = false;
-	gameState.reflectorOn = true;
-
+	gameState.reflectorOn = false;
+	gameState.fogOn = false;
 	//init gameOver
 	gameState.gameOver = false;
 	// set initial fog color to black
@@ -1241,13 +1255,45 @@ void menuFlash(int menuItemID)
 	switch (menuItemID)
 	{
 		case 1:
-			gameState.reflectorOn = false;
-			glUseProgram(0);
-			break;
-		case 2:
 			gameState.reflectorOn = true;
 			glUseProgram(0);
 			break;
+		case 2:
+			gameState.reflectorOn = false;
+			glUseProgram(0);
+			break;
+	}
+}
+
+void menuFog(int menuItemID)
+{
+	switch (menuItemID)
+	{
+	case 1:
+		gameState.fogOn = true;
+		glUseProgram(0);
+		break;
+	case 2:
+		gameState.fogOn = false;
+		glUseProgram(0);
+		break;
+	}
+}
+
+void menuRain(int menuItemID)
+{
+	switch (menuItemID)
+	{
+	case 1:
+		gameState.gameOver = true;
+		createBanner();
+		glUseProgram(0);
+		break;
+	case 2:
+		gameState.gameOver = false;
+		gameState.banner = NULL;
+		glUseProgram(0);
+		break;
 	}
 }
 
@@ -1330,7 +1376,13 @@ int main(int argc, char** argv) {
 	glutAddMenuEntry("On", 1);
 	glutAddMenuEntry("Off", 2);
 
+	int idFog = glutCreateMenu(menuFog);
+	glutAddMenuEntry("On", 1);
+	glutAddMenuEntry("Off", 2);
 
+	int idRain = glutCreateMenu(menuRain);
+	glutAddMenuEntry("On", 1);
+	glutAddMenuEntry("Off", 2);
 	//int idPoint = glutCreateMenu(menuPoint);
 	//glutAddMenuEntry("Pointlight on", 1);
 	//glutAddMenuEntry("Pointlight off", 2);
@@ -1340,7 +1392,8 @@ int main(int argc, char** argv) {
 	glutAddSubMenu("Camera", idCamera);
 	glutAddSubMenu("Sun", idSunPosition);
 	glutAddSubMenu("Flash", idFlash);
-	glutAddMenuEntry("GameOver", 1);
+	glutAddSubMenu("Fog", idFog);
+	glutAddMenuEntry("Rain", idRain);
 	glutAddMenuEntry("Quit", 2);
 
 	/* Menu will be invoked by the right button. */
