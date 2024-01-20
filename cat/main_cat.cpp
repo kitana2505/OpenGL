@@ -46,7 +46,7 @@
 #include "Ground.h"
 #include "Skybox.h"
 #include "Animal_cat.h"
-#include "Animal_turtle.h"
+#include "Airplane.h"
 #include "Missile.h"
 #include "Banner.h"
 #include "Brick.h"
@@ -103,6 +103,10 @@ struct _GameState {
 
 	/// Sunlight should be on/off
 	bool sunOn;
+
+	//fog can be turned on or off
+	bool fogOn;
+
 	Fire2* fire2; 
 	Skybox* skybox;
 
@@ -125,6 +129,8 @@ struct _GameState {
 	 ObjectList poleList;
 
 	 bool jump;
+
+
 
 }gameState;
 
@@ -169,16 +175,19 @@ void move_player(float deltaTime) {
 		gameState.player_direction = glm::normalize(gameState.player_direction);
 	}
 
+
 	//gameState.player_direction = glm::normalize(glm::vec3(0, 0,0));
+
 	if (gameState.jump) {
-		if (check_bounds(gameState.player_position + gameState.player_direction * PLAYER_HIGH_SPEED * deltaTime)) {
-			gameState.player_position += gameState.player_direction * PLAYER_HIGH_SPEED * deltaTime;
+		if (check_bounds(gameState.player_position + gameState.player_direction * HIGH_SPEED * deltaTime)) {
+			gameState.player_position += gameState.player_direction * HIGH_SPEED * deltaTime;
+
 		}
 
 	}
 	else {
-		if (check_bounds(gameState.player_position + gameState.player_direction * PLAYER_WALKING_SPEED * deltaTime)) {
-			gameState.player_position += gameState.player_direction * PLAYER_WALKING_SPEED * deltaTime;
+		if (check_bounds(gameState.player_position + gameState.player_direction * WALKING_SPEED * deltaTime)) {
+			gameState.player_position += gameState.player_direction * WALKING_SPEED * deltaTime;
 		}
 	}
 
@@ -323,7 +332,7 @@ void loadShaderPrograms() //define at least 1 shader obj
 
 	//fog
 	commonShaderProgram.locations.fogColor = glGetUniformLocation(commonShaderProgram.program, "fogColor");
-	//commonShaderProgram.locations.fogOn = glGetUniformLocation(commonShaderProgram.program, "fogOn");
+	commonShaderProgram.locations.fogOn = glGetUniformLocation(commonShaderProgram.program, "fogOn");
 
 
 	commonShaderProgram.initialized = true;
@@ -436,7 +445,7 @@ void loadShaderPrograms() //define at least 1 shader obj
 
 	//fog
 	brickShaderProgram.locations.fogColor = glGetUniformLocation(brickShaderProgram.program, "fogColor");
-	//brickShaderProgram.locations.fogOn = glGetUniformLocation(brickShaderProgram.program, "fogOn");
+	brickShaderProgram.locations.fogOn = glGetUniformLocation(brickShaderProgram.program, "fogOn");
 	brickShaderProgram.locations.mossTex = glGetUniformLocation(brickShaderProgram.program, "mossTex");
 
 	// exlosion shader
@@ -497,7 +506,7 @@ glm::vec3 move_camera() {
 	}
 	glm::vec3 position = gameState.initial_camera_position;
 	glm::vec3 target = gameState.target_camera_position;
-	glm::vec3 direction = (target - position) * 0.05f;
+	glm::vec3 direction = (target - position) * 0.1f;
 
 	float dis1 = glm::distance(gameState.camera_position, target);
 	gameState.camera_position += direction;
@@ -506,6 +515,18 @@ glm::vec3 move_camera() {
 		gameState.camera_position = target;
 		gameState.move_camera = false;
 	}
+
+	/*glm::vec3 current_camera_position = gameState.camera_position;
+	float original_distance = glm::distance(gameState.camera_position, target);
+	float dis2 = glm::distance(gameState.camera_position, target);
+	do { gameState.camera_position += direction;
+		current_camera_position = gameState.camera_position;
+	} while (glm::distance(current_camera_position, target) <= original_distance);
+		//gameState.camera_position += direction;
+	
+	//gameState.camera_position += direction;
+	gameState.move_camera = false;*/
+	
 	return gameState.camera_position;
 }
 
@@ -528,7 +549,15 @@ void setLights() {
 	else {
 		glUniform1i(commonShaderProgram.locations.flashlightOn, 0);
 		glUniform1i(brickShaderProgram.locations.flashlightOn, 0);
+	}if (gameState.fogOn) {
+		glUniform1i(commonShaderProgram.locations.fogOn, 1);
+		glUniform1i(brickShaderProgram.locations.fogOn, 1);
 	}
+	else {
+		glUniform1i(commonShaderProgram.locations.fogOn, 0);
+		glUniform1i(brickShaderProgram.locations.fogOn, 0);
+	}
+
 
 }
 
@@ -556,23 +585,27 @@ void drawScene(void)
 	switch (gameState.camera_index) {
 	case 0:
 		gameState.target_camera_position = gameState.player_position;
+		//gameState.cameraElevationAngle = 0.0f;
+		//gameState.cameraRotationAngle = 90.0f;
 		break;
 	case 1:
-		gameState.target_camera_position = CAT_INITIAL_POS * glm::vec3(1.0f, 1.0f, 0.5f);
-
 		// Fix camera in front of the cat
+
+		gameState.target_camera_position = CAT_INITIAL_POS * glm::vec3(1.0f, 1.0f, 0.5f);
 		gameState.cameraElevationAngle = 0.0f;
 		gameState.cameraRotationAngle = 90.0f;
 		break;
 	case 2:
-		gameState.target_camera_position = CAM_INIT_PLAYER;
-		gameState.cameraElevationAngle = 0.0f;
-		gameState.cameraRotationAngle = 125.0f;
+		// see the main objects from above
+		gameState.target_camera_position = STATIC_CAMERA_2;
+		gameState.cameraElevationAngle = -70.0f;
+		gameState.cameraRotationAngle = 135.0f;
 		break;
 	case 3:
-		gameState.target_camera_position = STATIC_CAMERA_2;
-		gameState.cameraElevationAngle = -45.0f;
-		gameState.cameraRotationAngle = 135.0f;
+		
+		gameState.target_camera_position = CAM_INIT_PLAYER;
+		gameState.cameraElevationAngle = 0.0f;
+		gameState.cameraRotationAngle = 100.0f;
 		break;
 	}
 	glm::vec3 cameraPosition = move_camera();
@@ -1174,7 +1207,8 @@ void initApplication() {
 	gameState.fire2 = new Fire2(&commonShaderProgram, &fireShaderProgram);
 	gameState.skybox = new Skybox(&skyboxShaderProgram);
 	//gameState.missile = new Missile(&commonShaderProgram, &missileShaderProgram);
-	objects.push_back(new Turtle(&commonShaderProgram));
+
+	objects.push_back(new Airplane(&commonShaderProgram));
 	objects.push_back(gameState.skybox);
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
@@ -1191,7 +1225,6 @@ void initApplication() {
 	Rabbit* rabbit3 = new Rabbit(&commonShaderProgram);
 	rabbit3->position = rabbit2->position + glm::vec3(4.0f, 0.0f, 0.0f);
 	objects.push_back(new Tree(&commonShaderProgram));
-	objects.push_back(new Turtle(&commonShaderProgram));
 
 	rabbitList.push_back(rabbit1);
 	rabbitList.push_back(rabbit2);
@@ -1212,8 +1245,8 @@ void initApplication() {
 
 	//initiali night environment
 	gameState.sunOn = false;
-	gameState.reflectorOn = true;
-
+	gameState.reflectorOn = false;
+	gameState.fogOn = false;
 	//init gameOver
 	gameState.gameOver = false;
 
@@ -1278,15 +1311,31 @@ void menuFlash(int menuItemID)
 	switch (menuItemID)
 	{
 		case 1:
-			gameState.reflectorOn = false;
+			gameState.reflectorOn = true;
 			glUseProgram(0);
 			break;
 		case 2:
-			gameState.reflectorOn = true;
+			gameState.reflectorOn = false;
 			glUseProgram(0);
 			break;
 	}
 }
+
+void menuFog(int menuItemID)
+{
+	switch (menuItemID)
+	{
+	case 1:
+		gameState.fogOn = true;
+		glUseProgram(0);
+		break;
+	case 2:
+		gameState.fogOn = false;
+		glUseProgram(0);
+		break;
+	}
+}
+
 
 void menuRain(int menuItemID)
 {
@@ -1302,6 +1351,7 @@ void menuRain(int menuItemID)
 		break;
 	}
 }
+
 
 void myMenu(int menuItemID) {
 	switch (menuItemID) {
@@ -1376,10 +1426,13 @@ int main(int argc, char** argv) {
 	glutAddMenuEntry("On", 1);
 	glutAddMenuEntry("Off", 2);
 
+	int idFog = glutCreateMenu(menuFog);
+	glutAddMenuEntry("On", 1);
+	glutAddMenuEntry("Off", 2);
+  
 	int idRain = glutCreateMenu(menuRain);
 	glutAddMenuEntry("On", 1);
 	glutAddMenuEntry("Off", 2);
-
 
 	//int idPoint = glutCreateMenu(menuPoint);
 	//glutAddMenuEntry("Pointlight on", 1);
@@ -1390,8 +1443,10 @@ int main(int argc, char** argv) {
 	glutAddSubMenu("Camera", idCamera);
 	glutAddSubMenu("Sun", idSunPosition);
 	glutAddSubMenu("Flash", idFlash);
+	glutAddSubMenu("Fog", idFog);
 	glutAddSubMenu("Rain", idRain);
 	glutAddMenuEntry("Quit", 1);
+
 
 	/* Menu will be invoked by the right button. */
 	glutAttachMenu(GLUT_RIGHT_BUTTON);

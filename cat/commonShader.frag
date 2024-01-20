@@ -28,7 +28,7 @@ uniform Material material;     // current material
 smooth in vec2 texCoord_v;     // fragment texture coordinates
 //smooth in vec4 fogColor_v;
 float fogDensity = 0.001f;
-int fogOn = 1;
+uniform int fogOn;
 vec4 fogColor_f;
 out vec4       color_f;        // outgoing fragment color
 //in float visibility;
@@ -162,7 +162,7 @@ void main() {
    color_f += directionalLight(sun, material, vertexPosition, normal);
   }
 
- if(reflectorOn==0){
+ if(reflectorOn==1){
 	color_f += spotLight(flashlight, material, vertexPosition, normal);
  }
   

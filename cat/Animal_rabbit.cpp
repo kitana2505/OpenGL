@@ -11,11 +11,14 @@ void Rabbit::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 	if (initialized && (shaderProgram != nullptr)) {
 		glEnable(GL_STENCIL_TEST);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
 		glUseProgram(shaderProgram->program);
 		for (auto geometry : geometries) {
 			for (auto location : locations) {
 				//TODO
 				//glStencilFunc(GL_ALWAYS, i + 2, 0xFF);
+				geometry->texture = pgr::createTexture(RABBIT_TEXTURE);
+				CHECK_GL_ERROR();
 				localModelMatrix = glm::translate(glm::mat4(1.0f), position);
 				glBindVertexArray(geometry->vertexArrayObject);
 				setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
@@ -27,11 +30,12 @@ void Rabbit::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 					geometry->shininess,
 					geometry->texture
 				);
+				glActiveTexture(GL_TEXTURE0); // select texture unit 0
+				glBindTexture(GL_TEXTURE_2D, geometry->texture);
 				glDrawElements(GL_TRIANGLES, geometry->numTriangles * 3, GL_UNSIGNED_INT, 0);
 				//glDisable(GL_STENCIL_TEST);
 				glBindVertexArray(0);
-
-
+				glBindTexture(GL_TEXTURE_2D, 0);
 			}
 		}
 		glUseProgram(0);

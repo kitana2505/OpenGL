@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Animal_Turtle.h"
+#include "Airplane.h"
 /// Number of control points of the animation curve.
 const size_t  curveSize = 12;
 /// Control points of the animation curve.
@@ -21,8 +21,10 @@ const size_t  curveSize = 12;
   glm::vec3(0.33, -0.35, 0.0)
 };*/
 
+
+//ellipse
 glm::vec3 curveData[] = {
-  glm::vec3(0.00, 0.0,  0.0)* glm::vec3(10),
+  glm::vec3(0.00, 0.0,  0.35)* glm::vec3(10),
 
   glm::vec3(-0.33,  0.0, 0.35)* glm::vec3(10),
   glm::vec3(-0.66,  0.0, 0.35)* glm::vec3(10),
@@ -30,7 +32,7 @@ glm::vec3 curveData[] = {
   glm::vec3(-0.66, 0.0, -0.35)* glm::vec3(10),
   glm::vec3(-0.33, 0.0, -0.35)* glm::vec3(10),
 
-  glm::vec3(0.00,  0.0, 0.0)* glm::vec3(10),
+  glm::vec3(0.00,  0.0, -0.35)* glm::vec3(10),
 
   glm::vec3(0.33,  0.0, 0.35)* glm::vec3(10),
   glm::vec3(0.66,  0.0, 0.35)* glm::vec3(10),
@@ -39,7 +41,7 @@ glm::vec3 curveData[] = {
   glm::vec3(0.33, 0.0, -0.35)* glm::vec3(10)
 };
 
-void Turtle::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
+void Airplane::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 
 	
 	currentTime = elapsedTime;
@@ -49,8 +51,10 @@ void Turtle::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 	position = initPosition + evaluateClosedCurve(curveData, curveSize, curveParamT);
 	direction = glm::normalize(evaluateClosedCurve_1stDerivative(curveData, curveSize, curveParamT));
 	localModelMatrix = alignObject(position, direction, glm::vec3(0.0f, 1.0f, 0.0f));
-	localModelMatrix = glm::scale(localModelMatrix, glm::vec3(size));
-	localModelMatrix = glm::rotate(localModelMatrix, glm::radians(TURTLE_ROTATION), glm::vec3(0, 1, 0));
+	//localModelMatrix = glm::scale(localModelMatrix, glm::vec3(size));
+	//localModelMatrix = glm::rotate(localModelMatrix, glm::radians(-Airplane_ROTATION), glm::vec3(0, 1, 0));
+	localModelMatrix = glm::rotate(localModelMatrix, glm::radians(AIRPLANE_ROTATION), glm::vec3(0, 1, 0));
+	localModelMatrix = glm::rotate(localModelMatrix, glm::radians(-AIRPLANE_ROTATION), glm::vec3(1, 0, 0));
 
 	//localModelMatrix = glm::translate(glm::mat4(1.0f), position);
 	//glm::mat4 modelMatrix = alignObject(position, direction, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -58,17 +62,20 @@ void Turtle::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 	ObjectInstance::update(elapsedTime, parentModelMatrix);
 }
 
-void Turtle::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
+void Airplane::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 {
 	if (initialized && (shaderProgram != nullptr)) {
 		glUseProgram(shaderProgram->program);
 		for (auto geometry : geometries) {
 			//for (auto location : locations) {
-			
+			//location = glm::rotate(globalModelMatrix, 0.0f, glm::vec3(1, 0, 0));
+
+			geometry->texture = pgr::createTexture(AIRPLANE_TEXTURE);
+			CHECK_GL_ERROR();
 
 				glBindVertexArray(geometry->vertexArrayObject);
-				//setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
-				setTransformUniforms(*shaderProgram, localModelMatrix, viewMatrix, projectionMatrix);
+				setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
+				//setTransformUniforms(*shaderProgram, localModelMatrix, viewMatrix, projectionMatrix);
 				setMaterialUniforms(
 					*shaderProgram,
 					geometry->ambient,
@@ -77,9 +84,11 @@ void Turtle::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 					geometry->shininess,
 					geometry->texture
 				);
+				glActiveTexture(GL_TEXTURE0); // select texture unit 0
+				glBindTexture(GL_TEXTURE_2D, geometry->texture);
 				glDrawElements(GL_TRIANGLES, geometry->numTriangles * 3, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
-
+				glBindTexture(GL_TEXTURE_2D, 0);
 
 			//}
 		}
@@ -87,24 +96,24 @@ void Turtle::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 
 	}
 	else {
-		//std::cout << "Can't draw Turtle: triangle not initialized properly!" << std::endl;
+		//std::cout << "Can't draw Airplane: triangle not initialized properly!" << std::endl;
 	}
 }
 
-Turtle::Turtle(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(false)
+Airplane::Airplane(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(false)
 {
 	//this->shaderProgram = shdrPrg;
-	if (loadMultipleMeshes(TURTLE_MODEL, shdrPrg, geometries) != true) {
-		std::cerr << "initializeModels(): Turtle model loading failed." << std::endl;
+	if (loadMultipleMeshes(AIRPLANE_MODEL, shdrPrg, geometries) != true) {
+		std::cerr << "initializeModels(): Airplane model loading failed." << std::endl;
 	}
 	else {
 		//geometries[0]->texture= pgr::createTexture("\data\Spruce_obj");;
 		initialized = true;
 	}
-	position = TURTLE_INITIAL_POS;
-	size = TURTLE_SCALE;
-	speed = TURTLE_SPEED;
-	initPosition = TURTLE_INITIAL_POS;
+	position = AIRPLANE_INITIAL_POS;
+	size = AIRPLANE_SCALE;
+	speed = AIRPLANE_SPEED;
+	initPosition = AIRPLANE_INITIAL_POS;
 	direction = glm::vec3(
 		(float)(2.0 * (rand() / (double)RAND_MAX) - 1.0),
 		0.0f,
@@ -113,13 +122,13 @@ Turtle::Turtle(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(fa
 	startTime = 0.0f;
 	//location = glm::scale(globalModelMatrix, glm::vec3(size));
 	//location = glm::translate(location, position);
-	//location = glm::rotate(globalModelMatrix, 1.7f, glm::vec3(1, 0, 0));
+	//locations.emplace_back(location);
 	
 
 	CHECK_GL_ERROR();
 
 }
-Turtle::~Turtle() {
+Airplane::~Airplane() {
 	for (auto geometry : geometries) {
 		glDeleteVertexArrays(1, &(geometry->vertexArrayObject));
 		glDeleteBuffers(1, &(geometry->elementBufferObject));
@@ -131,7 +140,7 @@ Turtle::~Turtle() {
 }
 
 
-glm::vec3 Turtle::evaluateCurveSegment(
+glm::vec3 Airplane::evaluateCurveSegment(
 	const glm::vec3& P0,
 	const glm::vec3& P1,
 	const glm::vec3& P2,
@@ -156,7 +165,7 @@ glm::vec3 Turtle::evaluateCurveSegment(
 	return result;
 }
 
-glm::vec3 Turtle::evaluateCurveSegment_1stDerivative(
+glm::vec3 Airplane::evaluateCurveSegment_1stDerivative(
 	const glm::vec3& P0,
 	const glm::vec3& P1,
 	const glm::vec3& P2,
@@ -180,7 +189,7 @@ glm::vec3 Turtle::evaluateCurveSegment_1stDerivative(
 	return result;
 }
 
-glm::vec3 Turtle::evaluateClosedCurve(
+glm::vec3 Airplane::evaluateClosedCurve(
 	const glm::vec3 points[],
 	const size_t    count,
 	const float     t
@@ -204,7 +213,7 @@ glm::vec3 Turtle::evaluateClosedCurve(
 	return result;
 }
 
-glm::vec3 Turtle::evaluateClosedCurve_1stDerivative(
+glm::vec3 Airplane::evaluateClosedCurve_1stDerivative(
 	const glm::vec3 points[],
 	const size_t    count,
 	const float     t
@@ -229,7 +238,7 @@ glm::vec3 Turtle::evaluateClosedCurve_1stDerivative(
 	return result;
 }
 
-glm::mat4 Turtle::alignObject(const glm::vec3& position, const glm::vec3& front, const glm::vec3& up) {
+glm::mat4 Airplane::alignObject(const glm::vec3& position, const glm::vec3& front, const glm::vec3& up) {
 
 	glm::vec3 z = -glm::normalize(front);
 
@@ -258,7 +267,7 @@ glm::mat4 Turtle::alignObject(const glm::vec3& position, const glm::vec3& front,
 
 
 template <typename T>
-T Turtle::cyclic_clamp(const T value, const T minBound, const T maxBound) {
+T Airplane::cyclic_clamp(const T value, const T minBound, const T maxBound) {
 
 	T amp = maxBound - minBound;
 	T val = fmod(value - minBound, amp);
@@ -269,7 +278,7 @@ T Turtle::cyclic_clamp(const T value, const T minBound, const T maxBound) {
 	return val + minBound;
 }
 
-bool Turtle::isVectorNull(const glm::vec3& vect) {
+bool Airplane::isVectorNull(const glm::vec3& vect) {
 
 	return !vect.x && !vect.y && !vect.z;
 }
