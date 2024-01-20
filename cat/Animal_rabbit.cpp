@@ -15,7 +15,6 @@ void Rabbit::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 		glUseProgram(shaderProgram->program);
 		for (auto geometry : geometries) {
 			for (auto location : locations) {
-				//TODO
 				//glStencilFunc(GL_ALWAYS, i + 2, 0xFF);
 				geometry->texture = pgr::createTexture(RABBIT_TEXTURE);
 				CHECK_GL_ERROR();
@@ -42,7 +41,7 @@ void Rabbit::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 
 	}
 	else {
-		//std::cout << "Can't draw Cat: triangle not initialized properly!" << std::endl;
+		std::cout << "Can't draw Rabbit: triangle not initialized properly!" << std::endl;
 	}
 }
 
@@ -50,7 +49,7 @@ Rabbit::Rabbit(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(fa
 {
 	//this->shaderProgram = shdrPrg;
 	if (loadMultipleMeshes(RABBIT_MODEL, shdrPrg, geometries) != true) {
-		std::cerr << "initializeModels(): Cat model loading failed." << std::endl;
+		std::cerr << "initializeModels(): Rabbit model loading failed." << std::endl;
 	}
 	else {
 		//geometries[0]->texture= pgr::createTexture("\data\Spruce_obj");;
@@ -58,8 +57,6 @@ Rabbit::Rabbit(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(fa
 	}
 
 	glm::mat4 location = glm::scale(globalModelMatrix, glm::vec3(RABBIT_SCALE));
-	//location = glm::translate(location, Rabbit_INITIAL_POS);
-	//location = glm::rotate(location, Rabbit_ROTATION, glm::vec3(0, 1, 0));
 	locations.emplace_back(location);
 
 	CHECK_GL_ERROR();

@@ -5,9 +5,9 @@
 #include "iostream"
 
 /**
- * \file    object.h : this file contains the parent of all objects in the scene
- * \author  Vonášek Michal
- * \date    2023/05/05
+ * \file    object.h 
+ * \author  
+ * \date    
  */
 typedef struct _FireShaderProgram {
 	// identifier for the shader program

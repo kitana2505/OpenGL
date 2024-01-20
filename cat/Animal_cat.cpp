@@ -37,13 +37,12 @@ void Cat::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 
 	}
 	else {
-		//std::cout << "Can't draw Cat: triangle not initialized properly!" << std::endl;
+		std::cout << "Can't draw Cat: triangle not initialized properly!" << std::endl;
 	}
 }
 
 Cat::Cat(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(false)
 {
-	//this->shaderProgram = shdrPrg;
 	if (loadMultipleMeshes(CAT_MODEL, shdrPrg, geometries) != true) {
 		std::cerr << "initializeModels(): Cat model loading failed." << std::endl;
 	}

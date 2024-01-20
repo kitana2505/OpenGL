@@ -157,12 +157,9 @@
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="Animal_rabbit.cpp" />
     <ClCompile Include="Airplane.cpp" />
-    <ClCompile Include="data\fire_wood\big.cpp" />
-    <ClCompile Include="data\fire_wood\fireplace.cpp" />
     <ClCompile Include="data\fire_wood\medium.cpp" />
     <ClCompile Include="data\fire_wood\small.cpp" />
     <ClCompile Include="Explosion.cpp" />
-    <ClCompile Include="Fire.cpp" />
     <ClCompile Include="Fire2.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="House.cpp" />
@@ -179,12 +176,9 @@
     <ClInclude Include="Animal_rabbit.h" />
     <ClInclude Include="Airplane.h" />
     <ClInclude Include="data.h" />
-    <ClInclude Include="data\fire_wood\big.h" />
-    <ClInclude Include="data\fire_wood\fireplace.h" />
     <ClInclude Include="data\fire_wood\medium.h" />
     <ClInclude Include="data\fire_wood\small.h" />
     <ClInclude Include="Explosion.h" />
-    <ClInclude Include="fire.h" />
     <ClInclude Include="Fire2.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="House.h" />

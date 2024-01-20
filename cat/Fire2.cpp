@@ -1,7 +1,6 @@
 #include <iostream>
 #include "Fire2.h"
-#include "data/fire_wood/fireplace.h"
-const char* FIRE_MODEL_NAME2 = "data/low_poly_fireplace/fireplace.obj";
+
 
 ObjectGeometry* flames2 = new ObjectGeometry;
 ObjectGeometry* fireWood2 = new ObjectGeometry;
@@ -12,12 +11,6 @@ float firesize2 = 10;
 int current_fire_size2 = 4;
 
 void Fire2::update(float currentTime, const glm::mat4* parentModelMatrix) {
-	/*firesize -= eTime * FIRE_BURN_MULT;
-	if (firesize < 0) {
-		firesize = 0;
-	}
-	elapsed_time2 += eTime;
-	update_fire_size();*/
 	elapsed_time2 += currentTime;
 	ObjectInstance::update(currentTime, parentModelMatrix);
 }
@@ -50,7 +43,6 @@ void Fire2::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 		glBindVertexArray(0);
 
 		glUseProgram(0);
-		//draw_fireWood2(viewMatrix, projectionMatrix);
 		draw_flames(viewMatrix, projectionMatrix);
 		glDisable(GL_STENCIL_TEST);
 		ObjectInstance::draw(viewMatrix, projectionMatrix);
@@ -122,9 +114,6 @@ Fire2::Fire2(ShaderProgram* shdrPrg, FireShaderProgram* fireShaderProgram)
 		this->localModelMatrix = glm::translate(localModelMatrix, glm::vec3(FIRE_TRANSLATE));
 		this->size = FIRE_SIZE;
 		glUseProgram(shaderProgram->program);
-		//glUniform3f(shaderProgram->locations.fireAmbient, 0.0f, 0.0f, 0.0f);
-		//glUniform3f(shaderProgram->locations.fireDiffuse, 1.0f, 0.4f, 0.0f);
-		//glUniform3f(shaderProgram->locations.fireSpecular, 1.5f, 0.5f, 0.0f);
 		glUniform3f(shaderProgram->locations.firePosition, 0, 0, 0);
 		glUniform1f(shaderProgram->locations.fireStrength, 10);
 		//glUniform1f(shaderProgram->locations.fireFallof, 1.5f);
@@ -154,7 +143,6 @@ Fire2::Fire2(ShaderProgram* shdrPrg, FireShaderProgram* fireShaderProgram)
 	glBindVertexArray(0);
 
 	flames2->numTriangles = flameNumQuadVertices;
-	//init_fireWood2();
 
 }
 

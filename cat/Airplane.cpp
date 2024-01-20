@@ -3,26 +3,7 @@
 /// Number of control points of the animation curve.
 const size_t  curveSize = 12;
 /// Control points of the animation curve.
-/*glm::vec3 curveData[] = {
-  glm::vec3(0.00, 0.0,  0.0),
 
-  glm::vec3(-0.33,  0.35, 0.0),
-  glm::vec3(-0.66,  0.35, 0.0),
-  glm::vec3(-1.00,  0.0, 0.0),
-  glm::vec3(-0.66, -0.35, 0.0),
-  glm::vec3(-0.33, -0.35, 0.0),
-
-  glm::vec3(0.00,  0.0, 0.0),
-
-  glm::vec3(0.33,  0.35, 0.0),
-  glm::vec3(0.66,  0.35, 0.0),
-  glm::vec3(1.00,  0.0, 0.0),
-  glm::vec3(0.66, -0.35, 0.0),
-  glm::vec3(0.33, -0.35, 0.0)
-};*/
-
-
-//ellipse
 glm::vec3 curveData[] = {
   glm::vec3(0.00, 0.0,  0.35)* glm::vec3(10),
 
@@ -51,14 +32,9 @@ void Airplane::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 	position = initPosition + evaluateClosedCurve(curveData, curveSize, curveParamT);
 	direction = glm::normalize(evaluateClosedCurve_1stDerivative(curveData, curveSize, curveParamT));
 	localModelMatrix = alignObject(position, direction, glm::vec3(0.0f, 1.0f, 0.0f));
-	//localModelMatrix = glm::scale(localModelMatrix, glm::vec3(size));
-	//localModelMatrix = glm::rotate(localModelMatrix, glm::radians(-Airplane_ROTATION), glm::vec3(0, 1, 0));
+	
 	localModelMatrix = glm::rotate(localModelMatrix, glm::radians(AIRPLANE_ROTATION), glm::vec3(0, 1, 0));
 	localModelMatrix = glm::rotate(localModelMatrix, glm::radians(-AIRPLANE_ROTATION), glm::vec3(1, 0, 0));
-
-	//localModelMatrix = glm::translate(glm::mat4(1.0f), position);
-	//glm::mat4 modelMatrix = alignObject(position, direction, glm::vec3(0.0f, 0.0f, 1.0f));
-	//localModelMatrix = glm::rotate(localModelMatrix, modelMatrix, glm::vec3(0, 1, 0));
 	ObjectInstance::update(elapsedTime, parentModelMatrix);
 }
 
@@ -96,7 +72,7 @@ void Airplane::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatr
 
 	}
 	else {
-		//std::cout << "Can't draw Airplane: triangle not initialized properly!" << std::endl;
+		std::cout << "Can't draw Airplane: triangle not initialized properly!" << std::endl;
 	}
 }
 
@@ -120,10 +96,6 @@ Airplane::Airplane(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialize
 		(float)(2.0 * (rand() / (double)RAND_MAX) - 1.0));
 	direction = glm::normalize(direction);
 	startTime = 0.0f;
-	//location = glm::scale(globalModelMatrix, glm::vec3(size));
-	//location = glm::translate(location, position);
-	//locations.emplace_back(location);
-	
 
 	CHECK_GL_ERROR();
 
@@ -261,9 +233,6 @@ glm::mat4 Airplane::alignObject(const glm::vec3& position, const glm::vec3& fron
 
 	return matrix;
 }
-
-
-
 
 
 template <typename T>

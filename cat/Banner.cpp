@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Banner.h"
-//BannerShaderProgram* BannerShdr;
 
 void Banner::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 	currentTime = elapsedTime;
@@ -36,7 +35,6 @@ void Banner::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 		matrix = glm::translate(matrix, position);
 		matrix = glm::scale(matrix, glm::vec3(size));
 
-		//matrix = matrix * billboardRotationMatrix; // make billboard to face the camera
 		glm::mat4 PVMmatrix = projectionMatrix * viewMatrix * matrix;
 		glUniformMatrix4fv(shaderProgram->locations.PVMmatrix, 1, GL_FALSE, glm::value_ptr(PVMmatrix));        // model-view-projection
 		glUniform1f(shaderProgram->locations.time, currentTime - startTime);

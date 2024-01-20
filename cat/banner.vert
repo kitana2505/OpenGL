@@ -18,7 +18,6 @@ void main() {
   gl_Position = PVMmatrix * vec4(position, 1.0);   // outgoing vertex in clip coordinates
 
   float localTime = time * decay;
-  // localTime = 0;
 
   vec2 offset = vec2( 0.0,-(floor(localTime) - localTime)*8); //u,v
 
