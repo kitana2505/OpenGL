@@ -1251,17 +1251,26 @@ void menuFlash(int menuItemID)
 	}
 }
 
-void myMenu(int menuItemID) {
-
-	switch (menuItemID) {
-	
-	// Add Banner
+void menuRain(int menuItemID)
+{
+	switch (menuItemID)
+	{
 	case 1:
-		// show Banner
+		gameState.gameOver = true;
+		createBanner();
 		break;
-
-	// Exit program
 	case 2:
+		gameState.gameOver = false;
+		gameState.banner = NULL;
+		break;
+	}
+}
+
+void myMenu(int menuItemID) {
+	switch (menuItemID) {
+
+		// Exit program
+	case 1:
 		exit(0);
 		break;
 	}
@@ -1330,6 +1339,10 @@ int main(int argc, char** argv) {
 	glutAddMenuEntry("On", 1);
 	glutAddMenuEntry("Off", 2);
 
+	int idRain = glutCreateMenu(menuRain);
+	glutAddMenuEntry("On", 1);
+	glutAddMenuEntry("Off", 2);
+
 
 	//int idPoint = glutCreateMenu(menuPoint);
 	//glutAddMenuEntry("Pointlight on", 1);
@@ -1340,8 +1353,8 @@ int main(int argc, char** argv) {
 	glutAddSubMenu("Camera", idCamera);
 	glutAddSubMenu("Sun", idSunPosition);
 	glutAddSubMenu("Flash", idFlash);
-	glutAddMenuEntry("GameOver", 1);
-	glutAddMenuEntry("Quit", 2);
+	glutAddSubMenu("Rain", idRain);
+	glutAddMenuEntry("Quit", 1);
 
 	/* Menu will be invoked by the right button. */
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
