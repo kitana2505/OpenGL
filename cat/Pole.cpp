@@ -103,7 +103,7 @@ glm::mat4 Pole::alignObject(const glm::vec3& position, const glm::vec3& front, c
 void Pole::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 	float timeDelta = elapsedTime - currentTime;
 	currentTime = elapsedTime;
-
+	
 	ObjectInstance::update(elapsedTime, parentModelMatrix);
 }
 
@@ -111,13 +111,16 @@ void Pole::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 {
 	glm::mat4 modelMatrix = alignObject(position, direction, glm::vec3(0.0f, 0.0f, 1.0f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(size));
-
+	//glm::mat4 modelMatrix = glm::mat4(1.0f);
+	//modelMatrix = glm::scale(modelMatrix, glm::vec3(size));
+	//modelMatrix = glm::translate(modelMatrix, position);
 	const float frequency = POLE_ROT_FREQ; // per second
 	const float angle = 0.5f * M_PI * frequency * (currentTime - startTime); // angle in radians
 	localModelMatrix = glm::rotate(modelMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
-
+	//alpha is float
 	if (initialized && (shaderProgram != nullptr)) {
 		glUseProgram(shaderProgram->program);
+		glUniform1f(shaderProgram->locations.alpha, 0.5f + 0.5f * sin(currentTime - startTime));
 		for (auto geometry : geometries) {
 			//for (auto location : locations) {
 
@@ -133,6 +136,7 @@ void Pole::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 				geometry->texture
 			);
 			//glDrawElements(GL_TRIANGLES, geometry->numTriangles * 3, GL_UNSIGNED_INT, 0);
+			
 			glDrawArrays(GL_TRIANGLES, 0, geometry->numTriangles * 3);
 			glBindVertexArray(0);
 

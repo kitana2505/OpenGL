@@ -67,6 +67,7 @@ ExplosionShaderProgram explosionShaderProgram;
 SkyboxShaderProgram skyboxShaderProgram;
 MissileShaderProgram missileShaderProgram;
 ShaderProgram bannerShaderProgram;
+ShaderProgram dynamicShaderProgram;
 ObjectList rabbitList;
 
 
@@ -459,7 +460,19 @@ void loadShaderPrograms() //define at least 1 shader obj
 	explosionShaderProgram.frames = glGetUniformLocation(explosionShaderProgram.program, "pattern");
 	explosionShaderProgram.scale = glGetUniformLocation(explosionShaderProgram.program, "scale");
 
+	GLuint shaders8[] = {
+	pgr::createShaderFromFile(GL_VERTEX_SHADER, "dynamicObject.vert"),
+	pgr::createShaderFromFile(GL_FRAGMENT_SHADER, "dynamicObject.frag"),
+	0
+	};
 
+	dynamicShaderProgram.program = pgr::createProgram(shaders8);
+	dynamicShaderProgram.locations.position = glGetAttribLocation(dynamicShaderProgram.program, "position");
+	//commonShaderProgram.locations.color = glGetAttribLocation(commonShaderProgram.program, "color");
+
+	// other attributes and uniforms
+	dynamicShaderProgram.locations.PVMmatrix = glGetUniformLocation(dynamicShaderProgram.program, "PVMmatrix");
+	dynamicShaderProgram.locations.alpha = glGetUniformLocation(dynamicShaderProgram.program, "alpha");
 
 	assert(commonShaderProgram.locations.PVMmatrix != -1);
 	assert(commonShaderProgram.locations.position != -1);
@@ -1177,7 +1190,7 @@ void initApplication() {
 
 	// Add rotating pole for morphing
 	auto PolePos = glm::vec3(11.0f, 7.0f, 0.3f);
-	Pole* Pole= Pole::createPole(&commonShaderProgram, PolePos, gameState.elapsedTime);
+	Pole* Pole= Pole::createPole(&dynamicShaderProgram, PolePos, gameState.elapsedTime);
 	gameState.poleList.push_back(Pole);
 
 	// player_init

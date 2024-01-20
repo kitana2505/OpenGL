@@ -201,6 +201,8 @@
     <None Include="brickShader.vert" />
     <None Include="commonShader.frag" />
     <None Include="commonShader.vert" />
+    <None Include="dynamicObject.frag" />
+    <None Include="dynamicObject.vert" />
     <None Include="explosion.frag" />
     <None Include="explosion.vert" />
     <None Include="fireShader.frag" />
