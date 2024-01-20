@@ -484,6 +484,13 @@ void loadShaderPrograms() //define at least 1 shader obj
 	// other attributes and uniforms
 	dynamicShaderProgram.locations.PVMmatrix = glGetUniformLocation(dynamicShaderProgram.program, "PVMmatrix");
 	dynamicShaderProgram.locations.alpha = glGetUniformLocation(dynamicShaderProgram.program, "alpha");
+	// material
+	dynamicShaderProgram.locations.ambient = glGetUniformLocation(dynamicShaderProgram.program, "material.ambient");
+	dynamicShaderProgram.locations.diffuse = glGetUniformLocation(dynamicShaderProgram.program, "material.diffuse");
+	dynamicShaderProgram.locations.specular = glGetUniformLocation(dynamicShaderProgram.program, "material.specular");
+	dynamicShaderProgram.locations.shininess = glGetUniformLocation(dynamicShaderProgram.program, "material.shininess");
+
+	dynamicShaderProgram.locations.useTexture = glGetUniformLocation(dynamicShaderProgram.program, "material.useTexture");
 
 	assert(commonShaderProgram.locations.PVMmatrix != -1);
 	assert(commonShaderProgram.locations.position != -1);

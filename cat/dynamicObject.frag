@@ -7,13 +7,13 @@ out vec4 fragmentColor;
 
 
 // define the input variable color 
-in vec4 color;
+smooth in vec4 color_v;
 
 uniform mat4  PVMmatrix;   // transformation matrix
 
 
 void main()
 {
-    fragmentColor = color;
+    fragmentColor = color_v;
   
 }

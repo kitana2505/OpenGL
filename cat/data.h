@@ -160,7 +160,7 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 
 // player config 
 
-=======
+
 #define WALKING_SPEED  3.0f
 #define HIGH_SPEED  8.0f
 
