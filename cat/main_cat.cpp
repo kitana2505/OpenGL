@@ -124,6 +124,8 @@ struct _GameState {
 	 ObjectList explosions;
 	 ObjectList poleList;
 
+	 bool jump;
+
 }gameState;
 
 
@@ -168,9 +170,9 @@ void move_player(float deltaTime) {
 	}
 
 	//gameState.player_direction = glm::normalize(glm::vec3(0, 0,0));
-	if (gameState.keyMap[RUN]) {
-		if (check_bounds(gameState.player_position + gameState.player_direction * PLAYER_RUNNING_SPEED * deltaTime)) {
-			gameState.player_position += gameState.player_direction * PLAYER_RUNNING_SPEED * deltaTime;
+	if (gameState.jump) {
+		if (check_bounds(gameState.player_position + gameState.player_direction * PLAYER_HIGH_SPEED * deltaTime)) {
+			gameState.player_position += gameState.player_direction * PLAYER_HIGH_SPEED * deltaTime;
 		}
 
 	}
@@ -804,6 +806,12 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
 			gameState.banner = NULL;
 		}
 		break;
+
+	case 'z':
+	case 'Z':
+		//case GLUT_KEY_DOWN:
+		gameState.jump = true;
+		break;
 	}
 }
 // Called whenever a key on the keyboard was released. The key is given by
@@ -847,9 +855,14 @@ void keyboardUpCb(unsigned char keyReleased, int mouseX, int mouseY) {
 		gameState.launchMissile = false;
 
 		break;
+	case 'z':
+	case 'Z':
+		//case GLUT_KEY_DOWN:
+		gameState.jump = false;
+		break;
 	}
 
-
+		
 }
 //
 /**
@@ -878,9 +891,7 @@ void specialKeyboardCb(int specKeyPressed, int mouseX, int mouseY) {
 		//case GLUT_KEY_DOWN:
 		gameState.keyMap[BACKWARD] = true;
 		break;
-	case GLUT_KEY_SHIFT_L:
-		gameState.keyMap[RUN] = true;
-		break;
+
 	}
 }
 
@@ -1205,6 +1216,9 @@ void initApplication() {
 
 	//init gameOver
 	gameState.gameOver = false;
+
+	// init jump
+	gameState.jump = false;
 	// set initial fog color to black
 	glUseProgram(commonShaderProgram.program);
 	glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);

@@ -152,7 +152,7 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 
 // player config 
 #define PLAYER_WALKING_SPEED  2.0f
-#define PLAYER_RUNNING_SPEED  4.5f
+#define PLAYER_HIGH_SPEED  4.5f
 #define PLAYER_HEIGHT  0.5f
 #define CAM_INIT_PLAYER glm::vec3(6.69, 1.0f, -19.63f)
 
