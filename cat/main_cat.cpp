@@ -779,7 +779,7 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
 	case 'G':
 		//case GLUT_KEY_DOWN:
 		if (gameState.gameOver == false){
-		gameState.gameOver = true;
+			gameState.gameOver = true;
 		createBanner();
 		}
 		else  {
@@ -1253,18 +1253,26 @@ void menuFlash(int menuItemID)
 			break;
 	}
 }
+void menuRain(int menuItemID)
+{
+	switch (menuItemID)
+	{
+		case 1: 
+			gameState.gameOver = true;
+			createBanner();
+			break;
+		case 2:
+			gameState.gameOver = false;
+			gameState.banner = NULL;
+			break;
+	}
+}
 
 void myMenu(int menuItemID) {
-
 	switch (menuItemID) {
-	
-	// Add Banner
-	case 1:
-		// show Banner
-		break;
 
 	// Exit program
-	case 2:
+	case 1:
 		exit(0);
 		break;
 	}
@@ -1333,6 +1341,9 @@ int main(int argc, char** argv) {
 	glutAddMenuEntry("On", 1);
 	glutAddMenuEntry("Off", 2);
 
+	int idRain = glutCreateMenu(menuRain);
+	glutAddMenuEntry("On", 1);
+	glutAddMenuEntry("Off", 2);
 
 	//int idPoint = glutCreateMenu(menuPoint);
 	//glutAddMenuEntry("Pointlight on", 1);
@@ -1343,8 +1354,8 @@ int main(int argc, char** argv) {
 	glutAddSubMenu("Camera", idCamera);
 	glutAddSubMenu("Sun", idSunPosition);
 	glutAddSubMenu("Flash", idFlash);
-	glutAddMenuEntry("GameOver", 1);
-	glutAddMenuEntry("Quit", 2);
+	glutAddSubMenu("Rain", idRain);
+	glutAddMenuEntry("Quit", 1);
 
 	/* Menu will be invoked by the right button. */
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
