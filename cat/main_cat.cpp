@@ -172,16 +172,17 @@ void move_player(float deltaTime) {
 		gameState.player_direction = glm::normalize(gameState.player_direction);
 	}
 
+
 	//gameState.player_direction = glm::normalize(glm::vec3(0, 0,0));
 	if (gameState.keyMap[RUN]) {
-		if (check_bounds(gameState.player_position + gameState.player_direction * PLAYER_RUNNING_SPEED * deltaTime)) {
-			gameState.player_position += gameState.player_direction * PLAYER_RUNNING_SPEED * deltaTime;
+		if (check_bounds(gameState.player_position + gameState.player_direction * RUNNING_SPEED * deltaTime)) {
+			gameState.player_position += gameState.player_direction * RUNNING_SPEED * deltaTime;
 		}
 
 	}
 	else {
-		if (check_bounds(gameState.player_position + gameState.player_direction * PLAYER_WALKING_SPEED * deltaTime)) {
-			gameState.player_position += gameState.player_direction * PLAYER_WALKING_SPEED * deltaTime;
+		if (check_bounds(gameState.player_position + gameState.player_direction * WALKING_SPEED * deltaTime)) {
+			gameState.player_position += gameState.player_direction * WALKING_SPEED * deltaTime;
 		}
 	}
 
@@ -488,7 +489,7 @@ glm::vec3 move_camera() {
 	}
 	glm::vec3 position = gameState.initial_camera_position;
 	glm::vec3 target = gameState.target_camera_position;
-	glm::vec3 direction = (target - position) * 0.08f;
+	glm::vec3 direction = (target - position) * 0.1f;
 
 	float dis1 = glm::distance(gameState.camera_position, target);
 	gameState.camera_position += direction;
@@ -578,14 +579,16 @@ void drawScene(void)
 		gameState.cameraRotationAngle = 90.0f;
 		break;
 	case 2:
+		// see the main objects from above
+		gameState.target_camera_position = STATIC_CAMERA_2;
+		gameState.cameraElevationAngle = -70.0f;
+		gameState.cameraRotationAngle = 135.0f;
+		break;
+	case 3:
+		
 		gameState.target_camera_position = CAM_INIT_PLAYER;
 		gameState.cameraElevationAngle = 0.0f;
 		gameState.cameraRotationAngle = 100.0f;
-		break;
-	case 3:
-		gameState.target_camera_position = STATIC_CAMERA_2;
-		gameState.cameraElevationAngle = -50.0f;
-		gameState.cameraRotationAngle = 135.0f;
 		break;
 	}
 	glm::vec3 cameraPosition = move_camera();

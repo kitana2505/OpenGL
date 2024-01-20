@@ -70,6 +70,8 @@ void Airplane::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatr
 			//for (auto location : locations) {
 			//location = glm::rotate(globalModelMatrix, 0.0f, glm::vec3(1, 0, 0));
 
+			geometry->texture = pgr::createTexture(AIRPLANE_TEXTURE);
+			CHECK_GL_ERROR();
 
 				glBindVertexArray(geometry->vertexArrayObject);
 				setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
@@ -82,9 +84,11 @@ void Airplane::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatr
 					geometry->shininess,
 					geometry->texture
 				);
+				glActiveTexture(GL_TEXTURE0); // select texture unit 0
+				glBindTexture(GL_TEXTURE_2D, geometry->texture);
 				glDrawElements(GL_TRIANGLES, geometry->numTriangles * 3, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
-
+				glBindTexture(GL_TEXTURE_2D, 0);
 
 			//}
 		}

@@ -29,6 +29,8 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define CAT_SCALE  0.5f
 #define CAT_INITIAL_POS glm::vec3(0, 0.9, -10)
 #define CAT_ROTATION 0.0f
+#define CAT_TEXTURE "data/animal_cat/texture_cat.jpg"
+
 //banner
 
 #define BANNER_TEXTURE_NAME  "data/banner/scrollrain.jpg"
@@ -39,6 +41,8 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define RABBIT_SCALE  0.3f
 #define RABBIT_INITIAL_POS glm::vec3(20.0, 0.9, -20)
 #define RABBIT_ROTATION 0.0f
+#define RABBIT_TEXTURE "data/animal_rabbit/texture_rabbit.jpg"
+
 
 //AIRPLANE
 #define AIRPLANE_MODEL  "data/airplane/11803_Airplane_v1_l1.obj"
@@ -46,6 +50,8 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define AIRPLANE_INITIAL_POS glm::vec3(-5.0f,8.0f, 15.0f)
 #define AIRPLANE_ROTATION 90.0f
 #define AIRPLANE_SPEED    0.5f
+#define AIRPLANE_TEXTURE "data/airplane/texture_airplane.jpg"
+
 
 //missile
 #define MISSILE_MAX_DISTANCE       3.5f
@@ -55,14 +61,15 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 
 //brick
 #define BRICK_MODEL "data/brick/brick.obj"
-#define BRICK_SCALE  0.5f
-#define BRICK_INITIAL_POS glm::vec3(5.0f,0.0f,-5.0f)
+#define BRICK_SCALE  3.0f
+#define BRICK_INITIAL_POS glm::vec3(4.1f,0.0f,-3.0f)
 #define BRICK_ROTATION 0.0f
 
 //house
 #define HOUSE_MODEL "data/house/house_blue/house.obj"
 #define HOUSE_SCALE 2.0f
 #define HOUSE_TRANSLATE glm::vec3(5.0f,0.8f,0)
+#define HOUSE_TEXTURE "data/house/house_blue/texture_house.jpg"
 
 //trees
 #define TREE_SPACING 10.0f
@@ -148,8 +155,8 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 #define FIRE_SMALL_TRANSLATE  glm::vec3(2, 2, 0)
 
 // player config 
-#define PLAYER_WALKING_SPEED  2.0f
-#define PLAYER_RUNNING_SPEED  4.5f
+#define WALKING_SPEED  3.0f
+#define RUNNING_SPEED  8.0f
 #define PLAYER_HEIGHT  0.5f
 #define CAM_INIT_PLAYER glm::vec3(6.69, 1.0f, -19.63f)
 
