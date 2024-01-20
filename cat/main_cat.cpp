@@ -1395,10 +1395,6 @@ int main(int argc, char** argv) {
 	glutAddMenuEntry("On", 1);
 	glutAddMenuEntry("Off", 2);
 
-
-	int idRain = glutCreateMenu(menuRain);
-	glutAddMenuEntry("On", 1);
-	glutAddMenuEntry("Off", 2);
 	//int idPoint = glutCreateMenu(menuPoint);
 	//glutAddMenuEntry("Pointlight on", 1);
 	//glutAddMenuEntry("Pointlight off", 2);
