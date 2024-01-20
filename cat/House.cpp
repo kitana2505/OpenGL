@@ -13,6 +13,7 @@ void House::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 		glUseProgram(shaderProgram->program);
 		for (auto geometry : geometries) {
 			for (auto location : locations) {
+				geometry->texture = pgr::createTexture(HOUSE_TEXTURE);
 
 				glBindVertexArray(geometry->vertexArrayObject);
 				setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
@@ -24,9 +25,11 @@ void House::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 					geometry->shininess,
 					geometry->texture
 				);
+				glActiveTexture(GL_TEXTURE0); // select texture unit 0
+				glBindTexture(GL_TEXTURE_2D,geometry->texture);
 				glDrawElements(GL_TRIANGLES, geometry->numTriangles * 3, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
-
+				glBindTexture(GL_TEXTURE_2D, 0);
 
 			}
 		}
