@@ -1297,6 +1297,7 @@ void menuFog(int menuItemID)
 	}
 }
 
+
 void menuRain(int menuItemID)
 {
 	switch (menuItemID)
@@ -1304,27 +1305,20 @@ void menuRain(int menuItemID)
 	case 1:
 		gameState.gameOver = true;
 		createBanner();
-		glUseProgram(0);
 		break;
 	case 2:
 		gameState.gameOver = false;
 		gameState.banner = NULL;
-		glUseProgram(0);
 		break;
 	}
 }
 
+
 void myMenu(int menuItemID) {
-
 	switch (menuItemID) {
-	
-	// Add Banner
-	case 1:
-		// show Banner
-		break;
 
-	// Exit program
-	case 2:
+		// Exit program
+	case 1:
 		exit(0);
 		break;
 	}
@@ -1396,6 +1390,11 @@ int main(int argc, char** argv) {
 	int idFog = glutCreateMenu(menuFog);
 	glutAddMenuEntry("On", 1);
 	glutAddMenuEntry("Off", 2);
+  
+	int idRain = glutCreateMenu(menuRain);
+	glutAddMenuEntry("On", 1);
+	glutAddMenuEntry("Off", 2);
+
 
 	int idRain = glutCreateMenu(menuRain);
 	glutAddMenuEntry("On", 1);
@@ -1410,8 +1409,9 @@ int main(int argc, char** argv) {
 	glutAddSubMenu("Sun", idSunPosition);
 	glutAddSubMenu("Flash", idFlash);
 	glutAddSubMenu("Fog", idFog);
-	glutAddMenuEntry("Rain", idRain);
-	glutAddMenuEntry("Quit", 2);
+	glutAddSubMenu("Rain", idRain);
+	glutAddMenuEntry("Quit", 1);
+
 
 	/* Menu will be invoked by the right button. */
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
