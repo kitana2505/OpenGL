@@ -40,12 +40,12 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define RABBIT_INITIAL_POS glm::vec3(20.0, 0.9, -20)
 #define RABBIT_ROTATION 0.0f
 
-//turtle
-#define TURTLE_MODEL  "data/airplane/11803_Airplane_v1_l1.obj"
-#define TURTLE_SCALE 2.0f
-#define TURTLE_INITIAL_POS glm::vec3(-5.0f,8.0f, 15.0f)
-#define TURTLE_ROTATION 90.0f
-#define TURTLE_SPEED    0.5f
+//AIRPLANE
+#define AIRPLANE_MODEL  "data/airplane/11803_Airplane_v1_l1.obj"
+#define AIRPLANE_SCALE 2.0f
+#define AIRPLANE_INITIAL_POS glm::vec3(-5.0f,8.0f, 15.0f)
+#define AIRPLANE_ROTATION 90.0f
+#define AIRPLANE_SPEED    0.5f
 
 //missile
 #define MISSILE_MAX_DISTANCE       3.5f
@@ -56,7 +56,7 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 //brick
 #define BRICK_MODEL "data/brick/brick.obj"
 #define BRICK_SCALE  0.5f
-#define BRICK_INITIAL_POS glm::vec3(28.0f,0.0f,-5.0f)
+#define BRICK_INITIAL_POS glm::vec3(5.0f,0.0f,-5.0f)
 #define BRICK_ROTATION 0.0f
 
 //house
@@ -68,6 +68,7 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define TREE_SPACING 10.0f
 #define TREE_MODEL "data/tree/Tree.obj"
 #define TREE_SCALE 2.0f
+#define TREE_LOCATION glm::vec3(2.0, 0.9,3.0)
 
 //grass
 #define GRASS_MODEL "data/trava/trava.obj"

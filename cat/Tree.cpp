@@ -49,7 +49,7 @@ Tree::Tree(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(false)
 	else {
 		initialized = true;
 	}
-	float RANGE = 5;
+	/*float RANGE = 5;
 	for (float i = -SCENE_WIDTH; i < SCENE_WIDTH; i+= TREE_SPACING) {
 		for (float j = -SCENE_WIDTH; j < SCENE_WIDTH; j+= TREE_SPACING) {
 			if (i < RANGE && i > RANGE) continue;
@@ -68,7 +68,11 @@ Tree::Tree(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(false)
 			
 			locations.emplace_back(location);
 		}
-	}
+
+	}*/
+	glm::mat4 location = glm::scale(globalModelMatrix, glm::vec3(TREE_SCALE));
+	location = glm::translate(location,TREE_LOCATION);
+	locations.emplace_back(location);
 	CHECK_GL_ERROR();
 	
 }

@@ -46,7 +46,7 @@
 #include "Ground.h"
 #include "Skybox.h"
 #include "Animal_cat.h"
-#include "Animal_turtle.h"
+#include "Airplane.h"
 #include "Missile.h"
 #include "Banner.h"
 #include "Brick.h"
@@ -488,7 +488,7 @@ glm::vec3 move_camera() {
 	}
 	glm::vec3 position = gameState.initial_camera_position;
 	glm::vec3 target = gameState.target_camera_position;
-	glm::vec3 direction = (target - position) * 0.05f;
+	glm::vec3 direction = (target - position) * 0.08f;
 
 	float dis1 = glm::distance(gameState.camera_position, target);
 	gameState.camera_position += direction;
@@ -497,6 +497,18 @@ glm::vec3 move_camera() {
 		gameState.camera_position = target;
 		gameState.move_camera = false;
 	}
+
+	/*glm::vec3 current_camera_position = gameState.camera_position;
+	float original_distance = glm::distance(gameState.camera_position, target);
+	float dis2 = glm::distance(gameState.camera_position, target);
+	do { gameState.camera_position += direction;
+		current_camera_position = gameState.camera_position;
+	} while (glm::distance(current_camera_position, target) <= original_distance);
+		//gameState.camera_position += direction;
+	
+	//gameState.camera_position += direction;
+	gameState.move_camera = false;*/
+	
 	return gameState.camera_position;
 }
 
@@ -555,22 +567,24 @@ void drawScene(void)
 	switch (gameState.camera_index) {
 	case 0:
 		gameState.target_camera_position = gameState.player_position;
+		//gameState.cameraElevationAngle = 0.0f;
+		//gameState.cameraRotationAngle = 90.0f;
 		break;
 	case 1:
-		gameState.target_camera_position = CAT_INITIAL_POS * glm::vec3(1.0f, 1.0f, 0.5f);
-
 		// Fix camera in front of the cat
+
+		gameState.target_camera_position = CAT_INITIAL_POS * glm::vec3(1.0f, 1.0f, 0.5f);
 		gameState.cameraElevationAngle = 0.0f;
 		gameState.cameraRotationAngle = 90.0f;
 		break;
 	case 2:
 		gameState.target_camera_position = CAM_INIT_PLAYER;
 		gameState.cameraElevationAngle = 0.0f;
-		gameState.cameraRotationAngle = 125.0f;
+		gameState.cameraRotationAngle = 100.0f;
 		break;
 	case 3:
 		gameState.target_camera_position = STATIC_CAMERA_2;
-		gameState.cameraElevationAngle = -45.0f;
+		gameState.cameraElevationAngle = -50.0f;
 		gameState.cameraRotationAngle = 135.0f;
 		break;
 	}
@@ -1156,7 +1170,7 @@ void initApplication() {
 	gameState.fire2 = new Fire2(&commonShaderProgram, &fireShaderProgram);
 	gameState.skybox = new Skybox(&skyboxShaderProgram);
 	//gameState.missile = new Missile(&commonShaderProgram, &missileShaderProgram);
-	objects.push_back(new Turtle(&commonShaderProgram));
+	objects.push_back(new Airplane(&commonShaderProgram));
 	
 	objects.push_back(gameState.skybox);
 	objects.push_back(new House(&commonShaderProgram));
@@ -1170,8 +1184,8 @@ void initApplication() {
 	rabbit2->position = rabbit1->position + glm::vec3(4.0f, 0.0f, 0.0f);
 	Rabbit* rabbit3 = new Rabbit(&commonShaderProgram);
 	rabbit3->position = rabbit2->position + glm::vec3(4.0f, 0.0f, 0.0f);
-  objects.push_back(new Tree(&commonShaderProgram));
-	objects.push_back(new Turtle(&commonShaderProgram));
+	objects.push_back(new Tree(&commonShaderProgram));
+	//objects.push_back(new Turtle(&commonShaderProgram));
 	
 
 	//objects.push_back(gameState.fire);

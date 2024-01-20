@@ -2,12 +2,12 @@
 
 #include "object.h"
 
-class Turtle : public ObjectInstance
+class Airplane : public ObjectInstance
 {
 public:
 
-	Turtle(ShaderProgram* shdrPrg = nullptr);
-	~Turtle();
+	Airplane(ShaderProgram* shdrPrg = nullptr);
+	~Airplane();
 
 	void update(float elapsedTime, const glm::mat4* parentModelMatrix) override;
 	void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) override;
@@ -42,7 +42,7 @@ public:
 
 private:
 
-	bool initialized;  ///< object has the shader with defined loTurtleions
+	bool initialized;  ///< object has the shader with defined loAirplaneions
 	//std::vector<glm::mat4> locations;
 	glm::mat4  location;
 	glm::vec3 initPosition;
