@@ -52,7 +52,7 @@
 #include "Brick.h"
 #include "Animal_rabbit.h"
 #include "Explosion.h"
-
+#include "Pole.h"
 
 //constexpr int WINDOW_WIDTH = 500;
 //constexpr int WINDOW_HEIGHT = 500;
@@ -66,7 +66,6 @@ ShaderProgram brickShaderProgram;
 ExplosionShaderProgram explosionShaderProgram;
 SkyboxShaderProgram skyboxShaderProgram;
 MissileShaderProgram missileShaderProgram;
-ObjectList missleList;
 ShaderProgram bannerShaderProgram;
 ObjectList rabbitList;
 
@@ -122,6 +121,7 @@ struct _GameState {
 
 	 ObjectList missleList;
 	 ObjectList explosions;
+	 ObjectList poleList;
 
 }gameState;
 
@@ -192,7 +192,7 @@ void shooting(ObjectList objects, float elapsedTime)
 	//missilePosition += missileDirection * 1.5f * CAT_SCALE;
 	missilePosition += missileDirection * CAT_SCALE * 0.25f;
 	//MissileShaderProgram* missileShader = new MissileShaderProgram;
-	Missile* newMissile = Missile::createMissile(&commonShaderProgram, missilePosition, missileDirection, gameState.missileLaunchTime, gameState.elapsedTime);
+	Missile* newMissile = Missile::createMissile(&commonShaderProgram, missilePosition, missileDirection, gameState.elapsedTime);
 	//}
 
 
@@ -599,6 +599,11 @@ void drawScene(void)
 	}
 
 	for (ObjectInstance* object : gameState.missleList) {   // for (auto object : objects) {
+		if (object != nullptr)
+			object->draw(viewMatrix, projectionMatrix);
+	}
+
+	for (ObjectInstance* object : gameState.poleList) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->draw(viewMatrix, projectionMatrix);
 	}
@@ -1058,8 +1063,11 @@ void timerCb(int)
 		if (object != nullptr)
 		  object->update(time/1000, &sceneRootMatrix);
 	}
-    
 	for (ObjectInstance* object : gameState.missleList) {   // for (auto object : objects) {
+		if (object != nullptr)
+			object->update(gameState.elapsedTime, &sceneRootMatrix);
+	}
+	for (ObjectInstance* object : gameState.poleList) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->update(gameState.elapsedTime, &sceneRootMatrix);
 	}
@@ -1143,32 +1151,34 @@ void initApplication() {
 	gameState.skybox = new Skybox(&skyboxShaderProgram);
 	//gameState.missile = new Missile(&commonShaderProgram, &missileShaderProgram);
 	objects.push_back(new Turtle(&commonShaderProgram));
-	
 	objects.push_back(gameState.skybox);
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
 	Brick* brick = new Brick(&brickShaderProgram);
 	objects.push_back(brick);
+
+
+	// Add rabits for picking 
 	Rabbit* rabbit1 = new Rabbit(&commonShaderProgram);
 	rabbit1->position = RABBIT_INITIAL_POS;
 	Rabbit* rabbit2 = new Rabbit(&commonShaderProgram);
 	rabbit2->position = rabbit1->position + glm::vec3(4.0f, 0.0f, 0.0f);
 	Rabbit* rabbit3 = new Rabbit(&commonShaderProgram);
 	rabbit3->position = rabbit2->position + glm::vec3(4.0f, 0.0f, 0.0f);
-  objects.push_back(new Tree(&commonShaderProgram));
+	objects.push_back(new Tree(&commonShaderProgram));
 	objects.push_back(new Turtle(&commonShaderProgram));
-	
 
-	//objects.push_back(gameState.fire);
-	//objects.push_back(gameState.missile);
 	rabbitList.push_back(rabbit1);
 	rabbitList.push_back(rabbit2);
 	rabbitList.push_back(rabbit3);
 	objects.push_back(gameState.fire2);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	// init your Application
-	// - setup the initial application state
+
+
+	// Add rotating pole for morphing
+	auto PolePos = glm::vec3(11.0f, 7.0f, 0.3f);
+	Pole* Pole= Pole::createPole(&commonShaderProgram, PolePos, gameState.elapsedTime);
+	gameState.poleList.push_back(Pole);
 
 	// player_init
 	gameState.player_position = CAM_INIT_PLAYER;

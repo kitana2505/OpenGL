@@ -168,6 +168,7 @@
     <ClCompile Include="House.cpp" />
     <ClCompile Include="main_cat.cpp" />
     <ClCompile Include="Missile.cpp" />
+    <ClCompile Include="Pole.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Tree.cpp" />
   </ItemGroup>
@@ -189,6 +190,7 @@
     <ClInclude Include="House.h" />
     <ClInclude Include="Missile.h" />
     <ClInclude Include="object.h" />
+    <ClInclude Include="Pole.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="Tree.h" />
   </ItemGroup>

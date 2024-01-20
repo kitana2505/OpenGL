@@ -53,6 +53,10 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define MISSILE_SIZE     0.25f
 #define MISSILE_SPEED              2.5f
 
+//pole
+#define POLE_SIZE     1.0f
+#define POLE_ROT_FREQ    1      
+// 
 //brick
 #define BRICK_MODEL "data/brick/brick.obj"
 #define BRICK_SCALE  0.5f
