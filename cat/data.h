@@ -59,6 +59,10 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define MISSILE_SIZE     0.25f
 #define MISSILE_SPEED              2.5f
 
+//pole
+#define POLE_SIZE     1.0f
+#define POLE_ROT_FREQ    1      
+// 
 //brick
 #define BRICK_MODEL "data/brick/brick.obj"
 #define BRICK_SCALE  3.0f
@@ -155,8 +159,11 @@ const float flame_sizes[3] = { 0.5f, 1.0f, 1.5f };
 #define FIRE_SMALL_TRANSLATE  glm::vec3(2, 2, 0)
 
 // player config 
+
+=======
 #define WALKING_SPEED  3.0f
-#define RUNNING_SPEED  8.0f
+#define HIGH_SPEED  8.0f
+
 #define PLAYER_HEIGHT  0.5f
 #define CAM_INIT_PLAYER glm::vec3(6.69, 1.0f, -19.63f)
 

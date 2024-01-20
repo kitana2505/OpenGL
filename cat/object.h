@@ -57,6 +57,7 @@ typedef struct _BrickShaderProgram {
 	//GLint frameDurationLocation; // = -1;
 	//GLint brickTex; // brick texture sampler – texture unit 0
 	GLint mossTex;
+	GLint alpha;
 
 }BrickShaderProgram;
 
@@ -157,6 +158,7 @@ typedef struct _ShaderProgram {
 
 		//GLfloat time;
 		GLint mossTex;
+		GLint alpha;
 	} locations;
 
 
@@ -197,6 +199,7 @@ typedef struct _ShaderProgram {
 		locations.fogColor = -1;
 
 		locations.mossTex = -1;
+		locations.alpha = -1;
 	}
 
 } ShaderProgram;

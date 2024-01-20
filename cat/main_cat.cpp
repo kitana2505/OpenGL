@@ -52,7 +52,7 @@
 #include "Brick.h"
 #include "Animal_rabbit.h"
 #include "Explosion.h"
-
+#include "Pole.h"
 
 //constexpr int WINDOW_WIDTH = 500;
 //constexpr int WINDOW_HEIGHT = 500;
@@ -66,8 +66,8 @@ ShaderProgram brickShaderProgram;
 ExplosionShaderProgram explosionShaderProgram;
 SkyboxShaderProgram skyboxShaderProgram;
 MissileShaderProgram missileShaderProgram;
-ObjectList missleList;
 ShaderProgram bannerShaderProgram;
+ShaderProgram dynamicShaderProgram;
 ObjectList rabbitList;
 
 
@@ -126,6 +126,9 @@ struct _GameState {
 
 	 ObjectList missleList;
 	 ObjectList explosions;
+	 ObjectList poleList;
+
+	 bool jump;
 
 
 
@@ -174,9 +177,11 @@ void move_player(float deltaTime) {
 
 
 	//gameState.player_direction = glm::normalize(glm::vec3(0, 0,0));
-	if (gameState.keyMap[RUN]) {
-		if (check_bounds(gameState.player_position + gameState.player_direction * RUNNING_SPEED * deltaTime)) {
-			gameState.player_position += gameState.player_direction * RUNNING_SPEED * deltaTime;
+
+	if (gameState.jump) {
+		if (check_bounds(gameState.player_position + gameState.player_direction * HIGH_SPEED * deltaTime)) {
+			gameState.player_position += gameState.player_direction * HIGH_SPEED * deltaTime;
+
 		}
 
 	}
@@ -199,7 +204,7 @@ void shooting(ObjectList objects, float elapsedTime)
 	//missilePosition += missileDirection * 1.5f * CAT_SCALE;
 	missilePosition += missileDirection * CAT_SCALE * 0.25f;
 	//MissileShaderProgram* missileShader = new MissileShaderProgram;
-	Missile* newMissile = Missile::createMissile(&commonShaderProgram, missilePosition, missileDirection, gameState.missileLaunchTime, gameState.elapsedTime);
+	Missile* newMissile = Missile::createMissile(&commonShaderProgram, missilePosition, missileDirection, gameState.elapsedTime);
 	//}
 
 
@@ -466,7 +471,19 @@ void loadShaderPrograms() //define at least 1 shader obj
 	explosionShaderProgram.frames = glGetUniformLocation(explosionShaderProgram.program, "pattern");
 	explosionShaderProgram.scale = glGetUniformLocation(explosionShaderProgram.program, "scale");
 
+	GLuint shaders8[] = {
+	pgr::createShaderFromFile(GL_VERTEX_SHADER, "dynamicObject.vert"),
+	pgr::createShaderFromFile(GL_FRAGMENT_SHADER, "dynamicObject.frag"),
+	0
+	};
 
+	dynamicShaderProgram.program = pgr::createProgram(shaders8);
+	dynamicShaderProgram.locations.position = glGetAttribLocation(dynamicShaderProgram.program, "position");
+	//commonShaderProgram.locations.color = glGetAttribLocation(commonShaderProgram.program, "color");
+
+	// other attributes and uniforms
+	dynamicShaderProgram.locations.PVMmatrix = glGetUniformLocation(dynamicShaderProgram.program, "PVMmatrix");
+	dynamicShaderProgram.locations.alpha = glGetUniformLocation(dynamicShaderProgram.program, "alpha");
 
 	assert(commonShaderProgram.locations.PVMmatrix != -1);
 	assert(commonShaderProgram.locations.position != -1);
@@ -630,6 +647,11 @@ void drawScene(void)
 	}
 
 	for (ObjectInstance* object : gameState.missleList) {   // for (auto object : objects) {
+		if (object != nullptr)
+			object->draw(viewMatrix, projectionMatrix);
+	}
+
+	for (ObjectInstance* object : gameState.poleList) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->draw(viewMatrix, projectionMatrix);
 	}
@@ -817,6 +839,12 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
 			gameState.banner = NULL;
 		}
 		break;
+
+	case 'z':
+	case 'Z':
+		//case GLUT_KEY_DOWN:
+		gameState.jump = true;
+		break;
 	}
 }
 // Called whenever a key on the keyboard was released. The key is given by
@@ -860,9 +888,14 @@ void keyboardUpCb(unsigned char keyReleased, int mouseX, int mouseY) {
 		gameState.launchMissile = false;
 
 		break;
+	case 'z':
+	case 'Z':
+		//case GLUT_KEY_DOWN:
+		gameState.jump = false;
+		break;
 	}
 
-
+		
 }
 //
 /**
@@ -891,9 +924,7 @@ void specialKeyboardCb(int specKeyPressed, int mouseX, int mouseY) {
 		//case GLUT_KEY_DOWN:
 		gameState.keyMap[BACKWARD] = true;
 		break;
-	case GLUT_KEY_SHIFT_L:
-		gameState.keyMap[RUN] = true;
-		break;
+
 	}
 }
 
@@ -1089,8 +1120,11 @@ void timerCb(int)
 		if (object != nullptr)
 		  object->update(time/1000, &sceneRootMatrix);
 	}
-    
 	for (ObjectInstance* object : gameState.missleList) {   // for (auto object : objects) {
+		if (object != nullptr)
+			object->update(gameState.elapsedTime, &sceneRootMatrix);
+	}
+	for (ObjectInstance* object : gameState.poleList) {   // for (auto object : objects) {
 		if (object != nullptr)
 			object->update(gameState.elapsedTime, &sceneRootMatrix);
 	}
@@ -1173,14 +1207,17 @@ void initApplication() {
 	gameState.fire2 = new Fire2(&commonShaderProgram, &fireShaderProgram);
 	gameState.skybox = new Skybox(&skyboxShaderProgram);
 	//gameState.missile = new Missile(&commonShaderProgram, &missileShaderProgram);
+
 	objects.push_back(new Airplane(&commonShaderProgram));
-	
 	objects.push_back(gameState.skybox);
 	objects.push_back(new House(&commonShaderProgram));
 	objects.push_back(new Ground(&commonShaderProgram));
 	objects.push_back(new Cat(&commonShaderProgram));
 	Brick* brick = new Brick(&brickShaderProgram);
 	objects.push_back(brick);
+
+
+	// Add rabits for picking 
 	Rabbit* rabbit1 = new Rabbit(&commonShaderProgram);
 	rabbit1->position = RABBIT_INITIAL_POS;
 	Rabbit* rabbit2 = new Rabbit(&commonShaderProgram);
@@ -1188,18 +1225,17 @@ void initApplication() {
 	Rabbit* rabbit3 = new Rabbit(&commonShaderProgram);
 	rabbit3->position = rabbit2->position + glm::vec3(4.0f, 0.0f, 0.0f);
 	objects.push_back(new Tree(&commonShaderProgram));
-	//objects.push_back(new Turtle(&commonShaderProgram));
-	
 
-	//objects.push_back(gameState.fire);
-	//objects.push_back(gameState.missile);
 	rabbitList.push_back(rabbit1);
 	rabbitList.push_back(rabbit2);
 	rabbitList.push_back(rabbit3);
 	objects.push_back(gameState.fire2);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	// init your Application
-	// - setup the initial application state
+
+
+	// Add rotating pole for morphing
+	auto PolePos = glm::vec3(11.0f, 7.0f, 0.3f);
+	Pole* Pole= Pole::createPole(&dynamicShaderProgram, PolePos, gameState.elapsedTime);
+	gameState.poleList.push_back(Pole);
 
 	// player_init
 	gameState.player_position = CAM_INIT_PLAYER;
@@ -1213,6 +1249,9 @@ void initApplication() {
 	gameState.fogOn = false;
 	//init gameOver
 	gameState.gameOver = false;
+
+	// init jump
+	gameState.jump = false;
 	// set initial fog color to black
 	glUseProgram(commonShaderProgram.program);
 	glUniform3f(commonShaderProgram.locations.fogColor, 0.0f, 0.0f, 0.0f);
