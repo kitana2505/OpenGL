@@ -176,9 +176,7 @@ void move_player(float deltaTime) {
 	}
 
 
-	//gameState.player_direction = glm::normalize(glm::vec3(0, 0,0));
-
-	if (gameState.jump) {
+	if (gameState.keyMap[RUN]) {
 		if (check_bounds(gameState.player_position + gameState.player_direction * HIGH_SPEED * deltaTime)) {
 			gameState.player_position += gameState.player_direction * HIGH_SPEED * deltaTime;
 
@@ -930,6 +928,9 @@ void specialKeyboardCb(int specKeyPressed, int mouseX, int mouseY) {
 	case GLUT_KEY_DOWN:
 		//case GLUT_KEY_DOWN:
 		gameState.keyMap[BACKWARD] = true;
+		break;
+	case GLUT_KEY_SHIFT_L:
+		gameState.keyMap[RUN] = true;
 		break;
 
 	}
