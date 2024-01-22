@@ -157,8 +157,6 @@
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="Animal_rabbit.cpp" />
     <ClCompile Include="Airplane.cpp" />
-    <ClCompile Include="data\fire_wood\medium.cpp" />
-    <ClCompile Include="data\fire_wood\small.cpp" />
     <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="Fire2.cpp" />
     <ClCompile Include="Ground.cpp" />
@@ -177,7 +175,6 @@
     <ClInclude Include="Airplane.h" />
     <ClInclude Include="data.h" />
     <ClInclude Include="data\fire_wood\medium.h" />
-    <ClInclude Include="data\fire_wood\small.h" />
     <ClInclude Include="Explosion.h" />
     <ClInclude Include="Fire2.h" />
     <ClInclude Include="Ground.h" />

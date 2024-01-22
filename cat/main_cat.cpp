@@ -1203,14 +1203,10 @@ void initApplication() {
 	// - all programs (shaders), buffers, textures, ...
 	loadShaderPrograms();
 	CHECK_GL_ERROR();
-	//objects.push_back(new Triangle(&commonShaderProgram));
-	// objects.push_back(new SingleMesh(&commonShaderProgram));
-	//objects.push_back(new Tree(&commonShaderProgram));
+
 	gameState.banner = NULL;
-	//gameState.fire = new Fire(&commonShaderProgram, &fireShaderProgram);
 	gameState.fire2 = new Fire2(&commonShaderProgram, &fireShaderProgram);
 	gameState.skybox = new Skybox(&skyboxShaderProgram);
-	//gameState.missile = new Missile(&commonShaderProgram, &missileShaderProgram);
 
 	objects.push_back(new Airplane(&commonShaderProgram));
 	objects.push_back(gameState.skybox);

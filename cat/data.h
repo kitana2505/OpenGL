@@ -81,13 +81,6 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define TREE_SCALE 2.0f
 #define TREE_LOCATION glm::vec3(2.0, 0.9,3.0)
 
-//grass
-#define GRASS_MODEL "data/trava/trava.obj"
-#define GRASS_SPACING 20.0f
-#define GRASS_ROTATION_VEC glm::vec3(3,0,2)
-#define GRASS_ROTATION_size -0.5f
-#define GRASS_TRASLATION glm::vec3(0, -0.5f, 0)
-#define GRASS_SCALE 1.0f
 
 //ground
 #define GROUND_MODEL "data/grass/grass.obj"
