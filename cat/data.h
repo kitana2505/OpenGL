@@ -15,7 +15,7 @@
 #define WINDOW_TITLE   "CAT"
 
 /// keys used in the key map
-enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
+enum { FORWARD, LEFT, BACKWARD, RIGHT, KEY_SPACE, KEYS_COUNT};
 
 #define SCENE_WIDTH  100.0f
 #define SCENE_HEIGHT 100.0f
@@ -76,7 +76,7 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 #define HOUSE_TEXTURE "data/house/house_blue/texture_house.jpg"
 
 //trees
-#define TREE_SPACING 10.0f
+//#define TREE_SPACING 10.0f
 #define TREE_MODEL "data/tree/Tree.obj"
 #define TREE_SCALE 2.0f
 #define TREE_LOCATION glm::vec3(2.0, 0.9,3.0)
@@ -111,7 +111,6 @@ enum { FORWARD, LEFT, BACKWARD, RIGHT, RUN, KEY_SPACE, KEYS_COUNT};
 
 //camera
 #define CAMERA_COUNT 4;
-//#define STATIC_CAMERA_1 glm::vec3(-80,15,20)
 #define STATIC_CAMERA_2 glm::vec3(17.0f,30.0f,-12.0f)
 
 //Skybox
@@ -132,7 +131,7 @@ const float flameVertexData[flameNumQuadVertices * 5] = {
 
 
 //
-// "game over" banner geometry definition 
+// "rain" banner geometry definition 
 //
 
 const int bannerNumQuadVertices = 4;

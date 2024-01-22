@@ -1,8 +1,6 @@
 #include <iostream>
 #include "Ground.h"
 
-//std::vector<glm::mat4> locations;
-//const char* MODEL_NAME = "data/low_poly_Ground/Ground2.obj";
 
 void Ground::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
   ObjectInstance::update(elapsedTime, parentModelMatrix);
@@ -48,7 +46,7 @@ Ground::Ground(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(fa
 {
 	//this->shaderProgram = shdrPrg;
 	if (loadMultipleMeshes(GROUND_MODEL, shdrPrg, geometries) != true) {
-		std::cerr << "initializeModels(): Vegetation model loading failed." << std::endl;
+		std::cerr << " Ground model loading failed." << std::endl;
 	}
 	else {
 		initialized = true;
@@ -58,7 +56,6 @@ Ground::Ground(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(fa
 				glm::mat4 location = glm::scale(localModelMatrix, GROUND_SCALE);
 				location = glm::translate(location, glm::vec3(i/ GROUND_SCALE.x, 0, j/ GROUND_SCALE.z));
 				
-				//location = glm::rotate(location, randRotation, glm::vec3(0, 1, 0));
 				location = glm::rotate(location, GROUND_ROTATION, glm::vec3(1, 0, 0));
 				locations.emplace_back(location);
 			}

@@ -49,20 +49,12 @@ uniform float reflectorSpotCosCutOff;
 uniform int reflectorExponent;
 uniform int sunOn;
 uniform float sunStrength;
-//uniform int explodeOn;
-//uniform float explodeStrength;
-//uniform float explodeTime;
+
 
 uniform vec3 firePosition;
 uniform float fireStrength;
-//uniform float fireFallof;
-//uniform vec3 fireDiffuse;
-//uniform vec3 fireAmbient;
-//uniform vec3 fireSpecular;
-//uniform int fogOn;
-uniform vec3 fogColor;
 
-//const float density=0.0007;
+uniform vec3 fogColor;
 
 
 vec4 spotLight(Light light, Material material, vec3 vertexPosition, vec3 vertexNormal) {
@@ -97,7 +89,6 @@ vec4 fireLight(mat4 VMatrix, Material material, vec3 vertexPosition, vec3 vertex
   ret += max(dot(R, V),0)*material.specular * light.specular; //specular
 
   ret*= fireStrength;
-  //ret/=(pow(distance, fireFallof));
   
 
   return vec4(ret, 1.0);
@@ -170,17 +161,13 @@ void main() {
 
 
   float fogDist = pow(distance(flashlight.position, vertexPosition), 2);
-	  //visibility = clamp(1/(distance*density), 0.0f, 1.0f);
   float fog = 0; 
 		
   if(fogOn==1){
-	  // can see fog from view of the player/ camera 
-	  //float distance = pow(distance(flashlight.position, vertexPosition), 2);
-	  //fogDensity = 0.1f;
+	  
 	  fog = exp(-1 * fogDist * fogDensity);
 	  fog = clamp(fog, 0.0f, 1.0f);
 	  if (fog != 0) {
-			//vec4 fogCol = vec4(0.8f, 0.8f, 0.8f, 1.0);
 			fogColor_f = vec4(fogColor, 1.0f);
 	  }
 	}
@@ -188,18 +175,13 @@ void main() {
 		fog = 1;
 		fogColor_f = vec4(fogColor, 1.0f);
 		}
-  //if(visibility<=0){
-    //discard;
-  //}
   
 
-  // if material has a texture -> apply it
   if(material.useTexture){
-    //color_f =  mix(fogColor_v, color_v * texture(texSampler, texCoord_v), visibility);
+    
 	color_f =  mix(fogColor_f, color_f * texture(texSampler, texCoord_v),fog);
 
   }else{
-    //color_f = mix(fogColor_v, color_v, visibility);
 	color_f = mix(fogColor_f, color_f,fog);
   }
 }

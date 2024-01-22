@@ -16,17 +16,13 @@ void Skybox::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 			// compose transformations
 			glm::mat4 matrix = projectionMatrix * viewMatrix;
 
-			// create view rotation matrix by using view matrix with cleared translation
 			glm::mat4 viewRotation = viewMatrix;
 			viewRotation[3] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-			// vertex shader will translate screen space coordinates (NDC) using inverse PV matrix
 			glm::mat4 inversePVmatrix = glm::inverse(projectionMatrix * viewRotation);
-			//glm::mat4 inversePVmatrix = projectionMatrix * viewRotation;
 			glUniformMatrix4fv(shaderProgram->iPVM, 1, GL_FALSE, glm::value_ptr(inversePVmatrix));
 			glUniform1i(shaderProgram->Sampler, 0);
 
-			// draw "skybox" rendering 2 triangles covering the far plane
 			glBindVertexArray(geometry->vertexArrayObject);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, geometry->texture);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, geometry->numTriangles + 2);
@@ -43,7 +39,6 @@ Skybox::Skybox(SkyboxShaderProgram* shdrPrg)
 	initialized = true;
 	this->shaderProgram = shdrPrg;
 	geometries.push_back(new ObjectGeometry);
-	// 2D coordinates of 2 triangles covering the whole screen (NDC), draw using triangle strip
 	load_skybox(SKYBOX_NIGHT_TEXTURE_NAME, night_suffixes);
 	
 }
@@ -62,7 +57,7 @@ void Skybox::load_skybox(const char* prefix, const char* suffixes[6]) {
 
 	// buffer for far plane rendering
 	glGenBuffers(1, &((geometries[0])->vertexBufferObject)); \
-		glBindBuffer(GL_ARRAY_BUFFER, (geometries[0])->vertexBufferObject);
+	glBindBuffer(GL_ARRAY_BUFFER, (geometries[0])->vertexBufferObject);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(screenCoords), screenCoords, GL_STATIC_DRAW);
 
 	//glUseProgram(farplaneShaderProgram);

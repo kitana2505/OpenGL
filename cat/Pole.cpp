@@ -122,10 +122,9 @@ void Pole::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 		glUseProgram(shaderProgram->program);
 		glUniform1f(shaderProgram->locations.alpha, 0.5f + 0.5f * sin(currentTime - startTime));
 		for (auto geometry : geometries) {
-			//for (auto location : locations) {
 
 			glBindVertexArray(geometry->vertexArrayObject);
-			//setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
+			
 			setTransformUniforms(*shaderProgram, localModelMatrix, viewMatrix, projectionMatrix);
 			setMaterialUniforms(
 				*shaderProgram,
@@ -135,13 +134,12 @@ void Pole::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 				geometry->shininess,
 				geometry->texture
 			);
-			//glDrawElements(GL_TRIANGLES, geometry->numTriangles * 3, GL_UNSIGNED_INT, 0);
+			
 			
 			glDrawArrays(GL_TRIANGLES, 0, geometry->numTriangles * 3);
 			glBindVertexArray(0);
 
 
-			//}
 		}
 		glUseProgram(0);
 

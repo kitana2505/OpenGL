@@ -174,7 +174,6 @@
     <ClInclude Include="Animal_rabbit.h" />
     <ClInclude Include="Airplane.h" />
     <ClInclude Include="data.h" />
-    <ClInclude Include="data\fire_wood\medium.h" />
     <ClInclude Include="Explosion.h" />
     <ClInclude Include="Fire2.h" />
     <ClInclude Include="Ground.h" />

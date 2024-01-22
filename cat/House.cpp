@@ -1,7 +1,6 @@
 #include <iostream>
 #include "House.h"
 
-//const char* MODEL_NAME = "data/low_poly_House/House2.obj";
 
 void House::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 	ObjectInstance::update(elapsedTime, parentModelMatrix);
@@ -37,7 +36,7 @@ void House::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
 
 	}
 	else {
-		//std::cout << "Can't draw Vegetation: triangle not initialized properly!" << std::endl;
+		std::cout << "Can't draw House: triangle not initialized properly!" << std::endl;
 	}
 }
 
@@ -45,10 +44,9 @@ House::House(ShaderProgram* shdrPrg) : ObjectInstance(shdrPrg), initialized(fals
 {
 	//this->shaderProgram = shdrPrg;
 	if (loadMultipleMeshes(HOUSE_MODEL, shdrPrg, geometries) != true) {
-		std::cerr << "initializeModels(): Vegetation model loading failed." << std::endl;
+		std::cerr << "initializeModels(): House model loading failed." << std::endl;
 	}
 	else {
-		//geometries[0]->texture= pgr::createTexture("\data\Spruce_obj");;
 		initialized = true;
 	}
 	direction = glm::vec3(0.0f, 1.0f, 0.0f);

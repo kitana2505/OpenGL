@@ -2,7 +2,6 @@
 #include <cmath>
 #include <math.h>
 #include "Missile.h"
-//#include "spline.h"
 const int missileTrianglesCount = 4;
 // temp constants used for missileVertices array contents definition
 const float invSqrt2 = (float)(1.0 / sqrt(2.0));
@@ -105,11 +104,7 @@ void Missile::update(float elapsedTime, const glm::mat4* parentModelMatrix) {
 
 	currentTime = elapsedTime;
 	position += timeDelta * speed * direction;
-	//position += 0.1f * speed * direction ;
-	//position = glm::vec3(0.0f, 0.0f, 0.0f);
-	//localModelMatrix = glm::translate(glm::mat4(0.0f), position);
-	//parentModelMatrix = localModelMatrix;
-
+	
 	if ((currentTime - startTime) * speed > MISSILE_MAX_DISTANCE)
 		destroyed = true;
 
@@ -129,10 +124,9 @@ void Missile::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatri
 	if (initialized && (shaderProgram != nullptr)) {
 		glUseProgram(shaderProgram->program);
 		for (auto geometry : geometries) {
-			//for (auto location : locations) {
 
 			glBindVertexArray(geometry->vertexArrayObject);
-			//setTransformUniforms(*shaderProgram, location * localModelMatrix, viewMatrix, projectionMatrix);
+			
 			setTransformUniforms(*shaderProgram, localModelMatrix, viewMatrix, projectionMatrix);
 			setMaterialUniforms(
 				*shaderProgram,
@@ -142,12 +136,11 @@ void Missile::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatri
 				geometry->shininess,
 				geometry->texture
 			);
-			//glDrawElements(GL_TRIANGLES, geometry->numTriangles * 3, GL_UNSIGNED_INT, 0);
+			
 			glDrawArrays(GL_TRIANGLES, 0, geometry->numTriangles * 3);
 			glBindVertexArray(0);
 
 
-			//}
 		}
 		glUseProgram(0);
 
@@ -169,9 +162,7 @@ Missile* Missile::createMissile(ShaderProgram* shdrPrg,const glm::vec3& missileP
 	newMissile->speed = MISSILE_SPEED;
 	newMissile->position = missilePosition;
 	newMissile->direction = glm::normalize(missileDirection);
-	//newMissile->draw(viewMatrix, projectionMatrix);
-	//gameObjects.missiles.push_back(newMissile);
-	//objects.push_back(newMissile);
+	
 	return newMissile;
 }
 

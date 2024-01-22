@@ -61,48 +61,6 @@ typedef struct _BrickShaderProgram {
 
 }BrickShaderProgram;
 
-typedef struct _MissileShaderProgram {
-	// identifier for the shader program
-	GLuint program;          // = 0;
-	// vertex attributes locations
-	GLint posLocation;       
-	GLint colorLocation;     
-	GLint normalLocation;    
-	GLint texCoordLocation;  
-	// uniforms locations
-	GLint PVMmatrixLocation;    
-	GLint VmatrixLocation;      // = -1;  view/camera matrix
-	GLint MmatrixLocation;      // = -1;  modeling matrix
-	GLint normalMatrixLocation; // = -1;  inverse transposed Mmatrix
-
-	GLint timeLocation;         // = -1; elapsed time in seconds
-
-	// material 
-	GLint diffuseLocation;    
-	GLint ambientLocation;    
-	GLint specularLocation;   
-	GLint shininessLocation;  
-	// texture
-	GLint useTextureLocation; 
-	GLint texSamplerLocation; 
-	// reflector related uniforms
-	GLint reflectorPositionLocation;   
-	GLint reflectorDirectionLocation; 
-
-}MissileShaderProgram;
-
-/*struct BannerShaderProgram {
-	// identifier for the shader program
-	GLuint program;           // = 0;
-	// vertex attributes locations
-	GLint posLocation;        // = -1;
-	GLint texCoordLocation;   // = -1;
-	// uniforms locations
-	GLint PVMmatrixLocation;  // = -1;
-	GLint timeLocation;       // = -1;
-	GLint texSamplerLocation; // = -1;
-} bannerShaderProgram;*/
-
 typedef struct _SkyboxShaderProgram {
 	GLuint program;
 	GLint screenCoord; 
@@ -148,10 +106,6 @@ typedef struct _ShaderProgram {
 
 		GLint firePosition;  
 		GLint fireStrength;
-		//GLint fireFallof;
-		//GLint fireDiffuse;
-		//GLint fireAmbient;
-		//GLint fireSpecular;
 
 		GLint fogColor;
 		GLint fogOn;
@@ -192,10 +146,6 @@ typedef struct _ShaderProgram {
 
 		locations.firePosition = -1;
 		locations.fireStrength = -1;
-		//locations.fireFallof = -1;
-		//locations.fireDiffuse = -1;
-		//locations.fireAmbient = -1;
-		//locations.fireSpecular = -1;
 		locations.fogColor = -1;
 
 		locations.mossTex = -1;
@@ -205,10 +155,10 @@ typedef struct _ShaderProgram {
 } ShaderProgram;
 
 typedef struct _ObjectGeometry {
-	GLuint        vertexBufferObject;   ///< identifier for the vertex buffer object
-	GLuint        elementBufferObject;  ///< identifier for the element buffer object
-	GLuint        vertexArrayObject;    ///< identifier for the vertex array object
-	unsigned int  numTriangles;         ///< number of triangles in the mesh
+	GLuint        vertexBufferObject;   
+	GLuint        elementBufferObject;  
+	GLuint        vertexArrayObject;    
+	unsigned int  numTriangles;         
 	glm::vec3     ambient;
 	glm::vec3     diffuse;
 	glm::vec3     specular;
@@ -233,9 +183,7 @@ public:
 	glm::mat4		localModelMatrix;
 	glm::mat4		globalModelMatrix;
 
-	// dynamic objects
-	// glm::vec3 direction;
-	// float     speed;
+	
 	glm::vec3 position;
 	glm::vec3 direction;
 	float     speed;

@@ -51,9 +51,6 @@
 #include "Explosion.h"
 #include "Pole.h"
 
-//constexpr int WINDOW_WIDTH = 500;
-//constexpr int WINDOW_HEIGHT = 500;
-// constexpr char WINDOW_TITLE[] = "PGR: Application Skeleton";
 
 ObjectList objects;
 // shared shader programs
@@ -62,7 +59,6 @@ FireShaderProgram fireShaderProgram;
 ShaderProgram brickShaderProgram;
 ExplosionShaderProgram explosionShaderProgram;
 SkyboxShaderProgram skyboxShaderProgram;
-MissileShaderProgram missileShaderProgram;
 ShaderProgram bannerShaderProgram;
 ShaderProgram dynamicShaderProgram;
 ObjectList rabbitList;
@@ -83,51 +79,42 @@ struct _GameState {
 	int camera_index = 0;
 	float cameraElevationAngle;
 	float cameraRotationAngle;
-
-	/// when changing camera view, I need to know, in which point I am starting to make it smooth
-	glm::vec3 initial_camera_position;
-
-	///current camera position
-	glm::vec3 camera_position;
-
-	/// where the camera should be moved
-	glm::vec3 target_camera_position;
-
-	/// whether camera is in correct place or should be moved
 	bool move_camera;
+	
+	glm::vec3 initial_camera_position;
+	glm::vec3 camera_position;	
+	glm::vec3 target_camera_position;
+	
+	
 	bool keyMap[KEYS_COUNT];
+
+	//lights
 	bool reflectorOn;
-
 	/// Sunlight should be on/off
-	bool sunOn;
-
+	bool sunOn;	
+	float sunStrength;
 	//fog can be turned on or off
 	bool fogOn;
 
 	Fire2* fire2; 
 	Skybox* skybox;
 
-	/// number of wood stacks in inventory
-	//int wood_in_inventory = 0;
-	 float sunStrength;
-
 
 	 float elapsedTime;
 	 float missileLaunchTime;
 	 float ufoMissileLaunchTime;
+
 	 Missile* missile;
 	 bool launchMissile;
-
-	 bool gameOver;
-	 Banner* banner;
-
 	 ObjectList missleList;
 	 ObjectList explosions;
+
+	 bool rain;
+	 Banner* banner;
+	
 	 ObjectList poleList;
 
 	 bool jump;
-
-
 
 }gameState;
 
@@ -164,7 +151,8 @@ void move_player(float deltaTime) {
 		forward += 0;
 		sideways += 1;
 	}
-
+	//move in x and z direction
+	//up and down arrow: moving forwards, backwards)
 	float x = cos(glm::radians(gameState.cameraRotationAngle)) * forward + sin(glm::radians(gameState.cameraRotationAngle)) * -sideways;
 	float z = cos(glm::radians(gameState.cameraRotationAngle)) * sideways + sin(glm::radians(gameState.cameraRotationAngle)) * forward;
 	gameState.player_direction = glm::vec3(x, 0, z);
@@ -173,10 +161,9 @@ void move_player(float deltaTime) {
 	}
 
 
-	if (gameState.keyMap[RUN]) {
+	if (gameState.jump) {
 		if (check_bounds(gameState.player_position + gameState.player_direction * HIGH_SPEED * deltaTime)) {
 			gameState.player_position += gameState.player_direction * HIGH_SPEED * deltaTime;
-
 		}
 
 	}
@@ -191,17 +178,14 @@ void move_player(float deltaTime) {
 void shooting(ObjectList objects, float elapsedTime)
 {
 	if (gameState.launchMissile == false) { return; }
-	//if (gameState.keyMap[KEY_SPACE] == true) {
-		// missile position and direction
+	
 	glm::vec3 missilePosition = objects[4]->position + glm::vec3(0.0f, CAT_SCALE/5.0f, 4.5f);
 	glm::vec3 missileDirection = objects[4]->direction;
 
-	//missilePosition += missileDirection * 1.5f * CAT_SCALE;
+	
 	missilePosition += missileDirection * CAT_SCALE * 0.25f;
-	//MissileShaderProgram* missileShader = new MissileShaderProgram;
-	Missile* newMissile = Missile::createMissile(&commonShaderProgram, missilePosition, missileDirection, gameState.elapsedTime);
-	//}
-
+	
+	Missile* newMissile = Missile::createMissile(&commonShaderProgram, missilePosition, missileDirection, gameState.elapsedTime);	
 
 	// test collisions among objects in the scene
 	
@@ -319,11 +303,7 @@ void loadShaderPrograms() //define at least 1 shader obj
 	//fire
 	commonShaderProgram.locations.firePosition = glGetUniformLocation(commonShaderProgram.program, "firePosition");
 	commonShaderProgram.locations.fireStrength = glGetUniformLocation(commonShaderProgram.program, "fireStrength");
-	//commonShaderProgram.locations.fireFallof = glGetUniformLocation(commonShaderProgram.program, "fireFallof");
-	//commonShaderProgram.locations.fireDiffuse = glGetUniformLocation(commonShaderProgram.program, "fireDiffuse");
-	//commonShaderProgram.locations.fireSpecular = glGetUniformLocation(commonShaderProgram.program, "fireSpecular");
-	//commonShaderProgram.locations.fireAmbient = glGetUniformLocation(commonShaderProgram.program, "fireAmbient");
-
+	
 
 	//fog
 	commonShaderProgram.locations.fogColor = glGetUniformLocation(commonShaderProgram.program, "fogColor");
@@ -376,40 +356,32 @@ void loadShaderPrograms() //define at least 1 shader obj
 
 	bannerShaderProgram.program = pgr::createProgram(shaders7);
 	bannerShaderProgram.locations.position = glGetAttribLocation(bannerShaderProgram.program, "position");
-	//commonShaderProgram.locations.color = glGetAttribLocation(commonShaderProgram.program, "color");
-
-	// other attributes and uniforms
 	bannerShaderProgram.locations.PVMmatrix = glGetUniformLocation(bannerShaderProgram.program, "PVMmatrix");
 
 	bannerShaderProgram.locations.texSampler = glGetUniformLocation(bannerShaderProgram.program, "texSampler");
 	bannerShaderProgram.locations.texCoord = glGetAttribLocation(bannerShaderProgram.program, "texCoord");
 	bannerShaderProgram.locations.time = glGetUniformLocation(bannerShaderProgram.program, "time");
 
-	// push vertex shader and fragment shader
 	GLuint shaders5[] = {
 	  pgr::createShaderFromFile(GL_VERTEX_SHADER,"brickShader.vert"),
 	  pgr::createShaderFromFile(GL_FRAGMENT_SHADER,"brickShader.frag"),
 	  0
 	};
 
-	// create the program with two shaders
 	brickShaderProgram.program = pgr::createProgram(shaders5);
 
-	// get position and texture coordinates attributes locations
 	brickShaderProgram.locations.position = glGetAttribLocation(brickShaderProgram.program, "position");
 	brickShaderProgram.locations.color = glGetAttribLocation(brickShaderProgram.program, "color");
 
-	// other attributes and uniforms
 	brickShaderProgram.locations.PVMmatrix = glGetUniformLocation(brickShaderProgram.program, "PVMmatrix");
 
 	brickShaderProgram.locations.normal = glGetAttribLocation(brickShaderProgram.program, "normal");
 	brickShaderProgram.locations.texCoord = glGetAttribLocation(brickShaderProgram.program, "texCoord");
 
-	// get uniforms locations
 	brickShaderProgram.locations.Vmatrix = glGetUniformLocation(brickShaderProgram.program, "Vmatrix");
 	brickShaderProgram.locations.Mmatrix = glGetUniformLocation(brickShaderProgram.program, "Mmatrix");
 	brickShaderProgram.locations.normalMatrix = glGetUniformLocation(brickShaderProgram.program, "normalMatrix");
-	// material
+	
 	brickShaderProgram.locations.ambient = glGetUniformLocation(brickShaderProgram.program, "material.ambient");
 	brickShaderProgram.locations.diffuse = glGetUniformLocation(brickShaderProgram.program, "material.diffuse");
 	brickShaderProgram.locations.specular = glGetUniformLocation(brickShaderProgram.program, "material.specular");
@@ -432,10 +404,6 @@ void loadShaderPrograms() //define at least 1 shader obj
 	//fire
 	brickShaderProgram.locations.firePosition = glGetUniformLocation(brickShaderProgram.program, "firePosition");
 	brickShaderProgram.locations.fireStrength = glGetUniformLocation(brickShaderProgram.program, "fireStrength");
-	//brickShaderProgram.locations.fireFallof = glGetUniformLocation(brickShaderProgram.program, "fireFallof");
-	//brickShaderProgram.locations.fireDiffuse = glGetUniformLocation(brickShaderProgram.program, "fireDiffuse");
-	//brickShaderProgram.locations.fireSpecular = glGetUniformLocation(brickShaderProgram.program, "fireSpecular");
-	//brickShaderProgram.locations.fireAmbient = glGetUniformLocation(brickShaderProgram.program, "fireAmbient");
 
 
 	//fog
@@ -450,14 +418,11 @@ void loadShaderPrograms() //define at least 1 shader obj
 		0
 	};
 
-	// create the program with two shaders
 	explosionShaderProgram.program = pgr::createProgram(shaders4);
 
-	// get position and texture coordinates attributes locations
 	explosionShaderProgram.posLocation = glGetAttribLocation(explosionShaderProgram.program, "position");
 	explosionShaderProgram.texCoordLocation = glGetAttribLocation(explosionShaderProgram.program, "texCoord");
-	// get uniforms locations
-	//explosionShaderProgram.texCoordLocation = 1;
+	
 	explosionShaderProgram.PVMmatrixLocation = glGetUniformLocation(explosionShaderProgram.program, "PVMmatrix");
 	explosionShaderProgram.VmatrixLocation = glGetUniformLocation(explosionShaderProgram.program, "Vmatrix");
 	explosionShaderProgram.timeLocation = glGetUniformLocation(explosionShaderProgram.program, "time");
@@ -474,12 +439,10 @@ void loadShaderPrograms() //define at least 1 shader obj
 
 	dynamicShaderProgram.program = pgr::createProgram(shaders8);
 	dynamicShaderProgram.locations.position = glGetAttribLocation(dynamicShaderProgram.program, "position");
-	//commonShaderProgram.locations.color = glGetAttribLocation(commonShaderProgram.program, "color");
-
-	// other attributes and uniforms
+	
 	dynamicShaderProgram.locations.PVMmatrix = glGetUniformLocation(dynamicShaderProgram.program, "PVMmatrix");
 	dynamicShaderProgram.locations.alpha = glGetUniformLocation(dynamicShaderProgram.program, "alpha");
-	// material
+	
 	dynamicShaderProgram.locations.ambient = glGetUniformLocation(dynamicShaderProgram.program, "material.ambient");
 	dynamicShaderProgram.locations.diffuse = glGetUniformLocation(dynamicShaderProgram.program, "material.diffuse");
 	dynamicShaderProgram.locations.specular = glGetUniformLocation(dynamicShaderProgram.program, "material.specular");
@@ -509,7 +472,7 @@ glm::vec3 move_camera() {
 	glm::vec3 position = gameState.initial_camera_position;
 	glm::vec3 target = gameState.target_camera_position;
 	glm::vec3 direction = (target - position) * 0.1f;
-
+	
 	float dis1 = glm::distance(gameState.camera_position, target);
 	gameState.camera_position += direction;
 	float dis2 = glm::distance(gameState.camera_position, target);
@@ -587,8 +550,7 @@ void drawScene(void)
 	switch (gameState.camera_index) {
 	case 0:
 		gameState.target_camera_position = gameState.player_position;
-		//gameState.cameraElevationAngle = 0.0f;
-		//gameState.cameraRotationAngle = 90.0f;
+	
 		break;
 	case 1:
 		// Fix camera in front of the cat
@@ -635,8 +597,6 @@ void drawScene(void)
 	glUniform3f(brickShaderProgram.locations.reflectorPosition, cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	glUniform3f(commonShaderProgram.locations.reflectorDirection, cameraDirection.x, cameraDirection.y, cameraDirection.z);
 	glUniform3f(brickShaderProgram.locations.reflectorDirection, cameraDirection.x, cameraDirection.y, cameraDirection.z);
-	//glUniform3f(commonShaderProgram.locations.reflectorPosition, objects[1]->position.x, objects[1]->position.y, objects[1]->position.z);
-	//glUniform3f(commonShaderProgram.locations.reflectorDirection, objects[1]->direction.x, objects[1]->direction.y, objects[1]->direction.z);
 	glUniform1f(commonShaderProgram.locations.reflectorSpotCosCutOff, 0.6f);
 	glUniform1i(commonShaderProgram.locations.reflectorExponent, 30);
 	glUniform1f(brickShaderProgram.locations.reflectorSpotCosCutOff, 0.6f);
@@ -737,8 +697,7 @@ void reshapeCb(int newWidth, int newHeight) {
 	gameState.windowHeight = newHeight;
 
 	glViewport(0, 0, (GLsizei)newWidth, (GLsizei)newHeight);
-	// TODO: Take new window size and update the application state,
-	// window and projection.
+
 
 	// glViewport(...);
 };
@@ -824,7 +783,6 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
 		break;
 
 	case ' ': // launch missile
-		//if (gameState.gameOver != true)
 		gameState.keyMap[KEY_SPACE] = true;
 		gameState.launchMissile = true;
 		break;
@@ -832,12 +790,12 @@ void keyboardCb(unsigned char keyPressed, int mouseX, int mouseY) {
 	case 'g':
 	case 'G':
 		//case GLUT_KEY_DOWN:
-		if (gameState.gameOver == false){
-		gameState.gameOver = true;
+		if (gameState.rain == false){
+		gameState.rain = true;
 		createBanner();
 		}
 		else  {
-			gameState.gameOver = false;
+			gameState.rain = false;
 			gameState.banner = NULL;
 		}
 		break;
@@ -882,9 +840,7 @@ void keyboardUpCb(unsigned char keyReleased, int mouseX, int mouseY) {
 
 	case 'g':
 	case 'G':
-		//case GLUT_KEY_Up:
-		//gameState.gameOver = false;
-
+		
 	case ' ':
 		gameState.keyMap[KEY_SPACE] = false;
 		gameState.launchMissile = false;
@@ -926,9 +882,7 @@ void specialKeyboardCb(int specKeyPressed, int mouseX, int mouseY) {
 		//case GLUT_KEY_DOWN:
 		gameState.keyMap[BACKWARD] = true;
 		break;
-	case GLUT_KEY_SHIFT_L:
-		gameState.keyMap[RUN] = true;
-		break;
+
 
 	}
 }
@@ -951,9 +905,7 @@ void specialKeyboardUpCb(int specKeyReleased, int mouseX, int mouseY) {
 		//case GLUT_KEY_DOWN:
 		gameState.keyMap[BACKWARD] = false;
 		break;
-	case GLUT_KEY_SHIFT_L:
-		gameState.keyMap[RUN] = false;
-		break;
+	
 	}
 } // key released
 
@@ -1113,8 +1065,7 @@ void timerCb(int)
 #ifndef SKELETON // @task_1_0
 	const glm::mat4 sceneRootMatrix = glm::mat4(1.0f);
 	gameState.elapsedTime = 0.001f * (float)glutGet(GLUT_ELAPSED_TIME);
-	//float elapsedTime = 0.001f * static_cast<float>(glutGet(GLUT_ELAPSED_TIME)); // milliseconds => seconds
-	gameState.elapsedTime = 0.001f * (float)glutGet(GLUT_ELAPSED_TIME);
+	
 	float time = glutGet(GLUT_ELAPSED_TIME);
 	float deltaTime = (time - gameState.last_update) / 1000;
 	gameState.last_update = time;
@@ -1147,11 +1098,11 @@ void timerCb(int)
 		shooting(objects, gameState.elapsedTime);
 	}
 
-	if ((gameState.gameOver == true) && (gameState.banner != NULL)) {
+	if ((gameState.rain == true) && (gameState.banner != NULL)) {
 		gameState.banner->currentTime = gameState.elapsedTime;
 	}
 	// game over? -> create banner with scrolling text "game over"
-	if (gameState.gameOver == true) {
+	if (gameState.rain == true) {
 		gameState.keyMap[KEY_SPACE] = false;
 		if (gameState.banner == NULL) {
 			// if game over and banner still not created -> create banner
@@ -1248,8 +1199,8 @@ void initApplication() {
 	gameState.sunOn = false;
 	gameState.reflectorOn = false;
 	gameState.fogOn = false;
-	//init gameOver
-	gameState.gameOver = false;
+	//init rain
+	gameState.rain = false;
 
 	// init jump
 	gameState.jump = false;
@@ -1343,11 +1294,11 @@ void menuRain(int menuItemID)
 	switch (menuItemID)
 	{
 	case 1:
-		gameState.gameOver = true;
+		gameState.rain = true;
 		createBanner();
 		break;
 	case 2:
-		gameState.gameOver = false;
+		gameState.rain = false;
 		gameState.banner = NULL;
 		break;
 	}
@@ -1377,9 +1328,7 @@ int main(int argc, char** argv) {
 
 	glutInitContextVersion(pgr::OGL_VER_MAJOR, pgr::OGL_VER_MINOR);
 	glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
-	 // how do we store the buffer
-	// color buffer is stored in glut_rgb
-	// glut_double defines how we draws the animation
+	
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH); //depth buffer display how far the obj from the camera
 
 	// for each window
@@ -1435,9 +1384,6 @@ int main(int argc, char** argv) {
 	glutAddMenuEntry("On", 1);
 	glutAddMenuEntry("Off", 2);
 
-	//int idPoint = glutCreateMenu(menuPoint);
-	//glutAddMenuEntry("Pointlight on", 1);
-	//glutAddMenuEntry("Pointlight off", 2);
 
 	/*Create main menu*/
 	glutCreateMenu(myMenu);

@@ -14,7 +14,7 @@ public:
 
 private:
 
-	bool initialized;  ///< object has the shader with defined locations
+	bool initialized;  
 	std::vector<glm::mat4> locations;
 };
 
